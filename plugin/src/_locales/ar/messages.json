@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "العودة إلى الأعلى"
+  },
+  "browserShortcutsHint": {
+    "message": "عرض وتخصيص في إعدادات المتصفح"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "تعذّر فتح إعدادات اختصارات لوحة المفاتيح."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "خصّص التعليمات المستخدمة لتحليل صفحة."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "تعليمات التمييز"
+  },
+  "f_summary_prompt_5157": {
+    "message": "تعليمات الملخص"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "استعادة الإعداد الافتراضي"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "تعذر حفظ التعليمات."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "تعليمات التمييز والملخص"
+  },
+  "pagePromptsHint": {
+    "message": "تعليمات التمييز والملخص"
+  },
+  "highlightNotFound": {
+    "message": "لم يُعثر عليها في الصفحة"
+  },
+  "highlightAmbiguous": {
+    "message": "تطابقات متعددة في الصفحة"
+  },
+  "highlightingDisabled": {
+    "message": "تمييز الصفحة معطل"
+  },
+  "highlightingUnavailable": {
+    "message": "تمييز الصفحة غير متاح"
+  },
+  "highlightMatchFailures": {
+    "message": "دون تطابق: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "لم تُعثر على بداية الجملة في النص الأصلي"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "تطابق عدة جمل في النص الأصلي"
+  },
+  "highlightInvalidResponse": {
+    "message": "تعذّرت قراءة استجابة التمييز"
   }
 }

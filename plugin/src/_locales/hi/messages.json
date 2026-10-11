@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "ऊपर जाएँ"
+  },
+  "browserShortcutsHint": {
+    "message": "ब्राउज़र सेटिंग में देखें और बदलें"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "कीबोर्ड शॉर्टकट सेटिंग नहीं खुल सकीं।"
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "पेज का विश्लेषण करने के निर्देश अनुकूलित करें।"
+  },
+  "f_highlight_prompt_141b": {
+    "message": "हाइलाइट के निर्देश"
+  },
+  "f_summary_prompt_5157": {
+    "message": "सारांश के निर्देश"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "डिफ़ॉल्ट पर रीसेट करें"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "निर्देश सहेजे नहीं जा सके।"
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "हाइलाइट और सारांश के निर्देश"
+  },
+  "pagePromptsHint": {
+    "message": "हाइलाइट और सारांश के निर्देश"
+  },
+  "highlightNotFound": {
+    "message": "पेज पर नहीं मिला"
+  },
+  "highlightAmbiguous": {
+    "message": "पेज पर कई मिलान"
+  },
+  "highlightingDisabled": {
+    "message": "पेज हाइलाइट बंद है"
+  },
+  "highlightingUnavailable": {
+    "message": "पेज हाइलाइट उपलब्ध नहीं है"
+  },
+  "highlightMatchFailures": {
+    "message": "$COUNT$ का मिलान नहीं हुआ",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "मूल पाठ में वाक्य की शुरुआत नहीं मिली"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "मूल पाठ में कई वाक्य मिले"
+  },
+  "highlightInvalidResponse": {
+    "message": "हाइलाइट का जवाब पढ़ा नहीं जा सका"
   }
 }

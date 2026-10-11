@@ -1,0 +1,26 @@
+// Prompt assembly follows highlight-before-summary order and finalization keeps every distinct selected sentence.
+import assert from 'assert';
+import { setup, imp } from './harness.mjs';
+const { w } = setup({});
+const { buildPagePrompt, DEFAULT_HIGHLIGHT_PROMPT, DEFAULT_SUMMARY_PROMPT } = await imp('modules/pagePrompts.js');
+const built = buildPagePrompt({ selectedLanguage: 'cn', summaryLength: 100 });
+assert(built.includes(DEFAULT_HIGHLIGHT_PROMPT) && built.includes(DEFAULT_SUMMARY_PROMPT));
+assert(built.indexOf(DEFAULT_HIGHLIGHT_PROMPT) < built.indexOf(DEFAULT_SUMMARY_PROMPT));
+assert(built.includes('Chinese') && built.includes('at most 100 words'));
+assert(built.includes('This limit does not apply to highlights or metadata'));
+assert(!/8-25|not far below|2-3 EXACT/.test(built), 'old snippet and minimum-length constraints are gone');
+assert(built.includes('GHOST_HIGHLIGHTS') && built.includes('SCHOLARLY') && built.includes('QUESTIONS'), 'output retains the metadata contract');
+assert(built.includes('shortest prefix') && built.includes('recover and highlight the complete source sentence'), 'only prefixes are requested from the model');
+const custom = buildPagePrompt({ highlightPrompt: 'Select predictions.', summaryPrompt: 'Explain implications.', moodOn: false, additionalQuestions: 'What changed?' });
+assert(custom.indexOf('Select predictions.') < custom.indexOf('Explain implications.'));
+assert(!custom.includes(DEFAULT_HIGHLIGHT_PROMPT) && !custom.includes(DEFAULT_SUMMARY_PROMPT));
+assert(!custom.includes('<!-- MOOD:') && custom.includes('What changed?'));
+chrome.i18n = { detectLanguage: (_t, cb) => cb({ languages: [{ language: 'en', percentage: 100 }] }) };
+const { finalizeSummary } = await imp('content/finalize.js');
+const sentences = Array.from({ length: 20 }, (_, index) => `Claim ${index + 1} is a distinct argument with essential qualifications that must remain intact even when a selected sentence exceeds the former twenty-five-word snippet limit.`);
+const prefixes = sentences.map((sentence, index) => `Claim ${index + 1} is`);
+const final = await finalizeSummary({ raw: '<h2>Connections</h2><p>A hidden implication.</p><!-- TAGS: Technology, Research --><!-- GHOST_HIGHLIGHTS: ' + JSON.stringify([...prefixes, prefixes[0]]) + ' -->', selectedLanguage: 'en', contentText: sentences.join(' '), pageTitle: 'Arguments', pageMeta: {} });
+assert.deepEqual(final.ghostQuotes, sentences, 'all complete sentences survive, with only exact duplicates removed');
+assert(!final.cleanHtml.includes('GHOST_HIGHLIGHTS'), 'metadata does not leak into the visible response');
+console.log('TEST 130 OK');
+w.close();

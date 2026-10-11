@@ -47,6 +47,7 @@
 <symbol id="i-laptop" viewBox="0 0 24 24"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16" /></symbol>
 <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /></symbol>
 <symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></symbol>
+<symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 16h10"/></symbol>
 <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol>
 <symbol id="i-loader" viewBox="0 0 24 24"><path d="M12 2v4" /><path d="m16.2 7.8 2.9-2.9" /><path d="M18 12h4" /><path d="m16.2 16.2 2.9 2.9" /><path d="M12 18v4" /><path d="m4.9 19.1 2.9-2.9" /><path d="M2 12h4" /><path d="m4.9 4.9 2.9 2.9" /></symbol>
@@ -336,7 +337,7 @@
 <p class="settings-caption" data-i18n="settingsCapSummarizing">SUMMARIZING</p>
 <button type="button" class="settings-row" data-panel="prompts">
   <span class="settings-row-icon"><span class="ic"><svg class="icon icon-message-square icon--lg" aria-hidden="true" focusable="false"><use href="#i-message-square"/></svg><span class="ic-e" aria-hidden="true">💬</span></span></span>
-  <span class="settings-row-text"><span class="settings-row-title" data-i18n="settingsPrompts">Prompts</span><span class="settings-row-sub" data-sub="prompts">Preset and custom prompt</span></span>
+  <span class="settings-row-text"><span class="settings-row-title" data-i18n="settingsPrompts">Prompts</span><span class="settings-row-sub" data-sub="prompts" data-i18n="pagePromptsHint">Highlight and summary prompts</span></span>
   <span class="settings-row-chev"><span class="ic"><svg class="icon icon-chevron-right" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg><span class="ic-e" aria-hidden="true">›</span></span></span>
 </button>
 <p class="settings-caption" data-i18n="settingsCapFeeds">FEEDS</p>
@@ -362,6 +363,11 @@
   <span class="settings-row-chev"><span class="ic"><svg class="icon icon-chevron-right" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg><span class="ic-e" aria-hidden="true">›</span></span></span>
 </button>
 <p class="settings-caption" data-i18n="settingsCapApp">APP</p>
+<button type="button" id="browserShortcutsButton" class="settings-row">
+  <span class="settings-row-icon"><span class="ic"><svg class="icon icon-keyboard icon--lg" aria-hidden="true" focusable="false"><use href="#i-keyboard"/></svg><span class="ic-e" aria-hidden="true">⌨️</span></span></span>
+  <span class="settings-row-text"><span class="settings-row-title" data-i18n="f_keyboard_shortcuts_ddb7">Keyboard shortcuts</span><span class="settings-row-sub" data-i18n="browserShortcutsHint">View and customize in browser settings</span></span>
+  <span class="settings-row-chev"><span class="ic"><svg class="icon icon-chevron-right" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg><span class="ic-e" aria-hidden="true">›</span></span></span>
+</button>
 <button type="button" class="settings-row" data-panel="appearance">
   <span class="settings-row-icon"><span class="ic"><svg class="icon icon-palette icon--lg" aria-hidden="true" focusable="false"><use href="#i-palette"/></svg><span class="ic-e" aria-hidden="true">🎨</span></span></span>
   <span class="settings-row-text"><span class="settings-row-title" data-i18n="settingsAppearance">Appearance &amp; Language</span><span class="settings-row-sub" data-sub="appearance">Theme · language · side panel</span></span>
@@ -523,14 +529,6 @@
                     <input type="checkbox" id="aiHighlightingToggle" />
                     <span class="slider-toggle"></span>
                   </label>
-                </div>
-                <div class="setting-group flex justify-between align-center mb-3">
-                  <label for="ghostHighlightAmount" data-i18n="f_ghost_highlight_amount_cdbc">Ghost Highlight Amount</label>
-                  <select id="ghostHighlightAmount">
-                      <option value="few" data-i18n="f_a_few_18aa">A few</option>
-                      <option value="regular" data-i18n="f_regular_f2b7">Regular</option>
-                      <option value="a_lot" data-i18n="f_a_lot_9f13">A lot</option>
-                  </select>
                 </div>
                 <div class="setting-group mb-3">
                   <label for="highlightExcludedSites" data-i18n="f_hide_the_highlights_panel_on_21d1">Hide the highlights panel on these sites</label>

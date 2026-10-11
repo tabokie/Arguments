@@ -9,7 +9,9 @@ const ANC_CONTEXT = 32;
 const ANC_SKIP = [
   'script', 'style', 'noscript', 'nav', 'header', 'footer', 'aside', 'form',
   '[role="navigation"]', '[role="banner"]', '[role="contentinfo"]',
-  '#comments', '.comments', '[data-aish-ui]', '#ai-summary-hybrid-sidebar', '[id^="aish-"]', '[id^="ai-summary"]'
+  '[role="dialog"]', '[role="alertdialog"]', '[aria-modal="true"]', 'dialog',
+  '#hnmain .comhead', '#hnmain .votelinks', '#hnmain .reply', '#hnmain .pagetop',
+  '[data-aish-ui]', '#ai-summary-hybrid-sidebar', '[id^="aish-"]', '[id^="ai-summary"]'
 ].join(',');
 const ANC_BLOCK = 'p,div,li,ul,ol,h1,h2,h3,h4,h5,h6,blockquote,td,th,tr,section,article,pre,figcaption,dd,dt,br';
 
@@ -65,9 +67,19 @@ export function ancArticleRoot(doc) {
   return ancLargestMatch(doc, 'article') || ancLargestMatch(doc, '[role="main"]') || ancLargestMatch(doc, 'main');
 }
 
-/** The article body: same candidates the extractor uses, falling back to <body>. */
+/** Shared extraction/anchoring scope: include sibling articles and discussion blocks. */
 export function ancScopeRoot(doc = document) {
-  return doc.querySelector('#storytext') || ancArticleRoot(doc) || doc.body;
+  const hn = doc.querySelector('#hnmain');
+  if (hn?.querySelector('.comment-tree, tr.comtr')) return hn;
+  let root = doc.querySelector('#storytext') || ancArticleRoot(doc)
+    || doc.querySelector('ytd-text-inline-expander') || doc.querySelector('ytd-section-list-renderer')
+    || doc.querySelector('#description') || doc.querySelector('#content') || doc.body;
+  const blocks = [...doc.querySelectorAll('article, #comments, .comments, ytd-comments')]
+    .filter(el => !ancLooksLikeFurniture(el) && !el.closest('[data-aish-ui], [role="dialog"], [role="alertdialog"], dialog'));
+  for (const block of blocks) {
+    while (root.parentElement && !root.contains(block)) root = root.parentElement;
+  }
+  return root;
 }
 
 // One normalised character per source character (or none): curly quotes → straight,
@@ -221,7 +233,7 @@ export function ancToRange(idx, start, end) {
 /** AI quotes: long enough and unique in the article, otherwise dropped. */
 export function ancQuoteUsable(idx, quote, minWords = 8) {
   const exact = ancNormalize(quote);
-  if (exact.length < 5) return null;
+  if (!exact) return null;
   const occ = ancOccurrences(idx, exact);
   if (!occ.length) return null;
   if (occ.length > 1 && exact.split(' ').length < minWords) return null;

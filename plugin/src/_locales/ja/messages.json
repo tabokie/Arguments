@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "先頭へ戻る"
+  },
+  "browserShortcutsHint": {
+    "message": "ブラウザーの設定で確認・変更"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "キーボードショートカットの設定を開けませんでした。"
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "ページの分析に使う指示をカスタマイズします。"
+  },
+  "f_highlight_prompt_141b": {
+    "message": "ハイライトの指示"
+  },
+  "f_summary_prompt_5157": {
+    "message": "要約の指示"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "既定値に戻す"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "指示を保存できませんでした。"
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "ハイライトと要約の指示"
+  },
+  "pagePromptsHint": {
+    "message": "ハイライトと要約の指示"
+  },
+  "highlightNotFound": {
+    "message": "ページ内に見つかりません"
+  },
+  "highlightAmbiguous": {
+    "message": "ページ内に複数の一致箇所"
+  },
+  "highlightingDisabled": {
+    "message": "ページのハイライトは無効です"
+  },
+  "highlightingUnavailable": {
+    "message": "ページのハイライトは利用できません"
+  },
+  "highlightMatchFailures": {
+    "message": "一致なし: $COUNT$ 件",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "原文に文の冒頭が見つかりません"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "原文の複数の文に一致"
+  },
+  "highlightInvalidResponse": {
+    "message": "ハイライトの応答を読み取れませんでした"
   }
 }

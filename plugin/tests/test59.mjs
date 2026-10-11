@@ -79,10 +79,6 @@ assert.equal(answerPreview('Questions about this: many'), 'Questions about this:
 const { languageRule } = await imp('modules/languages.js');
 assert.equal(languageRule('en'), '');
 assert(/German/.test(languageRule('de')) && /Antworte ausschließlich auf Deutsch/.test(languageRule('de')) && /Do NOT write it in English/.test(languageRule('de')));
-const contentSrc = fs.readFileSync(new URL('../src/content.js', import.meta.url), 'utf8');
-assert(/FINAL INSTRUCTIONS/.test(contentSrc) && /LENGTH RULE/.test(contentSrc), 'final reminder block');
-assert(/(?:content: |userMessage = )`[^`]*Content: \$\{(?:truncatedContent|pageText)\}\\n\\n\$\{finalReminder\}`/.test(contentSrc), 'reminder is the last thing in the user message');
-assert(/parts\.push\(\{ text: finalReminder \}\)/.test(contentSrc), 'gemini: reminder is the last part');
 const { resolveLocale } = await imp('modules/i18n.js');
 assert.equal(resolveLocale('de'), 'de'); assert.equal(resolveLocale('de-DE'), 'de');
 assert.equal(resolveLocale('', 'de-AT'), 'de'); assert.equal(resolveLocale('', 'en-GB'), 'en');
@@ -97,12 +93,10 @@ assert.equal(stI.node.querySelector('.recap-preview').hidden, false);
 stI.stop();
 const ss = fs.readFileSync(new URL('../src/modules/sendSheet.js', import.meta.url), 'utf8');
 assert(/createRecapStatus\(\{[\s\S]*preview: true/.test(ss) && /generateDigestIntro\(list0, state\.introStyle, \{ onStage/.test(ss));
-// Suggested questions cost no extra request: they ride along with the summary, the last instructions repeat the ask,
-// parsing is forgiving, and there is no separate suggestion call any more.
+// Suggested-question parsing is forgiving, and there is no separate suggestion call any more.
+// The actual requests and final reminders are checked in test129.
 {
-  const c = fs.readFileSync(new URL('../src/content.js', import.meta.url), 'utf8');
   const m = fs.readFileSync(new URL('mainScreen.js', here), 'utf8');
-  assert(/FINAL INSTRUCTIONS[\s\S]*QUESTIONS: \[\{"q":"\.\.\."/.test(c), 'QUESTIONS in the final reminder');
   assert(/QUESTIONS:\\s\*\(\[\\s\\S\]\*\?\)\\s\*\(\?:-->\|\$\)/.test(fs.readFileSync(new URL('../src/content/finalize.js', import.meta.url), 'utf8')) && /matchAll\(\/\["“\]/.test(fs.readFileSync(new URL('../src/modules/suggestions.js', import.meta.url), 'utf8')), 'forgiving parsing');
   assert(!/buildSuggestPrompt|parseSuggestions/.test(m), 'no second request for suggestions');
 }

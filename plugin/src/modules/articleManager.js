@@ -1,3 +1,5 @@
+import { renderHighlights } from './highlightView.js';
+import { t } from './i18n.js';
 import { mountReadingTools, destroyReadingTools } from './readingTools.js';
 import { showSkeleton, clearSkeleton } from './skeleton.js';
 import { modelIcon } from './modelBadge.js';
@@ -1762,6 +1764,9 @@ export async function showArticleDetail(article) {
         </details>
       </div>
     `;
+
+    const highlights = renderHighlights(article.highlights, key => t(key));
+    if (highlights) articleDetailContent.querySelector('.summary-box').appendChild(highlights);
 
     // On-device insights (reading level, sentiment, similar articles) load
     // asynchronously and progressively fill in — they never block the rest

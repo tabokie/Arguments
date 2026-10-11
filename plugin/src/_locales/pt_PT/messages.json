@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "Voltar ao topo"
+  },
+  "browserShortcutsHint": {
+    "message": "Ver e personalizar nas definições do navegador"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "Não foi possível abrir as definições dos atalhos de teclado."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "Personalize as instruções para analisar uma página."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "Instruções de realce"
+  },
+  "f_summary_prompt_5157": {
+    "message": "Instruções de resumo"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "Repor predefinição"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "Não foi possível guardar as instruções."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "Instruções de realce e resumo"
+  },
+  "pagePromptsHint": {
+    "message": "Instruções de realce e resumo"
+  },
+  "highlightNotFound": {
+    "message": "Não encontrado na página"
+  },
+  "highlightAmbiguous": {
+    "message": "Várias correspondências na página"
+  },
+  "highlightingDisabled": {
+    "message": "Realce da página desativado"
+  },
+  "highlightingUnavailable": {
+    "message": "Realce da página indisponível"
+  },
+  "highlightMatchFailures": {
+    "message": "$COUNT$ sem correspondência",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "Prefixo não encontrado no texto original"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "Várias frases no texto original"
+  },
+  "highlightInvalidResponse": {
+    "message": "Não foi possível ler a resposta de destaque"
   }
 }

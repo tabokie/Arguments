@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "Torna su"
+  },
+  "browserShortcutsHint": {
+    "message": "Visualizza e personalizza nelle impostazioni del browser"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "Impossibile aprire le impostazioni delle scorciatoie da tastiera."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "Personalizza le istruzioni per analizzare una pagina."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "Istruzioni di evidenziazione"
+  },
+  "f_summary_prompt_5157": {
+    "message": "Istruzioni di riepilogo"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "Ripristina impostazione predefinita"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "Impossibile salvare le istruzioni."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "Istruzioni di evidenziazione e riepilogo"
+  },
+  "pagePromptsHint": {
+    "message": "Istruzioni di evidenziazione e riepilogo"
+  },
+  "highlightNotFound": {
+    "message": "Non trovato nella pagina"
+  },
+  "highlightAmbiguous": {
+    "message": "Più corrispondenze nella pagina"
+  },
+  "highlightingDisabled": {
+    "message": "Evidenziazione della pagina disattivata"
+  },
+  "highlightingUnavailable": {
+    "message": "Evidenziazione della pagina non disponibile"
+  },
+  "highlightMatchFailures": {
+    "message": "$COUNT$ senza corrispondenza",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "Prefisso non trovato nel testo originale"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "Più frasi nel testo originale"
+  },
+  "highlightInvalidResponse": {
+    "message": "Impossibile leggere la risposta di evidenziazione"
   }
 }

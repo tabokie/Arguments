@@ -1,0 +1,48 @@
+- This is a fork of [https://github.com/philffm/ai-summary-helper](https://github.com/philffm/ai-summary-helper), I want to transform the original project into a tool for idea extraction on the web. I don't really requires summarizing. In my use case, the webpage that requires analyzing often has multiple blocks of text / threads of discussion that focus on unrelated topics. And inside a single block of text, there could be multiple key ideas being presented. I want to AI be able to identify those key ideas or arguments as they appear, regardless of whether there are too many, then highlight the key sentences where the ideas are presented. I don't want the AI to focus on or highlight the logical process or background context or supporting material that leads to a specific argument. Aside from the highlights, in the main response, I want to AI to point out succinctly the content in the page that are highly valuable (novel or insightful) but I could miss if only looking at highlights.
+
+This is basically my vision for the fork. Let's formalize it and replace the original README.md. I am going for a writing style that is minimalistic, restrained and technical but without actual implementation details. Present it more like an essay and less like a document with too many sections.
+- It is too verbose, a lot of redundant phrasing and ideas. And it is not about differences with the original, but rather stating what it does straightforwardly. The way I see it, there's only two product features: highlight arguments, and discover novelty. Mind you that the argument highlighting does NOT require novelty.
+- Make a commit
+- Include the ./prompts in last commit.
+- (1) When AI summary is finished, show it on the webpage as a closable window lower right side. (2) Add an entry in the extension setting to see and customize shortcuts. It jumps to the browser's setting page.
+- Add another section in README.md that mirrors the original's install section. But we don't host it on any store so only include the manual build and install guide.
+- Allow user to customize the highlight prompt in addition to the summary prompt. Update the system to take these configurations and assemble the final prompt.
+
+
+
+The default highlight prompt is:
+
+> Highlight the exact sentences that directly state key ideas or arguments.
+>
+> The page may contain multiple unrelated topics or threads. Treat each independently, and include as many distinct ideas as needed.
+>
+> Prefer claims, conclusions, interpretations, recommendations, predictions, or distinctions. Skip background, reasoning steps, evidence, examples, anecdotes, and repetition unless they express an independent idea.
+>
+> When several sentences make the same point, highlight the clearest one.
+
+
+
+The default summary prompt is:
+
+> Briefly surface valuable content that the highlights may miss.
+>
+> Focus on subtle qualifications, implications, disagreements, cross-page patterns, surprising connections, or important context.
+>
+> Do not repeat highlighted ideas or give a general summary. Keep it concise and information-dense.
+
+
+
+Keep only this default prompts, remove all other variants.
+
+
+
+When assembling the prompts, put highlight before summary instructions.
+- Is there a length limit still? I am thinking, maybe we should let the model to output highlight prefix only, otherwise the output might be too long.
+- Go ahead, implement that. The workflow is, for each model returned prefixes, first find the complete sentences within the sanitized text (that we feed to model), then use the sentences to find matches in the actual webpage.
+- I want to confirm one thing. If a sentence cannot find a match, will we still display it somewhere so that user can get the information even though there's no page markup? If not, I think we should have a highlight section in the hover window, it is collapsed by default.
+- Indicate matching failures too using UI
+- I want to see examples of the hover window, show me its screenshot using fake data.
+- [$gap](/Users/xyt/.agents/skills/gap/SKILL.md)
+- Fix them all. For 1, I specifically want you to make sure the implementation works for HackerNews structure, e.g. [https://news.ycombinator.com/item?id=49985643](https://news.ycombinator.com/item?id=49985643)
+- Make a commit
+- [$finish](/Users/xyt/.agents/skills/finish/SKILL.md)

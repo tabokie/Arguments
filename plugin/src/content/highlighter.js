@@ -709,20 +709,26 @@ function hlShowMenu(x, y, entry) {
 // ── 2. AI highlights ─────────────────────────────────────────────────────────
 
 export function applyGhostHighlights(quotes = []) {
-  if (!aiHighlightingEnabled || !quotes || !quotes.length) return;
+  if (!Array.isArray(quotes) || !quotes.length) return [];
+  if (!aiHighlightingEnabled) return quotes.map(text => ({ text, status: 'disabled' }));
   const idx = ancBuildIndex(ancScopeRoot());
+  // Match every sentence before consulting saved annotations: dismissed or previously
+  // saved highlights must not be reported as failures merely because no new mark is added.
+  const matches = quotes.map(text => {
+    const exact = ancQuoteUsable(idx, text, 8);
+    if (!exact) return { text, status: ancResolve(idx, { text }) ? 'ambiguous' : 'unmatched' };
+    const res = ancResolve(idx, { text: exact });
+    const range = res && ancToRange(idx, res.start, res.end);
+    const selector = range && ancMakeSelector(idx, range);
+    return range && selector ? { text, status: 'matched', exact, range, selector } : { text, status: 'unmatched' };
+  });
   getNormalizedAnnotations((annotations) => {
     const url = getPageKey();
     let added = false;
-    quotes.forEach(quote => {
-      const exact = ancQuoteUsable(idx, quote, 8);            // unique in the article, or long enough to be specific
-      if (!exact) return;
+    matches.forEach(({ status, exact, range, selector: q }) => {
+      if (status !== 'matched') return;
       // already known (also when dismissed earlier): never re-create
       if (annotations.some(a => a.url === url && a.type === 'ghost' && a.text === exact)) return;
-      const res = ancResolve(idx, { text: exact });
-      const range = res && ancToRange(idx, res.start, res.end);
-      if (!range) return;
-      const q = ancMakeSelector(idx, range);
       const ann = { id: hlNewId(), url, text: exact, type: 'ghost', timestamp: new Date().toISOString(), v: 2,
         quote: { exact: q.exact, prefix: q.prefix, suffix: q.suffix }, pos: q.pos };
       annotations.push(ann); added = true;
@@ -733,6 +739,7 @@ export function applyGhostHighlights(quotes = []) {
     if (added) chrome.storage.local.set({ [SK.annotations]: annotations });
     hlRefreshPanel();
   });
+  return matches.map(({ text, status }) => ({ text, status }));
 }
 
 /** Texts of the user's current highlights (used as high-priority context for the AI). */

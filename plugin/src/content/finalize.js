@@ -1,6 +1,7 @@
 import { ttsLang, langBase } from '../modules/languages.js';
 import { applyScholarly, paperIndexFields } from './paper.js';
-import { ensureGeneralTag, normalizeGhostQuotes, extractSummaryTitle, saveToLocalStorage } from './core.js';
+import { ensureGeneralTag, extractSummaryTitle, saveToLocalStorage } from './core.js';
+import { readHighlightSelections } from './highlightSentences.js';
 import { markdownToHtml, stripReasoning } from './markdown.js';
 import { parseSuggestionList } from '../modules/suggestions.js';
 // content/finalize.js
@@ -47,9 +48,11 @@ export function detectContentLang(text, htmlLang) {
 }
 
 /**
- * @param {object} o  raw, thinking, contentText, pageTitle (title for tag matching), selectedLanguage, htmlLang,
- *   pageMeta (base metadata, may be {}), ghostMax, fixedTitle ('' = derive), attachedTitle (string when a PDF was attached, else null)
- * @returns {Promise<{error:string}|{cleanHtml,tags,ghostQuotes,moodScore,questions,quick,pageMeta,title}>}
+ * @param {object} o  raw, thinking, contentText, highlightSourceText (exact source sent to the model), highlightSourceTruncated,
+ *   highlights (already recovered selections from chunked reading, when present),
+ *   pageTitle (title for tag matching), selectedLanguage, htmlLang,
+ *   pageMeta (base metadata, may be {}), fixedTitle ('' = derive), attachedTitle (string when a PDF was attached, else null)
+ * @returns {Promise<{error:string}|{cleanHtml,tags,highlights,ghostQuotes,moodScore,questions,quick,pageMeta,title}>}
  */
 export async function finalizeSummary(o) {
   let summary = stripReasoning(o.raw || '');
@@ -72,13 +75,9 @@ export async function finalizeSummary(o) {
     const have = new Set(tags.map(t => t.toLowerCase()));
     [srcLang, sumLang !== srcLang ? sumLang : ''].filter(Boolean).forEach((l) => { const t = '🌐 ' + l; if (!have.has(t.toLowerCase())) tags.push(t); });
   }
-  let ghostQuotes = [];
-  const ghostMatch = summary.match(/<!--\s*GHOST_HIGHLIGHTS:\s*([\s\S]*?)\s*-->/i);
-  if (ghostMatch) {
-    try { ghostQuotes = JSON.parse(ghostMatch[1].trim().replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim()); }
-    catch (e) { console.warn('[AI Summary Helper] Failed to parse ghost quotes:', e); }
-  }
-  ghostQuotes = normalizeGhostQuotes(ghostQuotes, o.ghostMax);
+  const highlights = Array.isArray(o.highlights) ? o.highlights
+    : readHighlightSelections(summary, o.highlightSourceText ?? o.contentText, srcLang || o.htmlLang, o.highlightSourceTruncated);
+  const ghostQuotes = highlights.filter(selection => selection.status === 'resolved').map(selection => selection.text);
   // Mood (-1..1) the model rated for the whole article; anything unparsable or out of range is ignored.
   let moodScore;
   const moodMatch = summary.match(/<!--\s*MOOD:\s*(-?\d*\.?\d+)\s*-->/i);
@@ -97,7 +96,7 @@ export async function finalizeSummary(o) {
   if (qMatch) ({ questions, quick } = parseSuggestionList(qMatch[1]));
 
   const cleanRawText = summary
-    .replace(/<!--\s*GHOST_HIGHLIGHTS:\s*([\s\S]*?)\s*-->/gi, '')
+    .replace(/<!--\s*GHOST_HIGHLIGHTS:\s*([\s\S]*?)\s*(?:-->|$)/gi, '')
     .replace(/<!--\s*TAGS:\s*[^>]+\s*-->/gi, '')
     .replace(/<!--\s*MOOD:[^>]*-->/gi, '')
     .replace(/<!--\s*SCHOLARLY:[\s\S]*?(?:-->|$)/gi, '')
@@ -108,22 +107,25 @@ export async function finalizeSummary(o) {
   const title = o.attachedTitle !== null && o.attachedTitle !== undefined
     ? (extractSummaryTitle(cleanHtml) || o.attachedTitle || 'Untitled')
     : (o.fixedTitle || extractSummaryTitle(cleanHtml) || 'Untitled');
-  return { cleanHtml, tags, ghostQuotes, moodScore, questions, quick, pageMeta, title };
+  return { cleanHtml, tags, highlights, ghostQuotes, moodScore, questions, quick, pageMeta, title };
 }
 
 /** Same as the in-page path: store the finished summary. `ctx` is what the page handed to the background when the run started. */
 export function saveFinished(ctx, f, contentHtml) {
   const extra = { ...(ctx.feedUrl && ctx.feedUrl !== ctx.sourceUrl ? { feedUrl: ctx.feedUrl } : {}), ...paperIndexFields(f.pageMeta && f.pageMeta.paper) };
-  return saveToLocalStorage(contentHtml, f.cleanHtml, ctx.sourceUrl, f.title, '', f.tags, ctx.modelIdentifier, ctx.summaryLength, f.moodScore, extra, f.pageMeta);
+  return saveToLocalStorage(contentHtml, f.cleanHtml, ctx.sourceUrl, f.title, '', f.tags, ctx.modelIdentifier, ctx.summaryLength, f.moodScore, extra, f.pageMeta, f.highlights);
 }
 
 /** Background: a run whose page went away is finished here. */
 export async function finishDetached(ctx, raw, thinking) {
   const f = await finalizeSummary({
     raw, thinking, contentText: ctx.contentText, pageTitle: ctx.pageTitle, selectedLanguage: ctx.selectedLanguage,
-    htmlLang: ctx.htmlLang, pageMeta: ctx.pageMeta, ghostMax: ctx.ghostMax, fixedTitle: ctx.fixedTitle, attachedTitle: ctx.attachedTitle
+    highlightSourceText: ctx.highlightSourceText, highlightSourceTruncated: ctx.highlightSourceTruncated,
+    highlights: ctx.highlights,
+    htmlLang: ctx.htmlLang, pageMeta: ctx.pageMeta, fixedTitle: ctx.fixedTitle, attachedTitle: ctx.attachedTitle
   });
   if (f.error) return { error: f.error };
+  f.highlights = f.highlights.map(selection => selection.status === 'resolved' ? { ...selection, status: 'unavailable' } : selection);
   const article = await saveFinished(ctx, f, ctx.contentHtml || '');
   return { ...f, article };
 }

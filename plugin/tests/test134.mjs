@@ -1,0 +1,65 @@
+// Source recovery failures stay visible and detached highlights survive a saved-history reload.
+import assert from 'assert';
+import { setup, imp, tick } from './harness.mjs';
+const { w, store } = setup({});
+globalThis.requestAnimationFrame = fn => setTimeout(fn, 0);
+globalThis.MutationObserver = w.MutationObserver;
+globalThis.IntersectionObserver = class { observe() {} disconnect() {} };
+globalThis.ResizeObserver = class { observe() {} disconnect() {} };
+chrome.runtime.getURL = p => 'chrome-extension://abc/' + p;
+const { finalizeSummary, finishDetached } = await imp('content/finalize.js');
+const source = 'We should adopt congestion pricing in cities.\n\nWe should adopt shorter workweeks in factories.';
+const raw = '<p>A valuable implication.</p><!-- GHOST_HIGHLIGHTS: ["We should adopt", "An invented prefix"] -->';
+const f = await finalizeSummary({ raw, contentText: source, selectedLanguage: 'en' });
+assert.deepEqual(f.highlights.map(h => [h.text, h.status]), [
+  ['We should adopt', 'source-ambiguous'], ['An invented prefix', 'source-unmatched']
+], 'failed source recovery must retain the original prefix with a truthful status');
+const { showSummaryWindow } = await imp('content/summaryWindow.js');
+const host = showSummaryWindow(f.cleanHtml, f.highlights);
+assert(!host.shadowRoot.querySelector('details').open);
+assert.equal(host.shadowRoot.querySelectorAll('.highlights li').length, 2);
+assert.equal(host.shadowRoot.querySelector('summary .failure').textContent, '2 not matched');
+assert.match(host.shadowRoot.querySelector('[data-match-status="source-ambiguous"]').textContent, /Multiple source sentences/);
+assert.match(host.shadowRoot.querySelector('[data-match-status="source-unmatched"]').textContent, /Prefix not found in source/);
+const malformed = await finalizeSummary({ raw: '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: [broken -->', contentText: source });
+const bad = showSummaryWindow(malformed.cleanHtml, malformed.highlights);
+assert.match(bad.shadowRoot.querySelector('.highlights').textContent, /Highlight response could not be read/);
+const omitted = await finalizeSummary({ raw: '<p>Insight.</p>', contentText: source });
+assert.equal(omitted.highlights[0].status, 'invalid-response', 'omitting required highlights metadata cannot masquerade as no arguments found');
+const empty = await finalizeSummary({ raw: '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: [] -->', contentText: source });
+assert.deepEqual(empty.highlights, [], 'an explicit empty selection remains a valid result');
+
+const sentence = 'A selected argument remains useful after navigation.';
+const result = await finishDetached({ sourceUrl: 'https://example.test/a', contentText: sentence, highlightSourceText: sentence, contentHtml: '<p>'+sentence+'</p>', selectedLanguage: 'en', pageTitle: 'A', fixedTitle: 'A' }, '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: ["A selected argument"] -->', '');
+assert.deepEqual(result.highlights, [{ prefix: 'A selected argument', text: sentence, status: 'unavailable' }]);
+const { default: SM } = await imp('modules/storageManager.js');
+const saved = await SM.getArticleFull(result.article.id);
+assert.deepEqual(saved.highlights, result.highlights, 'saved highlights survive record loading');
+const failures = await finishDetached({ sourceUrl: 'https://example.test/b', contentText: source, selectedLanguage: 'en' }, raw, '');
+assert.deepEqual((await SM.getArticleFull(failures.article.id)).highlights, f.highlights, 'source recovery failures also survive detached completion and record loading');
+const prepared = [{ prefix: 'A selected', text: sentence, status: 'resolved' }];
+const chunked = await finishDetached({ sourceUrl: 'https://example.test/c', contentText: 'Discovery notes.', highlights: prepared }, '<p>Insight.</p>', '');
+assert.equal(chunked.highlights[0].text, sentence, 'detached completion uses recovered chunk selections without asking the final response to repeat them');
+assert(!store['articles:index'].find(a => a.id === result.article.id).highlights, 'large highlight lists belong in the full record, not the history index');
+const am = await imp('modules/articleManager.js');
+am.initArticleManager({ showToast() {}, showScreen() {} });
+await am.showArticleDetail(store['articles:index'].find(a => a.id === result.article.id));
+await tick();
+const section = document.querySelector('#articleDetailContent .highlights');
+assert(section && !section.open, 'history displays the same collapsed Highlights section');
+assert(section.textContent.includes(sentence), 'the selected sentence is accessible after the webpage is gone');
+assert(section.textContent.includes('Page highlighting unavailable'));
+chrome.tabs = { query: async () => [{ id: 7, url: 'https://example.test/a', title: 'A' }],
+  sendMessage: (_id, _message, callback) => callback?.({ running: false }),
+  onActivated: { addListener() {} }, onUpdated: { addListener() {} } };
+const { initMainScreen } = await imp('modules/mainScreen.js');
+initMainScreen({ showScreen() {} });
+await tick(60);
+for (const listener of globalThis.__msgL || []) listener({ action: 'summaryComplete', summary: result.cleanHtml, highlights: result.highlights, title: 'A', url: 'https://example.test/a' });
+const panel = document.querySelector('#summaryFeed .summary-bubble .highlights');
+assert(panel && panel.textContent.includes(sentence), 'the extension panel displays the same full highlight result');
+panel.querySelector('summary').click();
+assert(panel.open, 'expanding highlights does not trigger the card navigation handler');
+console.log('TEST 134 OK');
+w.close();
+process.exit(0);

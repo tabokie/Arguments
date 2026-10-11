@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "Zurück nach oben"
+  },
+  "browserShortcutsHint": {
+    "message": "In den Browsereinstellungen ansehen und anpassen"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "Die Einstellungen für Tastenkürzel konnten nicht geöffnet werden."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "Passe die Anweisungen zur Analyse einer Seite an."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "Hervorhebungsanweisung"
+  },
+  "f_summary_prompt_5157": {
+    "message": "Zusammenfassungsanweisung"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "Auf Standard zurücksetzen"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "Anweisungen konnten nicht gespeichert werden."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "Hervorhebungs- und Zusammenfassungsanweisungen"
+  },
+  "pagePromptsHint": {
+    "message": "Hervorhebungs- und Zusammenfassungsanweisungen"
+  },
+  "highlightNotFound": {
+    "message": "Auf der Seite nicht gefunden"
+  },
+  "highlightAmbiguous": {
+    "message": "Mehrere Treffer auf der Seite"
+  },
+  "highlightingDisabled": {
+    "message": "Seitenhervorhebung deaktiviert"
+  },
+  "highlightingUnavailable": {
+    "message": "Seitenhervorhebung nicht verfügbar"
+  },
+  "highlightMatchFailures": {
+    "message": "$COUNT$ ohne Treffer",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "Präfix im Quelltext nicht gefunden"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "Mehrere Sätze im Quelltext"
+  },
+  "highlightInvalidResponse": {
+    "message": "Markierungsantwort konnte nicht gelesen werden"
   }
 }

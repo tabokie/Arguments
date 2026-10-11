@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "Наверх"
+  },
+  "browserShortcutsHint": {
+    "message": "Просмотр и настройка в параметрах браузера"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "Не удалось открыть настройки сочетаний клавиш."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "Настройте инструкции для анализа страницы."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "Инструкции для выделения"
+  },
+  "f_summary_prompt_5157": {
+    "message": "Инструкции для обзора"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "Восстановить по умолчанию"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "Не удалось сохранить инструкции."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "Инструкции для выделения и обзора"
+  },
+  "pagePromptsHint": {
+    "message": "Инструкции для выделения и обзора"
+  },
+  "highlightNotFound": {
+    "message": "Не найдено на странице"
+  },
+  "highlightAmbiguous": {
+    "message": "Несколько совпадений на странице"
+  },
+  "highlightingDisabled": {
+    "message": "Выделение на странице отключено"
+  },
+  "highlightingUnavailable": {
+    "message": "Выделение на странице недоступно"
+  },
+  "highlightMatchFailures": {
+    "message": "Без совпадений: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "Начало предложения не найдено в исходном тексте"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "Несколько предложений в исходном тексте"
+  },
+  "highlightInvalidResponse": {
+    "message": "Не удалось прочитать ответ с выделениями"
   }
 }

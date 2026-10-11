@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "Retour en haut"
+  },
+  "browserShortcutsHint": {
+    "message": "Consulter et modifier dans les paramètres du navigateur"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "Impossible d’ouvrir les paramètres des raccourcis clavier."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "Personnalisez les instructions pour analyser une page."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "Instructions de surlignage"
+  },
+  "f_summary_prompt_5157": {
+    "message": "Instructions de résumé"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "Rétablir la valeur par défaut"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "Impossible d’enregistrer les instructions."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "Instructions de surlignage et de résumé"
+  },
+  "pagePromptsHint": {
+    "message": "Instructions de surlignage et de résumé"
+  },
+  "highlightNotFound": {
+    "message": "Introuvable sur la page"
+  },
+  "highlightAmbiguous": {
+    "message": "Plusieurs correspondances sur la page"
+  },
+  "highlightingDisabled": {
+    "message": "Surlignage de la page désactivé"
+  },
+  "highlightingUnavailable": {
+    "message": "Surlignage de la page indisponible"
+  },
+  "highlightMatchFailures": {
+    "message": "$COUNT$ sans correspondance",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "Préfixe introuvable dans le texte source"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "Plusieurs phrases dans le texte source"
+  },
+  "highlightInvalidResponse": {
+    "message": "Impossible de lire la réponse de surlignage"
   }
 }

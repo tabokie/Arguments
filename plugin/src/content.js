@@ -1,8 +1,10 @@
 import { SK } from './modules/storageKeys.js';
 import { lengthSpec, readLengthSetting, resolveSummaryLength } from './modules/summaryLength.js';
-import { languageEnglishName, languageRule } from './modules/languages.js';
+import { loadPagePrompts, buildPagePrompt, buildPageInstructions } from './modules/pagePrompts.js';
 import { paperIndexFields, detectPaperInText, matchPagePaper } from './content/paper.js';
 import { finalizeSummary } from './content/finalize.js';
+import { showSummaryWindow } from './content/summaryWindow.js';
+import { resolveHighlightSelections, mergeHighlightSelections } from './content/highlightSentences.js';
 // content.js — Orchestrator
 // Entry point for the content script. Imports from ./content/* modules and
 // wires them together. The build system (scripts/build.js) bundles this into
@@ -55,7 +57,6 @@ import {
 } from './content/highlighter.js';
 
 import {
-  getGhostHighlightConfig,
   saveToLocalStorage,
   collectPageMeta
 } from './content/core.js';
@@ -285,8 +286,8 @@ import {
         const decisionDialog = document.getElementById('aish-decision-overlay');
         if (decisionDialog) decisionDialog.remove();
 
-        chrome.storage.sync.get(['debugEnabled', 'prompt'], async (data) => {
-          const promptToUse = data.prompt || 'Summarize the following content:';
+        chrome.storage.sync.get(['debugEnabled'], async (data) => {
+          const promptToUse = undefined;
           if (!document.body) {
             updateStreamingOverlay(streamOverlay, '❌ Cannot summarize this page type.', true);
             return;
@@ -372,15 +373,15 @@ import {
     }
 
     if (request.action === 'fetchSummary') {
-      const { additionalQuestions: popupQuestions, selectedLanguage, prompt: popupPrompt, summaryMode, summaryLength: msgSummaryLength, attachment } = request;
+      const { additionalQuestions: popupQuestions, selectedLanguage, prompt: popupPrompt, summaryMode, summaryLength: msgSummaryLength, attachment, highlightPrompt } = request;
       // Original feed link when started from the Feed (page URL may differ after redirects).
       pendingFeedUrl = request.feedUrl || '';
       sendResponse({ success: true, message: summaryMode === 'extension' ? 'Fetching summary...' : 'Selection started' });
 
       (async () => {
         if (summaryMode === 'extension') {
-          chrome.storage.sync.get(['debugEnabled', 'prompt'], (data) => {
-            const promptToUse = popupPrompt || data.prompt || 'Summarize the following content:';
+          chrome.storage.sync.get(['debugEnabled'], (data) => {
+            const promptToUse = popupPrompt;
             const length = msgSummaryLength || 'stored';   // shortcut / context menu send no length: use the saved setting
             if (!document.body) {
               sendResponse({ success: false, error: 'Cannot summarize this page type.' });
@@ -397,7 +398,8 @@ import {
               hiddenTarget,
               data.debugEnabled || false,
               summaryMode,
-              attachment
+              attachment,
+              highlightPrompt
             );
           });
           return;
@@ -405,8 +407,8 @@ import {
 
         const targetElement = await selectTargetElement();
         if (targetElement) {
-          chrome.storage.sync.get(['debugEnabled', 'prompt'], (data) => {
-            const promptToUse = popupPrompt || data.prompt || 'Summarize the following content:';
+          chrome.storage.sync.get(['debugEnabled'], (data) => {
+            const promptToUse = popupPrompt;
             const length = msgSummaryLength || 'stored';   // shortcut / context menu send no length: use the saved setting
             fetchSummary(
               popupQuestions,
@@ -415,7 +417,9 @@ import {
               length,
               targetElement,
               data.debugEnabled || false,
-              summaryMode
+              summaryMode,
+              null,
+              highlightPrompt
             );
           });
         }
@@ -446,22 +450,25 @@ import {
 
   /**
    * The page does not fit the model's context window: read it in parts, ask for compact notes on each part
-   * (names, numbers, claims, two verbatim sentences) and hand the notes to the final summary instead of the full text.
+   * using the configured instructions, retaining selected sentence prefixes for the final page analysis.
    */
-  async function condenseForOllama({ apiUrl, headers, model, text, windowTokens, overheadTokens, outputWords, tick }) {
-    const partTokens = Math.max(1200, windowTokens - 1500 - 700);
+  async function condenseForOllama({ apiUrl, headers, model, text, sourceTruncated, windowTokens, overheadTokens, outputWords, pagePrompts, tick }) {
+    const instructions = buildPageInstructions(pagePrompts);
+    const partTokens = Math.max(1200, windowTokens - 1500 - 700 - estimateTokens(instructions));
     const parts = splitForContext(text, partTokens);
     if (parts.length < 2) return { text, parts: 1 };
     const budgetTokens = Math.max(600, windowTokens - overheadTokens - Math.ceil(outputWords * 2.2) - 600);
     const perPartWords = Math.max(60, Math.min(400, Math.floor(budgetTokens / parts.length / 1.6)));
-    const notes = [];
+    const notes = [], highlights = [];
+    const noteChars = Math.max(0, Math.floor(budgetTokens * 3 / parts.length) - 40);
     for (let i = 0; i < parts.length; i++) {
       tick(i, parts.length);
+      const partPrompt = `Read ONE PART (${i + 1} of ${parts.length}) of a longer page.\n\n${instructions}\n\nFor each selected sentence, copy an exact prefix starting at the first character, long enough to distinguish the sentence from other sentences in this part. Retain every selected prefix. Do not paraphrase prefixes, append ellipses, or limit the number of highlights. Write concise observations for the summary in the source language, at most ${perPartWords} words. Return only JSON: {"highlights":["exact prefix",...],"notes":"summary observations"}. Output no preamble or reasoning.`;
       const body = {
         model, stream: false,
-        options: { num_ctx: ollamaNumCtx(estimateTokens(parts[i]), perPartWords) },
+        options: { num_ctx: Math.min(windowTokens, ollamaNumCtx(estimateTokens(partPrompt + parts[i]), perPartWords)) },
         messages: [
-          { role: 'system', content: `You condense ONE PART (${i + 1} of ${parts.length}) of a longer text into notes for a later summary. Keep names, numbers, claims and conclusions. Write in the language of the text. Include 2 sentences copied word for word that carry the main points. At most ${perPartWords} words. Output only the notes: no preamble, no reasoning.` },
+          { role: 'system', content: partPrompt },
           { role: 'user', content: parts[i] }
         ]
       };
@@ -469,9 +476,16 @@ import {
       let note = '';
       try { note = JSON.parse(raw).message?.content || ''; } catch (_) { note = raw; }
       note = stripReasoning(note).trim();
-      if (note) notes.push(`[Part ${i + 1} of ${parts.length}]\n${note}`);
+      try {
+        const result = JSON.parse(note.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, ''));
+        highlights.push(...resolveHighlightSelections(result.highlights, text, undefined, sourceTruncated, parts[i]));
+        note = typeof result.notes === 'string' ? result.notes : '';
+      } catch (_) { highlights.push({ text: '', status: 'invalid-response' }); }
+      // Selection recovery is independent of the final model's context budget.
+      // Only discovery notes enter the final request; never let their total grow unbounded.
+      if (noteChars) notes.push(`[Part ${i + 1} of ${parts.length}]\n${note.slice(0, noteChars)}`);
     }
-    return { text: notes.join('\n\n') || text, parts: parts.length };
+    return { text: notes.join('\n\n'), parts: parts.length, highlights: mergeHighlightSelections(highlights) };
   }
 
   async function startSummaryFromPage() {
@@ -481,14 +495,14 @@ import {
     if (!opened) { try { ensureHybridSidebar(); } catch (_) { /* page without a body cannot host the sidebar; nothing to show */ } }
     await new Promise((r) => setTimeout(r, 500));
     const [sync, local] = await Promise.all([
-      chrome.storage.sync.get(['selectedLanguage', 'prompt', 'debugEnabled']),
+      chrome.storage.sync.get(['selectedLanguage', 'debugEnabled']),
       chrome.storage.local.get([SK.summaryLength, SK.summaryLengthMode, SK.summaryLengthBias])
     ]);
     pendingFeedUrl = '';
     const hiddenTarget = document.createElement('div');
     hiddenTarget.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;';
     document.body.appendChild(hiddenTarget);
-    await fetchSummary('', sync.selectedLanguage || 'English', sync.prompt || 'Summarize the following content:',
+    await fetchSummary('', sync.selectedLanguage || 'English', undefined,
       lengthSpec(readLengthSetting(local, SK)), hiddenTarget, sync.debugEnabled || false, 'extension');
   }
   setPageSummarizeHandler(startSummaryFromPage);
@@ -498,7 +512,8 @@ import {
   // requestId of the summary currently streaming (Stop button → stopSummary).
   let activeSummaryRequestId = null;
 
-  async function fetchSummary(additionalQuestions, selectedLanguage, prompt, summaryLength, targetElement, debugEnabled, summaryMode = 'extension', attachment = null) {
+  async function fetchSummary(additionalQuestions, selectedLanguage, prompt, summaryLength, targetElement, debugEnabled, summaryMode = 'extension', attachment = null, highlightPrompt = undefined) {
+    const pagePrompts = await loadPagePrompts({ summaryPrompt: prompt, highlightPrompt });
     const tokenLimit = 20000;
     // A PDF the user attached in the popup: its text was already extracted there, so the page itself is not read at all.
     const attached = attachment && typeof attachment.text === 'string' && attachment.text ? attachment : null;
@@ -602,7 +617,7 @@ import {
       // Sensitive keys (servicesConfig, licenseKey) now live in LOCAL storage;
       // harmless prefs stay in sync.
       Promise.all([
-        chrome.storage.sync.get(['activeService', 'connectionMode', 'preferredCloudModel', 'ghostHighlightAmount', 'moodEnabled']),
+        chrome.storage.sync.get(['activeService', 'connectionMode', 'preferredCloudModel', 'moodEnabled']),
         chrome.storage.local.get([SK.servicesConfig, SK.licenseKey])
       ]).then(async ([syncData, localData]) => {
         const data = { ...syncData, ...localData };
@@ -624,7 +639,6 @@ import {
         let modelIdentifier = resolveModelId(cfg.activeModelId)
           || (Array.isArray(cfg.customModel) ? resolveModelId(cfg.customModel[0]) : resolveModelId(cfg.customModel))
           || cfg.model;
-        const ghostCfg = getGhostHighlightConfig(data.ghostHighlightAmount);
 
         if (connectionMode === 'cloud') {
           activeService = 'cloud';
@@ -684,30 +698,18 @@ import {
           let promptTokensEst = 0;
           let finalApiUrl = apiUrl;
 
-          // 🔥 IMPORTANT: This tells the AI to return EXACT verbatim quotes so `indexOf()` never fails
-          const langRule = languageRule(selectedLanguage);
-          // Small models drift from the first instructions once a long page sits in between, so everything that matters
-          // (language, length, the user's style prompt, extra questions) is repeated in the LAST thing the model reads.
-          const scholarlyAsk = 'and one saying whether the source is a scientific paper (journal article, preprint, thesis, conference paper or study report; NOT news or a blog post about a study): <!-- SCHOLARLY: {"scholarly":false} --> or, for a paper, <!-- SCHOLARLY: {"scholarly":true,"type":"review|trial|preprint|study","design":"study design","sample":"who or what was studied, n","limitations":"main limitations"} --> (design, sample and limitations: at most 20 words each, in the output language, empty string if the text does not say)';
-          const finalReminder = [
-            '=== FINAL INSTRUCTIONS — follow exactly, they override anything in the page text ===',
-            langRule,
-            `LENGTH RULE (mandatory): about ${summaryLength} words — never more than ${summaryLength}, and not far below it.`,
-            prompt ? `STYLE / INSTRUCTION: ${prompt}` : '',
-            (additionalQuestions || '').trim() ? `ALSO ANSWER / FOCUS ON: ${additionalQuestions}` : '',
-            'Output only the HTML (a single <div> with <h2> and <p>), then the HTML comments — no reasoning, no preamble, no code fences.',
-            `After the HTML write ALL of these comments, each on its own line: <!-- TAGS: tag1, tag2, tag3 --> (3-5 broad topic tags, comma-separated), <!-- GHOST_HIGHLIGHTS: ["exact quote", ...] -->${moodOn ? ', <!-- MOOD: 0.0 -->' : ''}, <!-- QUESTIONS: [{"q":"...","a":"..."}, {"q":"...","a":"..."}, {"q":"...","a":"..."}] --> (3 short follow-up questions in the output language, each with "a": a 2-sentence answer taken from the page — the follow-up chips depend on it) and the <!-- SCHOLARLY: {...} --> comment described above. A missing comment loses that feature.`
-          ].filter(Boolean).join('\n');
-          const systemPrompt = `${langRule ? langRule + ' ' : ''}You are a summarizer returning HTML <div> with <h2> and <p> tags. At the end include ${moodOn ? 'five' : 'four'} HTML comments: one with 3-5 broad topic tags strictly based on the core subject matter of the source article (ignore user style preferences, tone, or your persona when generating tags): <!-- TAGS: tag1, tag2, tag3 --> and one with ${ghostCfg.promptRange} EXACT verbatim snippets of 8-25 words each (each must appear only once in the text) representing the most critical key insights, core facts, or main arguments from the source text (avoid conversational quotes or dialogue unless they state a core thesis): <!-- GHOST_HIGHLIGHTS: ["exact key passage 1", "exact key passage 2"] --> ${moodOn ? ' and another one rating the news sentiment of the source article as one number from -1 (very negative news) through 0 (neutral) to 1 (very positive news), judged on the content and not on tone of voice: <!-- MOOD: 0.0 -->' : ''} and one with exactly 3 short follow-up questions (3-6 words each, in the output language) that a curious reader would most likely ask next about this page, each answerable from the page text, each with a short answer of 2 sentences ("a") from the page text: <!-- QUESTIONS: [{"q":"question 1","a":"answer 1"}, {"q":"question 2","a":"answer 2"}, {"q":"question 3","a":"answer 3"}] --> ${scholarlyAsk}. Output ONLY the HTML described here: no reasoning, no thinking notes, no preamble, no markdown code fences, nothing after the last comment.${langRule ? ' ' + langRule : ''}`;
+          let selectedHighlights;
+          let systemPrompt = buildPagePrompt({ ...pagePrompts, selectedLanguage, summaryLength, moodOn, additionalQuestions });
+          // Repeat the same contract after the source for models that drift on long pages.
+          let finalReminder = '=== FINAL INSTRUCTIONS ===\n' + systemPrompt;
 
           // ── Route based on API format ──
           if (activeService === 'gemini') {
             finalApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelIdentifier)}:streamGenerateContent?alt=sse`;
             headers['x-goog-api-key'] = apiKey;
             const parts = [
-              { text: `Please produce ONLY valid HTML. Return a single <div> containing <h2> and <p> tags. At the end include ${moodOn ? 'five' : 'four'} HTML comments: one with 3-5 broad topic tags strictly derived from the core subject matter of the source text (ignore user personas or styling prompts): <!-- TAGS: tag1, tag2, tag3 --> and one with ${ghostCfg.promptRange} EXACT verbatim snippets of 8-25 words each (each must appear only once in the text) representing the most critical key insights, core facts, or main arguments from the source text (avoid conversational quotes or dialogue unless they state a core thesis): <!-- GHOST_HIGHLIGHTS: ["exact key passage 1", "exact key passage 2"] --> ${moodOn ? ' and another one rating the news sentiment of the source article as one number from -1 (very negative news) through 0 (neutral) to 1 (very positive news), judged on the content and not on tone of voice: <!-- MOOD: 0.0 -->' : ''} and one with exactly 3 short follow-up questions (3-6 words each, in the output language) that a curious reader would most likely ask next about this page, each answerable from the page text, each with a short answer of 2 sentences ("a") from the page text: <!-- QUESTIONS: [{"q":"question 1","a":"answer 1"}, {"q":"question 2","a":"answer 2"}, {"q":"question 3","a":"answer 3"}] --> ${scholarlyAsk}. Output Language: ${languageEnglishName(selectedLanguage)}. Limit: ${summaryLength} words. Output ONLY the HTML described here: no reasoning, no thinking notes, no preamble, no markdown code fences, nothing after the last comment.` },
-              { text: `Additional Questions/Instructions: ${additionalQuestions}` },
-              { text: truncatedContent }
+              { text: systemPrompt },
+              { text: `SOURCE PAGE:\n${truncatedContent}` }
             ];
             parts.push({ text: finalReminder });
             requestBody = JSON.stringify({ contents: [{ role: 'user', parts }] });
@@ -721,7 +723,7 @@ import {
             let pageText = truncatedContent;
             if (activeService === 'ollama' && /\/api\/chat\b/.test(finalApiUrl)) {
               try {
-                const overhead = estimateTokens(systemPrompt + finalReminder + (prompt || '') + (additionalQuestions || ''));
+                const overhead = estimateTokens(systemPrompt + finalReminder);
                 const total = overhead + estimateTokens(truncatedContent);
                 if (total > 3500) {
                   let win = 0;
@@ -732,11 +734,14 @@ import {
                   const ctxWindow = Math.min(win || 32768, 32768);
                   if (needsChunking(total, ctxWindow, summaryLength)) {
                     const r = await condenseForOllama({
-                      apiUrl: finalApiUrl, headers, model: modelIdentifier, text: truncatedContent, windowTokens: ctxWindow, overheadTokens: overhead, outputWords: Number(summaryLength) || 200,
+                      apiUrl: finalApiUrl, headers, model: modelIdentifier, text: truncatedContent, sourceTruncated: truncatedContent.length < contentText.length, windowTokens: ctxWindow, overheadTokens: overhead, outputWords: Number(summaryLength) || 200, pagePrompts,
                       tick: (i, n) => relay('summaryProgress', { chunk: `Reading part ${i + 1} of ${n}…`, progress: 20 + Math.round((i / n) * 8) })
                     });
                     if (r.parts > 1) {
                       pageText = r.text;
+                      selectedHighlights = r.highlights;
+                      systemPrompt = buildPagePrompt({ ...pagePrompts, selectedLanguage, summaryLength, moodOn, additionalQuestions, sourceIsNotes: true });
+                      finalReminder = '=== FINAL INSTRUCTIONS ===\n' + systemPrompt;
                       if (ctxMsg) relay('summaryContext', ctxMsg = { ...ctxMsg, parts: r.parts, window: ctxWindow });
                     }
                   }
@@ -746,7 +751,7 @@ import {
                 console.warn('[AISH] chunked reading failed, sending the page in one piece:', e);
               }
             }
-            const userMessage = `Language: ${languageEnglishName(selectedLanguage)}. Limit: ${summaryLength} words. Instruction: ${prompt}. Additional Context/Questions: ${additionalQuestions}. Content: ${pageText}\n\n${finalReminder}`;
+            const userMessage = `SOURCE PAGE:\n${pageText}\n\n${finalReminder}`;
             const body = {
               model: modelIdentifier,
               messages: [
@@ -855,7 +860,9 @@ import {
               try { if (pageMeta && !pageMeta.paper && pdfMode) { const pp = detectPaperInText(contentText); if (pp) pageMeta.paper = pp; } } catch (_) { /* optional */ }
               const fin = await finalizeSummary({
                 raw: summary, thinking: thinkingText, contentText, pageTitle: attached && !pageMatch ? String(attached.name || '') : document.title,
-                selectedLanguage, htmlLang: (!attached || pageMatch) ? document.documentElement.lang : '', pageMeta, ghostMax: ghostCfg.max,
+                highlightSourceText: truncatedContent, highlightSourceTruncated: truncatedContent.length < contentText.length,
+                highlights: selectedHighlights,
+                selectedLanguage, htmlLang: (!attached || pageMatch) ? document.documentElement.lang : '', pageMeta,
                 fixedTitle: (pageMatch && pageMatch.title) || document.title || '',
                 attachedTitle: attached && !pageMatch ? String(attached.name || '').replace(/\.pdf$/i, '') : null
               });
@@ -872,9 +879,13 @@ import {
               // Apply ghost highlights to the page now that it's safe to do so.
               // Skip on PDF pages: Chrome's built-in PDF viewer is a locked-down
               // internal component with no injectable DOM, so there's nothing to
-              // highlight. The quotes are still saved in the article data and will
-              // render in our own history/detail view.
-              if (ghostQuotes.length > 0 && !pdfMode) applyGhostHighlights(ghostQuotes);
+              // highlight. Recovered sentences remain readable in the summary window.
+              const pageMatches = pdfMode
+                ? ghostQuotes.map(text => ({ text, status: 'unavailable' }))
+                : applyGhostHighlights(ghostQuotes);
+              const highlightResults = fin.highlights.map(selection => selection.status === 'resolved'
+                ? { ...selection, status: pageMatches.find(match => match.text === selection.text)?.status || 'unavailable' }
+                : selection);
 
               // WAIT FOR IMAGE COMPRESSION TO FINISH BEFORE SAVING
               let finalContentHtml = contentHtml;
@@ -903,11 +914,14 @@ import {
                   questions: suggestedQuestions,
                   quick: quickAnswers,
                   meta: pageMeta,
-                  content: finalContentHtml
+                  content: finalContentHtml,
+                  highlights: highlightResults
                 });
               }
 
-              saveToLocalStorage(finalContentHtml, cleanHtml, sourceUrl, articleTitle, '', tags, modelIdentifier, summaryLength, moodScore, { ...(pendingFeedUrl && pendingFeedUrl !== sourceUrl ? { feedUrl: pendingFeedUrl } : {}), ...paperIndexFields(pageMeta && pageMeta.paper) }, pageMeta)
+              showSummaryWindow(cleanHtml, highlightResults);
+
+              saveToLocalStorage(finalContentHtml, cleanHtml, sourceUrl, articleTitle, '', tags, modelIdentifier, summaryLength, moodScore, { ...(pendingFeedUrl && pendingFeedUrl !== sourceUrl ? { feedUrl: pendingFeedUrl } : {}), ...paperIndexFields(pageMeta && pageMeta.paper) }, pageMeta, highlightResults)
                 .then(savedArticle => {
                   try { chrome.runtime.sendMessage({ action: 'runSaved', requestId }).catch(() => {}); } catch (_) { /* optional */ }
                   if (savedArticle && savedArticle.id) relay('summarySaved', { id: savedArticle.id, url: sourceUrl });
@@ -1031,9 +1045,11 @@ import {
                 detach = {
                   sourceUrl, summaryMode, service: activeService, modelIdentifier, summaryLength, selectedLanguage,
                   contentText: String(contentText || '').slice(0, 30000), contentHtml: contentHtml || '',
+                  highlightSourceText: truncatedContent, highlightSourceTruncated: truncatedContent.length < contentText.length,
+                  highlights: selectedHighlights,
                   pageTitle: attached && !pageMatch ? String(attached.name || '') : document.title,
                   htmlLang: (!attached || pageMatch) ? document.documentElement.lang : '',
-                  pageMeta: baseMeta, ghostMax: ghostCfg.max,
+                  pageMeta: baseMeta,
                   fixedTitle: (pageMatch && pageMatch.title) || document.title || '',
                   attachedTitle: attached && !pageMatch ? String(attached.name || '').replace(/\.pdf$/i, '') : null,
                   feedUrl: pendingFeedUrl || ''

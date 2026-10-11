@@ -68,7 +68,7 @@ export function collectPageMeta(doc = document, loc = window.location) {
   return meta;
 }
 
-export function saveToLocalStorage(content, summary, url, title, description, tags = [], modelId = '', summaryLength = 200, moodScore, extra, pageMeta) {
+export function saveToLocalStorage(content, summary, url, title, description, tags = [], modelId = '', summaryLength = 200, moodScore, extra, pageMeta, highlights = []) {
   return new Promise((resolve, reject) => {
     const timestamp = new Date().toISOString();
     const id = `article_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -87,6 +87,7 @@ export function saveToLocalStorage(content, summary, url, title, description, ta
     if (pageMeta && pageMeta.favicon) indexEntry.favicon = pageMeta.favicon;   // lean: lists can show it without loading the record
     if (extra && typeof extra === 'object') Object.assign(indexEntry, extra);
     const record = { content, summary, description: description || (pageMeta && pageMeta.description) || '' };
+    if (highlights.length) record.highlights = highlights;
     if (pageMeta && Object.keys(pageMeta).length) record.meta = pageMeta;
 
     chrome.storage.local.get({ [SK.articlesIndex]: [] }, (data) => {
@@ -99,41 +100,6 @@ export function saveToLocalStorage(content, summary, url, title, description, ta
       });
     });
   });
-}
-
-/**
- * Ghost-highlight config based on the user's setting.
- */
-export function getGhostHighlightConfig(setting = 'regular') {
-  switch (setting) {
-    case 'few':
-      return { promptRange: '1-2', max: 2 };
-    case 'a_lot':
-      return { promptRange: '4-6', max: 6 };
-    default:
-      return { promptRange: '2-3', max: 3 };
-  }
-}
-
-/**
- * Normalize ghost quotes (dedupe, trim, cap count).
- */
-export function normalizeGhostQuotes(quotes, maxCount = 3) {
-  if (!Array.isArray(quotes)) return [];
-  const seen = new Set();
-  const normalized = [];
-
-  for (const q of quotes) {
-    const clean = (q || '').toString().replace(/\s+/g, ' ').trim();
-    if (!clean || clean.length < 5) continue;
-    const key = clean.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    normalized.push(clean);
-    if (normalized.length >= maxCount) break;
-  }
-
-  return normalized;
 }
 
 /**

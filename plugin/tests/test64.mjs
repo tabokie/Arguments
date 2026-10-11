@@ -23,11 +23,12 @@ assert(paperChips(art).some(c => c[1] === 'Review'));
 assert.equal(paperFacts(art).length, 2);
 assert(paperSearchText(art).includes('10.1234/abc') && paperSearchText(art).includes('smith'));
 assert.equal(paperSearchText({ title: 'x' }), '');
-// wiring
-const ct = fs.readFileSync(new URL('../src/content.js', import.meta.url), 'utf8');
-const cf = fs.readFileSync(new URL('../src/content/finalize.js', import.meta.url), 'utf8');
-assert(/SCHOLARLY/.test(ct) && /applyScholarly\(/.test(cf) && /replace\(\/<!--\\s\*SCHOLARLY/.test(cf));
-assert.equal((ct.match(/\$\{scholarlyAsk\}/g) || []).length, 2);
+// Completion merges scholarly metadata without exposing the metadata in the response.
+const { finalizeSummary } = await imp('content/finalize.js');
+const finished = await finalizeSummary({ raw: '<div><p>A trial finding.</p></div><!-- SCHOLARLY: {"scholarly":true,"type":"trial","sample":"n=120"} -->', selectedLanguage: 'en', contentText: 'We ran a trial of 120 people.', pageTitle: 'Trial', pageMeta: {} });
+assert.equal(finished.pageMeta.paper.type, 'trial');
+assert.equal(finished.pageMeta.paper.facts.sample, 'n=120');
+assert(!finished.cleanHtml.includes('SCHOLARLY'));
 const am = fs.readFileSync(new URL('../src/modules/articleManager.js', import.meta.url), 'utf8');
 assert(/\['research'/.test(am) && /RESEARCH_FILTERS/.test(am) && /paperSearchText\(a\)/.test(am));
 // on-demand key facts

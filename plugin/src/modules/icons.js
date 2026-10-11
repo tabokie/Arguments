@@ -11,7 +11,7 @@ export const ICON_EMOJI = {
     brain: '🧠', calendar: '📅', 'chart-column': '📊', check: '✓', 'chevron-down': '▾', 'chevron-right': '›', 'circle-alert': '⚠️',
     'circle-x': '❌', clipboard: '📋', 'clipboard-list': '📋', clock: '🕐', cloud: '☁️', copy: '📋', download: '📥', ellipsis: '⋯',
     eraser: '🧹', 'external-link': '↗', 'file-text': '📄', folders: '🗂️', globe: '🌐', headphones: '🎧', heart: '💙', info: '💠',
-    laptop: '💻', layers: '📦', lightbulb: '💡', link: '🔗', loader: '⏳', lock: '🔒', 'message-square': '💬', network: '🕸️',
+    keyboard: '⌨️', laptop: '💻', layers: '📦', lightbulb: '💡', link: '🔗', loader: '⏳', lock: '🔒', 'message-square': '💬', network: '🕸️',
     newspaper: '📰', palette: '🎨', paperclip: '📎', pause: '⏸', pencil: '✏️', pin: '📌', play: '▶', plus: '＋', 'refresh-cw': '↻',
     ruler: '📏', save: '💾', search: '🔍', send: '📤', server: '🦙', settings: '⚙️', 'share-2': '🔗', 'sliders-horizontal': '🎚️',
     smartphone: '📱', smile: '😊', sparkles: '✨', 'square-check-big': '☑️', star: ['☆', '★'], tag: '🏷️', 'trash-2': '🗑️',

@@ -1,4 +1,4 @@
-// promptBuilder.js — turns the guided chips (tone / length / focus / extra text) into prompt text.
+// promptBuilder.js — style preferences for feed briefings and recaps.
 // Pure functions: no DOM, no storage. The wording is English on purpose: it is sent to the AI,
 // which answers in the language chosen in the popup.
 
@@ -11,56 +11,18 @@ const TONE_TEXT = {
     formal: 'Tone: formal and precise.'
 };
 
-// ── Full articles ───────────────────────────────────────────────────────────
-const ARTICLE_LENGTH = {
-    short: 'Keep it short: under 300 words.',
-    medium: 'Aim for about 600 words.',
-    long: 'Be thorough: up to 1000 words.'
-};
-
-/** id → sentence. `group` decides the chip row it appears in. */
-export const ARTICLE_FOCUS = [
-    { id: 'facts',   group: 'focus',  text: 'Highlight the key facts and the main argument.' },
-    { id: 'numbers', group: 'focus',  text: 'Keep names, numbers and dates exact.' },
-    { id: 'opinions', group: 'focus', text: 'Separate facts from opinions and point out the author’s stance.' },
-    { id: 'actions', group: 'focus',  text: 'End with concrete action items or takeaways I can apply.' },
-    // Building blocks of the original “Phil’s secret prompt”
-    { id: 'title',   group: 'extras', text: 'Give the summary a creative title that explains the article in simple terms.' },
-    { id: 'quotes',  group: 'extras', text: 'Include the most significant quotes, exactly as stated and in the original language.' },
-    { id: 'ux',      group: 'extras', text: 'Add a fun reference to the topic related to my competence as a UX designer.' },
-    { id: 'standup', group: 'extras', text: 'Add a humorous take on the topic like a standup comedian.' },
-    { id: 'media',   group: 'extras', text: 'Recommend related books and media.' },
-    { id: 'style',   group: 'extras', text: 'Add emojis and hashtags, use HTML and highlight interesting parts.' }
-];
-
-export const PHIL_MIX = { tone: 'neutral', length: 'long', focus: ['title', 'quotes', 'ux', 'standup', 'media', 'style'], extra: '' };
-export const ARTICLE_DEFAULTS = { tone: 'neutral', length: 'medium', focus: ['facts', 'numbers'], extra: '' };
-
 function pick(list, ids) {
     const set = new Set(ids || []);
     return list.filter(f => set.has(f.id)).map(f => f.text);
 }
 
-export function normalizeBuilder(b, defaults = ARTICLE_DEFAULTS) {
+export function normalizeBuilder(b, defaults = FEED_DEFAULTS) {
     const o = { ...defaults, ...(b || {}) };
     if (!TONES.includes(o.tone)) o.tone = defaults.tone;
     if (!LENGTHS.includes(o.length)) o.length = defaults.length;
     o.focus = Array.isArray(o.focus) ? o.focus.filter(x => typeof x === 'string') : [...defaults.focus];
     o.extra = String(o.extra || '').slice(0, 800);
     return o;
-}
-
-export function buildArticlePrompt(b) {
-    const o = normalizeBuilder(b, ARTICLE_DEFAULTS);
-    const parts = [
-        'Summarize the article clearly, explaining it in simple terms.',
-        ...pick(ARTICLE_FOCUS, o.focus),
-        TONE_TEXT[o.tone],
-        ARTICLE_LENGTH[o.length],
-        'Answer additional questions in a serious and engaging way.'
-    ];
-    if (o.extra.trim()) parts.push(o.extra.trim());
-    return parts.map(p => '- ' + p).join(' ');
 }
 
 // ── Feeds & briefings ───────────────────────────────────────────────────────

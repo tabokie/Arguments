@@ -4330,5 +4330,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "맨 위로"
+  },
+  "browserShortcutsHint": {
+    "message": "브라우저 설정에서 확인 및 변경"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "키보드 단축키 설정을 열 수 없습니다."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "페이지 분석에 사용할 지침을 맞춤 설정하세요."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "강조 표시 지침"
+  },
+  "f_summary_prompt_5157": {
+    "message": "요약 지침"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "기본값으로 재설정"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "지침을 저장할 수 없습니다."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "강조 표시 및 요약 지침"
+  },
+  "pagePromptsHint": {
+    "message": "강조 표시 및 요약 지침"
+  },
+  "highlightNotFound": {
+    "message": "페이지에서 찾을 수 없음"
+  },
+  "highlightAmbiguous": {
+    "message": "페이지에 여러 일치 항목"
+  },
+  "highlightingDisabled": {
+    "message": "페이지 강조 표시 꺼짐"
+  },
+  "highlightingUnavailable": {
+    "message": "페이지 강조 표시 사용 불가"
+  },
+  "highlightMatchFailures": {
+    "message": "일치하지 않음: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "원문에서 문장 시작 부분을 찾을 수 없음"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "원문의 여러 문장과 일치"
+  },
+  "highlightInvalidResponse": {
+    "message": "강조 표시 응답을 읽을 수 없음"
   }
 }

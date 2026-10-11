@@ -1,5 +1,6 @@
 import { SK } from './storageKeys.js';
 import { T, N_ } from './feedI18n.js';
+import { canOpenBrowserShortcuts, openBrowserShortcuts } from './browserShortcuts.js';
 // settingsNav.js
 // Settings home (grouped list) → panel navigation, live row subtitles, and
 // search. All controls keep their original ids (settingsManager.js / authManager.js
@@ -16,9 +17,8 @@ const INDEX = [
     ['models', N_('Model identifier'), 'modelIdentifier', 'model name id gpt llama'],
     ['models', N_('API key'), 'apiKey', 'key token secret'],
     ['models', N_('Endpoint URL'), 'customEndpoint', 'ollama local server custom'],
-    ['prompts', N_('Preset prompt'), 'promptSettingsRoot', 'prompt preset template'],
-    ['prompts', N_('Custom prompt text'), 'promptSettingsRoot', 'prompt instructions system custom guided builder tone length focus'],
-    ['prompts', N_('Feed briefing & recap style'), 'promptSettingsRoot', 'feeds briefing recap style tone length'],
+    ['prompts', N_('Highlight prompt'), 'highlightPrompt', 'highlight sentences ideas arguments instructions custom'],
+    ['prompts', N_('Summary prompt'), 'prompt', 'summary novelty insights instructions custom'],
     ['feeds', N_('Sources · rename · tags · mute'), 'feedSubsCard', 'rss feeds subscriptions tags folder group rename mute unsubscribe sources'],
     ['feeds', N_('Import / export OPML'), 'feedOpmlActions', 'opml import export rss subscriptions backup reader'],
     ['feedprefs', N_('Mark read when opened'), 'feedSetMarkRead', 'feed read unread open'],
@@ -32,13 +32,13 @@ const INDEX = [
     ['feedprefs', N_('Keep feed items for'), 'feedSetKeep', 'feed retention days delete old cleanup'],
     ['reading', N_('Page highlighting'), 'highlightingToggle', 'highlight yellow marker annotate'],
     ['reading', N_('AI ghost highlighting'), 'aiHighlightingToggle', 'ghost highlight ai quotes blue'],
-    ['reading', N_('Ghost highlight amount'), 'ghostHighlightAmount', 'ghost highlight few regular a lot'],
     ['send', N_('Delivery method'), 'deliveryPreference', 'kindle koreader localsend send deliver'],
     ['send', N_('Kindle devices'), 'newKindleEmail', 'kindle email device send to kindle'],
     ['send', N_('KOReader / LocalSend devices'), 'newLocalSendIp', 'koreader localsend ip device scan'],
     ['send', N_('Bookmarklet generator'), 'generateBookmarkletBtn', 'bookmarklet ios android mobile safari'],
     ['appearance', N_('Theme'), 'themeSeg', 'dark light mode appearance system contrast'],
     ['appearance', N_('UI language'), 'uiLangSelect', 'language translation locale interface'],
+    ['shortcuts', N_('Keyboard shortcuts'), 'browserShortcutsButton', 'keyboard shortcuts hotkeys customize browser commands'],
     ['accessibility', N_('Accessibility profile'), 'profileList', 'accessibility a11y profile large text high contrast calm barrierefreiheit'],
     ['accessibility', N_('Text size'), 'textScaleRange', 'text size font zoom larger bigger smaller'],
     ['accessibility', N_('Line spacing'), 'lineSeg', 'text size font dyslexia reading spacing'],
@@ -58,10 +58,11 @@ const INDEX = [
 
 const PANEL_TITLES = {
     account: N_('Account & Plan'), models: N_('Models & API'), prompts: N_('Prompts'), feeds: N_('Sources'), feedprefs: N_('Feed preferences'), reading: N_('Reading & Highlighting'),
-    send: N_('Send & Share'), appearance: N_('Appearance & Language'), accessibility: N_('Accessibility'), library: N_('Library & Data'), about: N_('About & Tools')
+    send: N_('Send & Share'), appearance: N_('Appearance & Language'), shortcuts: N_('Keyboard shortcuts'), accessibility: N_('Accessibility'), library: N_('Library & Data'), about: N_('About & Tools')
 };
 
 let screenEl = null;
+let settingsUi = null;
 let currentPanel = 'account';
 
 // Large windows: master–detail (list stays visible, one panel open beside it).
@@ -112,8 +113,7 @@ async function refreshSubtitles() {
             set('models', T('Own key') + (prov ? ' · ' + prov : ''));
         }
     } catch (e) { /* storage unavailable (context invalidated) */ }
-    const preset = selectedText('promptSelect');
-    set('prompts', preset ? T('Preset: {name}', { name: preset }) : T('Preset and custom prompt'));
+    set('prompts', T('Highlight and summary prompts'));
     set('reading', T('Highlighting {a} · ghost {b}', { a: onOff('highlightingToggle'), b: onOff('aiHighlightingToggle') }));
     const delivery = selectedText('deliveryPreference');
     set('send', delivery ? T('Delivery: {name}', { name: delivery }) : T('Kindle · LocalSend · bookmarklet'));
@@ -173,6 +173,7 @@ function renderResults(query) {
     if (!q) { results.hidden = true; results.replaceChildren(); groups.hidden = false; return; }
     const tokens = q.split(/\s+/);
     const hits = INDEX.filter(([panel, label, , kw]) => {
+        if (panel === 'shortcuts' && !canOpenBrowserShortcuts()) return false;
         const hay = (label + ' ' + T(label) + ' ' + kw + ' ' + PANEL_TITLES[panel] + ' ' + T(PANEL_TITLES[panel])).toLowerCase();
         return tokens.every(t => hay.includes(t));
     });
@@ -195,15 +196,28 @@ function renderResults(query) {
         b.append(text, chev);
         b.addEventListener('click', () => {
             const input = $('settingsSearch'); input.value = ''; renderResults('');
-            openSettingsPanel(panel, target);
+            if (panel === 'shortcuts') openShortcuts(); else openSettingsPanel(panel, target);
         });
         results.appendChild(b);
     }
 }
 
+function openShortcuts() {
+    openBrowserShortcuts().catch(() => {
+        settingsUi?.showToast(T('Could not open keyboard shortcut settings.'));
+    });
+}
+
 export function initSettingsNav(ui) {
     screenEl = $('settingsScreen');
     if (!screenEl || !$('settingsHome')) return;
+    settingsUi = ui;
+
+    const shortcuts = $('browserShortcutsButton');
+    if (shortcuts) {
+        shortcuts.hidden = !canOpenBrowserShortcuts();
+        shortcuts.addEventListener('click', openShortcuts);
+    }
 
     document.querySelectorAll('.settings-row[data-panel]').forEach(row => {
         row.addEventListener('click', () => openSettingsPanel(row.dataset.panel));

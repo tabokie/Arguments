@@ -2,6 +2,7 @@ import { SK, SK_LEGACY, SK_DEAD, LOCAL_KEY_LIST, ARTICLE_REC_LEGACY, articleRecK
 import { debug } from './log.js';
 import { countWords } from './textUtils.js';
 import { withQuestions } from './conversation.js';
+import { DEFAULT_HIGHLIGHT_PROMPT, DEFAULT_SUMMARY_PROMPT, PAGE_PROMPT_KEYS, RETIRED_PROMPT_KEYS, resolvePagePrompts } from './pagePrompts.js';
 // storageManager.js
 
 // Precomputed once per save/migration so analyticsManager.js's reading-time
@@ -17,10 +18,8 @@ class StorageManager {
     }
 
     static DEFAULTS = {
-        prompt: `- brief summary
-    - fun standup comedy set on the topic
-    - what does it mean for my profession (ux)
-    - book recommendations`,
+        prompt: DEFAULT_SUMMARY_PROMPT,
+        highlightPrompt: DEFAULT_HIGHLIGHT_PROMPT,
         promptType: 'custom',
         selectedLanguage: 'en-US',
         connectionMode: 'cloud',
@@ -237,7 +236,8 @@ class StorageManager {
             records[articleRecKey(id)] = {
                 content: article.content || '',
                 summary: article.summary || '',
-                description: article.description || ''
+                description: article.description || '',
+                ...(Array.isArray(article.highlights) ? { highlights: article.highlights } : {})
             };
         }
 
@@ -417,7 +417,7 @@ class StorageManager {
         return clean;
     }
 
-    static async saveArticle({ content, summary, url, title, description, tags = [], modelId = '', connectionMode = '', summaryLength = 200, extra = {} }) {
+    static async saveArticle({ content, summary, url, title, description, highlights = [], tags = [], modelId = '', connectionMode = '', summaryLength = 200, extra = {} }) {
         const id = `article_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
         const timestamp = new Date().toISOString();
 
@@ -433,7 +433,7 @@ class StorageManager {
 
         await this.setLocal({
             [SK.articlesIndex]: articlesIndex,
-            [articleRecKey(id)]: { content, summary, description }
+            [articleRecKey(id)]: { content, summary, description, ...(highlights.length ? { highlights } : {}) }
         });
 
         return { id, timestamp };
@@ -783,13 +783,12 @@ class StorageManager {
     }
 
     static async ensurePromptDefaults() {
-        const data = await this.get(['prompt', 'promptType']);
-        if (!data.prompt) {
-            await this.set({
-                prompt: this.DEFAULTS.prompt,
-                promptType: 'custom'
-            });
+        const data = await this.get(PAGE_PROMPT_KEYS);
+        const { highlightPrompt, summaryPrompt } = resolvePagePrompts(data);
+        if (data.highlightPrompt !== highlightPrompt || data.prompt !== summaryPrompt || data.promptType !== 'custom') {
+            await this.set({ highlightPrompt, prompt: summaryPrompt, promptType: 'custom' });
         }
+        await chrome.storage.sync.remove(RETIRED_PROMPT_KEYS);
     }
 
     /**

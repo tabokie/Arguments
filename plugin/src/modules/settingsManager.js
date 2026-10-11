@@ -9,7 +9,7 @@ import { confirmDestructive } from './confirmDialog.js';
 import { deleteData, describeData } from './dataReset.js';
 import { filterBackupSecrets, hasBackupSecrets, prepareImportedData } from './backupUtils.js';
 import StorageManager from './storageManager.js';
-import { initPromptSettings } from './promptSettings.js';
+import { initPromptSettings, savePromptSettings } from './promptSettings.js';
 import { updateModelIdentifierUI } from './modelManager.js';
 import { initAuthManager } from './authManager.js';
 import { buildCanonicalTagMap, applyCanonicalTags } from './tagIntelligence.js';
@@ -37,7 +37,7 @@ export async function initSettingsManager(ui) {
     // main-screen onboarding mask — see authManager.js)
     initAuthManager(ui);
 
-    // Initialize prompt manager with the static DOM elements
+    // Initialize the highlight and summary prompt editors.
     initPromptSettings(document.getElementById('promptSettingsRoot'));
 
     // Prevent form submission page reloads AND persist model settings
@@ -46,6 +46,7 @@ export async function initSettingsManager(ui) {
     if (settingsForm) {
         settingsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            await savePromptSettings();
 
             const modelSelect = document.getElementById('model');
             const apiKeyInput = document.getElementById('apiKey');
@@ -674,15 +675,6 @@ function initGeneralSettings(storageData) {
             : legacyHighlighting;
         aiHighlightToggle.addEventListener('change', () => {
             persistHighlightingSettings('aiHighlightingEnabled', aiHighlightToggle.checked);
-        });
-    }
-
-    // ── AI Ghost Highlight Amount ────────────────────────────────
-    const ghostHighlightAmount = document.getElementById('ghostHighlightAmount');
-    if (ghostHighlightAmount) {
-        ghostHighlightAmount.value = storageData.ghostHighlightAmount || 'regular';
-        ghostHighlightAmount.addEventListener('change', () => {
-            autoSave('ghostHighlightAmount', ghostHighlightAmount.value);
         });
     }
 

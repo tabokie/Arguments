@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "Volver arriba"
+  },
+  "browserShortcutsHint": {
+    "message": "Ver y personalizar en los ajustes del navegador"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "No se pudieron abrir los ajustes de atajos de teclado."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "Personaliza las instrucciones para analizar una página."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "Instrucciones de resaltado"
+  },
+  "f_summary_prompt_5157": {
+    "message": "Instrucciones de resumen"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "Restablecer valor predeterminado"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "No se pudieron guardar las instrucciones."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "Instrucciones de resaltado y resumen"
+  },
+  "pagePromptsHint": {
+    "message": "Instrucciones de resaltado y resumen"
+  },
+  "highlightNotFound": {
+    "message": "No se encontró en la página"
+  },
+  "highlightAmbiguous": {
+    "message": "Varias coincidencias en la página"
+  },
+  "highlightingDisabled": {
+    "message": "Resaltado de página desactivado"
+  },
+  "highlightingUnavailable": {
+    "message": "Resaltado de página no disponible"
+  },
+  "highlightMatchFailures": {
+    "message": "$COUNT$ sin coincidencia",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "Prefijo no encontrado en el texto fuente"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "Varios enunciados en el texto fuente"
+  },
+  "highlightInvalidResponse": {
+    "message": "No se pudo leer la respuesta de resaltado"
   }
 }

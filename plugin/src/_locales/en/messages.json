@@ -4555,5 +4555,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "Back to top"
+  },
+  "browserShortcutsHint": {
+    "message": "View and customize in browser settings"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "Could not open keyboard shortcut settings."
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "Customize the instructions used to analyze a page."
+  },
+  "f_highlight_prompt_141b": {
+    "message": "Highlight prompt"
+  },
+  "f_summary_prompt_5157": {
+    "message": "Summary prompt"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "Reset to default"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "Could not save prompts."
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "Highlight and summary prompts"
+  },
+  "pagePromptsHint": {
+    "message": "Highlight and summary prompts"
+  },
+  "highlightNotFound": {
+    "message": "Not found on page"
+  },
+  "highlightAmbiguous": {
+    "message": "Multiple page matches"
+  },
+  "highlightingDisabled": {
+    "message": "Page highlighting disabled"
+  },
+  "highlightingUnavailable": {
+    "message": "Page highlighting unavailable"
+  },
+  "highlightMatchFailures": {
+    "message": "$COUNT$ not matched",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "Prefix not found in source"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "Multiple source sentences"
+  },
+  "highlightInvalidResponse": {
+    "message": "Highlight response could not be read"
   }
 }

@@ -21,6 +21,8 @@ import { typeText } from './typewriter.js';
 import { sidebarTokenFromHash, acceptSidebarMessage, SIDEBAR_TOKEN_FIELD } from './sidebarChannel.js';
 import { attachCardMenu } from './cardMenu.js';
 import { currentLengthSpec } from './summaryLength.js';
+import { PAGE_PROMPT_KEYS, resolvePagePrompts } from './pagePrompts.js';
+import { renderHighlights } from './highlightView.js';
 
 export function initMainScreen(ui) {
     const fetchSummaryButton = document.getElementById('fetchSummary');
@@ -63,6 +65,11 @@ export function initMainScreen(ui) {
             ${tagsHtml}
             ${modelHtml}
         `;
+        const highlights = renderHighlights(article.highlights, key => t(key));
+        if (highlights) {
+            highlights.addEventListener('click', event => event.stopPropagation());
+            bubble.appendChild(highlights);
+        }
         // 🎓 paper badges (detected from DOI / citation meta; the user's override lives on the index entry)
         {
             const chips = paperChips(article);
@@ -1028,7 +1035,8 @@ export function initMainScreen(ui) {
                     modelId: msg.modelId || '',
                     connectionMode: msg.connectionMode || 'local',
                     meta: msg.meta || {},
-                    content: msg.content || ''
+                    content: msg.content || '',
+                    highlights: msg.highlights || []
                 };
                 const liveBubble = addBubble(bubbleArticle);
                 liveBubbleArticle = bubbleArticle; liveBubbleEl = liveBubble;
@@ -1259,8 +1267,8 @@ export function initMainScreen(ui) {
         const pageInfo = chipEl ? { title: chipEl.dataset.title, host: chipEl.dataset.host } : null;
         const selectedLanguage = languageSelect.value;
 
-        chrome.storage.sync.get(['prompt', 'promptType', 'presetPrompt'], async (data) => {
-            let promptToUse = data.prompt || '';
+        chrome.storage.sync.get(PAGE_PROMPT_KEYS, async (data) => {
+            const { highlightPrompt, summaryPrompt } = resolvePagePrompts(data);
 
             const { [SK.summaryMode]: summaryMode } = await chrome.storage.local.get(SK.summaryMode);
             if (attaching) return;                                          // still reading the file
@@ -1272,7 +1280,8 @@ export function initMainScreen(ui) {
                     action: 'fetchSummary',
                     additionalQuestions,
                     selectedLanguage,
-                    prompt: promptToUse,
+                    prompt: summaryPrompt,
+                    highlightPrompt,
                     summaryMode: mode,
                     summaryLength: await currentLengthSpec(SK),
                     connectionMode,

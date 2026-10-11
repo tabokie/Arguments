@@ -4348,5 +4348,62 @@
   },
   "f_back_to_top_bd70": {
     "message": "返回頂部"
+  },
+  "browserShortcutsHint": {
+    "message": "在瀏覽器設定中查看及自訂"
+  },
+  "f_could_not_open_keyboard_shor_eb69": {
+    "message": "無法開啟鍵盤快捷鍵設定。"
+  },
+  "f_customize_the_instructions_u_947a": {
+    "message": "自訂用於分析網頁的指令。"
+  },
+  "f_highlight_prompt_141b": {
+    "message": "高亮提示詞"
+  },
+  "f_summary_prompt_5157": {
+    "message": "摘要提示詞"
+  },
+  "f_reset_to_default_f7dc": {
+    "message": "恢復預設"
+  },
+  "f_could_not_save_prompts_e8eb": {
+    "message": "無法儲存提示詞。"
+  },
+  "f_highlight_and_summary_prompt_ef01": {
+    "message": "高亮及摘要提示詞"
+  },
+  "pagePromptsHint": {
+    "message": "高亮及摘要提示詞"
+  },
+  "highlightNotFound": {
+    "message": "未在網頁中找到"
+  },
+  "highlightAmbiguous": {
+    "message": "網頁中有多處匹配"
+  },
+  "highlightingDisabled": {
+    "message": "已關閉網頁高亮"
+  },
+  "highlightingUnavailable": {
+    "message": "無法在此頁面高亮"
+  },
+  "highlightMatchFailures": {
+    "message": "$COUNT$ 條未匹配",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "highlightSourceNotFound": {
+    "message": "原文中找不到句子前綴"
+  },
+  "highlightSourceAmbiguous": {
+    "message": "前綴符合多個原文句子"
+  },
+  "highlightInvalidResponse": {
+    "message": "無法解析標示結果"
   }
 }

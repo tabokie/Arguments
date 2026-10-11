@@ -1,9 +1,25 @@
 import { debug } from '../modules/log.js';
 import { getUserHighlightTexts } from './highlighter.js';
-import { ancArticleRoot } from './anchor.js';
+import { ancScopeRoot } from './anchor.js';
 // content/extractor.js
 // Pure page-content extraction & parsing helpers. No DOM event wiring here —
 // these are called by the content.js orchestrator.
+
+/** Preserve block boundaries without splitting sentences at inline markup or wrapped source lines. */
+function extractedBlockText(root) {
+  const pieces = [];
+  const visit = (node) => {
+    if (node.nodeType === 3) { pieces.push(node.nodeValue.replace(/\s+/gu, ' ')); return; }
+    if (node.nodeType !== 1) return;
+    if (node.tagName === 'BR') { pieces.push('\n'); return; }
+    const block = /^(?:P|DIV|LI|UL|OL|H[1-6]|BLOCKQUOTE|TD|TH|TR|SECTION|ARTICLE|PRE|FIGCAPTION|DD|DT)$/u.test(node.tagName);
+    if (block) pieces.push('\n\n');
+    for (const child of node.childNodes) visit(child);
+    if (block) pieces.push('\n\n');
+  };
+  visit(root);
+  return pieces.join('').replace(/[ \t]*\n[ \t]*/gu, '\n').replace(/\n{3,}/gu, '\n\n').trim();
+}
 
 /**
  * Extract the main article text + HTML from the page, stripping noise.
@@ -23,9 +39,11 @@ export function getAllTextContent() {
   const noiseSelectors = [
     'script', 'style', 'noscript', 'nav', 'header', 'footer', 'aside',
     '[role="navigation"]', '[role="banner"]', '[role="contentinfo"]',
+    '[role="dialog"]', '[role="alertdialog"]', '[aria-modal="true"]', 'dialog',
     'iframe', 'embed', 'object', 'canvas', 'svg',
+    '[data-aish-ui]', '#ai-summary-hybrid-sidebar', '[id^="aish-"]', '[id^="ai-summary"]',
     '.ad', '.ads', '.advertisement', '.ad-wrap', '.ad-config',
-    '#comments', '.comments', '.sidebar', '#sidebar',
+    '.sidebar', '#sidebar',
     '.sr-only', '.visually-hidden', '.screen-reader-text', '.skip-link',
     '[aria-hidden="true"]', '.hidden', '.hide',
     '.tags', '.share-tools', '.recommended-stories', '.story-recommendations',
@@ -38,26 +56,29 @@ export function getAllTextContent() {
     '#callout-end-of-story-mount-piano-wrap', '#end-of-story-recommendations-mount',
     '#end-of-story-recommendations-mount-piano', '#newsletter-acquisition-callout-data',
     '.speakable',
-    '#comments', '#chat', '#live-chat-iframe', '#donation-shelf',
+    '#chat', '#live-chat-iframe', '#donation-shelf',
     '#merch-shelf', '#movie-description', '#secondary',
     '#related', '#playlist', '#header', '#masthead-container',
-    'ytd-comments', 'ytd-live-chat-frame', 'ytd-merch-shelf-renderer',
-    'ytd-video-secondary-info-renderer', 'ytd-comment-thread-renderer',
-    'ytd-item-section-renderer', 'ytd-shelf-renderer',
+    'ytd-live-chat-frame', 'ytd-merch-shelf-renderer',
+    'ytd-video-secondary-info-renderer', 'ytd-shelf-renderer',
     '#owner', '#subscribe-button', '#top-level-buttons-computed',
     '#vote-count', '#menu', '#action-buttons', '#actions',
     '#meta-contents', '#description-inline-expander'
   ];
 
-  const articleEl = document.querySelector('#storytext')
-    || ancArticleRoot(document)
-    || document.querySelector('ytd-text-inline-expander')
-    || document.querySelector('ytd-section-list-renderer')
-    || document.querySelector('#description')
-    || document.querySelector('#content')
-    || document.body;
+  const articleEl = ancScopeRoot(document);
 
-  const clone = articleEl.cloneNode(true);
+  let clone;
+  if (articleEl.id === 'hnmain' && articleEl.querySelector('.comment-tree, tr.comtr')) {
+    // Hacker News nests comments in tables. Copy only the post and each comment
+    // body, retaining DOM order and paragraph boundaries without voting/reply UI.
+    clone = document.createElement('div');
+    for (const node of articleEl.querySelectorAll('.fatitem .titleline > a:first-child, .fatitem .toptext, tr.comtr .commtext')) {
+      const block = document.createElement('div');
+      block.appendChild(node.cloneNode(true));
+      clone.appendChild(block);
+    }
+  } else clone = articleEl.cloneNode(true);
 
   for (const selector of noiseSelectors) {
     const nodes = clone.querySelectorAll(selector);
@@ -88,8 +109,7 @@ export function getAllTextContent() {
     }
   }
 
-  let text = clone.textContent || '';
-  let cleanText = text.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  let cleanText = extractedBlockText(clone);
 
   const noisePatterns = [
     /^Accessibility links\b/i,
@@ -107,7 +127,7 @@ export function getAllTextContent() {
     .split('\n')
     .filter(line => {
       const trimmed = line.trim();
-      if (!trimmed) return false;
+      if (!trimmed) return true;
       for (const pattern of noisePatterns) {
         if (pattern.test(trimmed)) return false;
       }
@@ -117,7 +137,7 @@ export function getAllTextContent() {
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
-  if (cleanText.length < 500 && articleEl !== document.body) {
+  if (cleanText.length < 500 && articleEl !== document.body && articleEl.id !== 'hnmain') {
     debug("Extracted content too short, falling back to full body.");
     const bodyClone = document.body.cloneNode(true);
     for (const selector of noiseSelectors) {
@@ -148,8 +168,7 @@ export function getAllTextContent() {
       }
     }
     clone.innerHTML = bodyClone.innerHTML;
-    text = bodyClone.textContent || '';
-    cleanText = text.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+    cleanText = extractedBlockText(bodyClone);
   }
 
   debug('Collected content length:', cleanText.length);
