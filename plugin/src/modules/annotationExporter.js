@@ -1,5 +1,5 @@
 import { pageKeyForUrl as pageKeyFromUrl } from './pageKey.js';
-import { SK } from './storageKeys.js';
+import { SK, articleRecKey } from './storageKeys.js';
 // annotationExporter.js
 // Builds an HTML "Highlights & Notes" section for a saved article from the
 // on-page annotations the extension captured (user highlights + AI ghost
@@ -9,8 +9,8 @@ import { SK } from './storageKeys.js';
 
 /**
  * Normalize a URL to the stable per-page key used by the highlighter
- * (origin + pathname), so annotations saved against the page match the
- * article URL even if the article has query params/fragments appended.
+ * while retaining content-identifying query parameters. Tracking parameters
+ * and fragments do not split annotations from their saved article.
  */
 function pageKeyForUrl(url) {
     return url ? pageKeyFromUrl(url) : '';
@@ -19,7 +19,7 @@ function pageKeyForUrl(url) {
 /**
  * Escape HTML so annotation text survives interpolation into HTML/XML docs.
  * Exported so other modules building their own (differently-styled) markup
- * around the same annotation text — e.g. archiveGraph.js's preview card —
+ * around the same annotation text
  * don't need to duplicate it.
  */
 export { escapeHtml } from './textUtils.js';
@@ -105,16 +105,29 @@ export function markHighlights(html, annotations, placed = new Set()) {
  * the latter included even if never marked "keep") for a given article URL.
  * Returns a promise resolving to an array of { text, type, timestamp }.
  */
-export async function fetchAnnotationsForArticle(article) {
-    const url = article?.url;
-    if (!url) return [];
+// Complete source selections remain exportable even when the page was closed or could not be marked.
+export function annotationsForArticle(article, all = []) {
+    const key = pageKeyForUrl(article?.url);
+    const page = key ? all.filter(annotation => annotation && pageKeyForUrl(annotation.url) === key) : [];
+    const result = page.filter(annotation => !annotation.dismissed);
+    const seen = new Set(page.map(annotation => annotation.text));
+    for (const selection of article?.highlights || []) {
+        if (!['resolved', 'matched', 'unmatched', 'unavailable'].includes(selection.status) || !selection.text || seen.has(selection.text)) continue;
+        seen.add(selection.text);
+        result.push({ text: selection.text, type: 'ghost', timestamp: article.timestamp, url: key });
+    }
+    return result;
+}
 
+export async function fetchAnnotationsForArticle(article) {
+    if (!article) return [];
     return new Promise((resolve) => {
-        chrome.storage.local.get([SK.annotations], (res) => {
-            if (chrome.runtime.lastError) { resolve([]); return; }
+        const recordKey = article.id ? articleRecKey(article.id) : '';
+        chrome.storage.local.get([SK.annotations, ...(recordKey ? [recordKey] : [])], (res) => {
+            if (chrome.runtime.lastError) { resolve(annotationsForArticle(article)); return; }
             const all = Array.isArray(res[SK.annotations]) ? res[SK.annotations] : [];
-            const key = pageKeyForUrl(url);
-            resolve(all.filter(a => a && a.url === key && !a.dismissed));
+            const full = { ...(res[recordKey] || {}), ...article };
+            resolve(annotationsForArticle(full, all));
         });
     });
 }

@@ -53,7 +53,7 @@ export function statusLines(ctx = {}) {
     const model = ctx.model || T('the model');
     lines.push(tokens > 0 ? T('Sent to {model} · ~{n} tokens', { model, n: tokens.toLocaleString('en-US') }) : T('Sent to {model}', { model }));
     if (tokens > 8000) lines[lines.length - 1] += ' — ' + T('Long page: a local model reads all of it first, this can take a minute or two.');
-    lines.push(T('Writing a {n}-word summary…', { n: Number(ctx.length) || 200 }));
+    lines.push(T("Writing a {n}-word main output…", { n: Number(ctx.length) || 200 }));
     return lines;
 }
 
@@ -70,7 +70,7 @@ export function createComposer(bar, { onChange } = {}) {
     let state = 'fetch';
     const copy = {
         // One short word, already translated for the bottom tab ("Summarize", "Zusammenfassen", "要約" …).
-        fetch: () => { const w = t('navSummarize'); return w === 'navSummarize' ? 'Summarize' : w; },
+        fetch: () => { const w = t('navSummarize'); return w === 'navSummarize' ? 'Analyze' : w; },
         working: () => T('■ Stop'),
         followup: () => T('Send')
     };

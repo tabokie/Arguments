@@ -1,11 +1,8 @@
 // feedInsights.js — analytics for the Feeds view (scope = the source you are looking at).
 // Reuses the chart renderers + .ar-* styles of the History report so both look alike.
 import { articlesByDay, articlesByWeek, renderBarChart, renderWeekChart, chartTips } from './analyticsManager.js';
-import { T, TN, uiLocale } from './feedI18n.js';
-import { groupedLabels } from './topicConcepts.js';
-import { moodSection } from './moodView.js';
+import { T, TN } from './feedI18n.js';
 import { el as h, arSection as section } from './dom.js';
-import { renderTopicsSection } from './topicsChart.js';
 
 const DAY = 86400000;
 // Short stop-word list for the mixed-language (en/de) term cloud.
@@ -56,10 +53,9 @@ export function renderInsights(container, ctx) {
     if (!items.length) { root.append(h('p', 'ar-empty', T('No items in this source yet.'))); return; }
 
     const unread = items.filter(i => !i.read).length;
-    const rated = items.filter(i => i.ai);
     const stats = h('div', 'ar-stats-row');
     stats.append(statCard(items.length, T('Items')), statCard(Math.round(unread / items.length * 100) + '%', T('Unread')),
-        statCard(items.filter(isSummarized).length, T('Summarized')), statCard(rated.length, T('AI-rated')));
+        statCard(items.filter(isSummarized).length, T("Analyzed")));
     root.append(stats);
 
     // Volume
@@ -83,26 +79,6 @@ export function renderInsights(container, ctx) {
         const rows = [...bySub].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([id, n]) => [subTitle(id), n, id]);
         s.append(barRows(rows, onSource, (l) => T('Show only {name}', { name: l })));
         root.append(s);
-    }
-
-    // Mood over time (daily store, outlives item retention)
-    root.append(moodSection(ctx));
-
-    // Topics over time — mood (default) or volume per AI category
-    root.addEventListener('tag-search', (e) => { if (e.detail && e.detail.tag) onSearch(e.detail.tag); });
-    root.append(renderTopicsSection(items.map(i => ({
-        timestamp: i.published,
-        tags: i.cat ? [i.cat] : (Array.isArray(i.tags) ? i.tags : []),
-        moodScore: i.ai && typeof i.sent === 'number' ? i.sent : undefined
-    })), root));
-
-    // Categories (AI-labelled items)
-    const cats = new Map();
-    items.forEach(i => { if (i.cat) cats.set(i.cat, (cats.get(i.cat) || 0) + 1); });
-    if (cats.size) {
-        const m = section(T('🏷️ Categories'));
-        m.append(barRows(groupedLabels([...cats], uiLocale()).slice(0, 8), onSearch, (l) => T('Search “{term}”', { term: l })));
-        root.append(m);
     }
 
     // Top terms

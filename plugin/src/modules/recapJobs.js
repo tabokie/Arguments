@@ -30,7 +30,7 @@ export function notifyReady(body, message, toast) {
         chrome.notifications.create(`recap_ready_${Date.now()}`, {
             type: 'basic',
             iconUrl: chrome.runtime.getURL('icons/icon128.png'),
-            title: 'AI Summary Helper',
+            title: 'Arguments',
             message,
         });
     } catch (e) { /* notifications unavailable */ }

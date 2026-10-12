@@ -1,7 +1,6 @@
 // conversation.js — follow-up Q&A on a summarized page. Pure helpers (no chrome.*, no DOM): testable in jsdom/node.
 // A turn: { id, q, a, sources: [quote], pinned, ts }.
 import { T } from './feedI18n.js';
-import { parseSuggestionList } from './suggestions.js';
 
 export const MAX_PROMPT_TURNS = 6;      // turns sent back to the model (plus summary)
 export const MAX_PAGE_CHARS = 20000;
@@ -46,22 +45,20 @@ export function newTurn(turns, { q, a, sources = [] }) {
 }
 
 export function buildPrompt({ title, content, summary, turns = [], question, draft = '' }) {
-    const system = 'You answer follow-up questions about one web page. Use only the page text and the summary below. '
+    const system = 'You answer follow-up questions about one web page. Use only the page text and the main output below. '
         + 'Be concise and answer in the language of the question. Reply in plain text (short paragraphs, "- " bullets, **bold**) — never HTML or code blocks. '
         + 'After the answer add one last line: SOURCES: "quote 1" | "quote 2" — up to 3 short passages copied word for word from the page text '
-        + '(each at least 8 words) that support the answer. Omit the line if no passage fits. '
-        + 'Then one final line: QUESTIONS: [{"q":"question 1","a":"answer 1"}, {"q":"question 2","a":"answer 2"}] — up to 3 short follow-up questions (3-6 words each, in the language of your answer) '
-        + 'the reader may want to ask next, answerable from the page and different from the earlier questions, each with "a": a 2-sentence answer from the page.';
+        + '(each at least 8 words) that support the answer. Omit the line if no passage fits.';
     const history = turns.slice(-MAX_PROMPT_TURNS).map(t => `Q: ${t.q}\nA: ${t.a}`).join('\n\n');
     const user = `PAGE TITLE: ${title || ''}\n\nPAGE TEXT:\n${plain(content).slice(0, MAX_PAGE_CHARS)}\n\n`
-        + `SUMMARY:\n${plain(summary)}\n\n`
+        + `MAIN OUTPUT:\n${plain(summary)}\n\n`
         + (history ? `EARLIER QUESTIONS:\n${history}\n\n` : '')
         + (draft ? `THE READER ALREADY SEES THE FIRST PART OF YOUR ANSWER (it is being typed out on screen):\n${draft}\n`
             + 'Continue directly after it, as if your next words were the very next sentence on screen. '
             + 'Do NOT restate, summarize, rephrase or echo anything it already says, and do not open with an intro, a recap or a phrase like "In short" / "As mentioned". '
             + 'Your first sentence must add something new: further detail, the reasoning behind it, context, examples, caveats or related points from the page. '
             + 'Write only what follows, in the same language and style. '
-            + 'Then the SOURCES and QUESTIONS lines as usual.\n\n' : '')
+            + 'Then the SOURCES line as usual.\n\n' : '')
         + `QUESTION: ${question}`;
     return { system, user };
 }
@@ -88,12 +85,10 @@ export function joinContinuation(head, cont) {
 export function parseAnswer(raw, pageContent) {
     let text = cleanAnswer(raw);
     let quotes = [];
-    let questions = [], quick = {};
-    // QUESTIONS: [...] — suggestions for the next turn (cut first so its quoted strings never look like source quotes)
+    // Discard legacy suggestion sections before reading source quotes.
     const qm = text.match(/\n?\s*QUESTIONS?\s*:\s*(\[[\s\S]*)$/i);
     if (qm) {
         text = text.slice(0, qm.index).trim();
-        ({ questions, quick } = parseSuggestionList(qm[1]));
     }
     const m = text.match(/\n?\s*SOURCES?\s*:\s*(.*)$/is);
     if (m) {
@@ -103,7 +98,7 @@ export function parseAnswer(raw, pageContent) {
     const hay = norm(pageContent);
     const seen = new Set();
     const sources = quotes.filter(q => { const n = norm(q); if (!n || seen.has(n) || !hay.includes(n)) return false; seen.add(n); return true; }).slice(0, 3);
-    return { a: text, sources, questions, quick };
+    return { a: text, sources };
 }
 
 /** "From your question(s)" HTML block. all=false → pinned turns only. '' when nothing to show. */

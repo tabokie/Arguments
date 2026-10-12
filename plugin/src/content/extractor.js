@@ -328,7 +328,7 @@ export async function inlineAndCompressImages(htmlString, maxWidth = 600, qualit
       const base64Data = canvas.toDataURL('image/jpeg', quality);
       img.setAttribute('src', base64Data);
     } catch (error) {
-      console.warn(`[AI Summary Helper] Failed to inline image ${originalSrc}. Leaving original URL.`, error);
+      console.warn(`[Arguments] Failed to inline image ${originalSrc}. Leaving original URL.`, error);
     }
   }));
 

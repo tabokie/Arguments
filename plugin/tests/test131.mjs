@@ -20,6 +20,14 @@ assert.deepEqual(resolveHighlightPrefixes(['هل'], 'هل هذا مفيد؟ نع
 assert.deepEqual(resolveHighlightPrefixes(['会涨'], '会涨。不会跌。', 'zh'), ['会涨。'], 'short sentences in languages without word spaces are kept');
 assert.deepEqual(resolveHighlightPrefixes(['Tail'], 'An earlier complete claim. Tail is cut mid-sentence', 'en', true), [], 'input truncation never produces a partial-sentence highlight');
 assert.deepEqual(resolveHighlightPrefixes(null, source), []);
+const discussionPrefix = "It's very true to me. Another effect I noticed in less tech inclined jobs";
+const discussionSpan = discussionPrefix + ' is that automation remains underestimated.';
+assert.deepEqual(resolveHighlightPrefixes([discussionPrefix], discussionSpan + ' A separate claim follows.', 'en'), [discussionSpan], 'a prefix crossing a sentence boundary expands through the last sentence it touches');
+assert.deepEqual(resolveHighlightPrefixes([discussionPrefix], "It's very true to me.\n\nAnother effect I noticed in less tech inclined jobs is that automation remains underestimated.", 'en'), [], 'prefix recovery cannot merge independent source blocks');
+assert.deepEqual(resolveHighlightPrefixes([discussionPrefix], discussionSpan.slice(0, -1), 'en', true), [], 'a prefix spanning a truncated final sentence is rejected');
+assert.equal(resolveHighlightSelections([discussionPrefix], discussionSpan, 'en', false, discussionPrefix)[0].status, 'source-unmatched', 'chunk recovery requires the entire expanded span in the source part');
+assert.deepEqual(resolveHighlightPrefixes(['Shared opening. Different conclusion'], 'Shared opening. Different conclusion matters.\n\nShared opening. Another conclusion matters.', 'en'), ['Shared opening. Different conclusion matters.'], 'a longer prefix can distinguish identical opening sentences');
+assert.deepEqual(resolveHighlightPrefixes(['会涨。不会'], '会涨。不会跌。其他事情不变。', 'zh'), ['会涨。不会跌。'], 'cross-sentence recovery preserves source spacing in languages without word spaces');
 const wrappedSource = 'A claim crosses\na wrapped line, with a qualification.';
 assert.equal(resolveHighlightSelections(['A claim crosses'], wrappedSource, 'en', false, 'A claim crosses\n\na wrapped line, with a qualification.')[0].text, 'A claim crosses a wrapped line, with a qualification.', 'chunk boundaries do not shorten original source sentences');
 assert.equal(resolveHighlightSelections(['A claim crosses'], wrappedSource, 'en', false, 'A claim crosses')[0].status, 'source-unmatched', 'a sentence cut across chunks is not represented as a complete argument');

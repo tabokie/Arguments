@@ -85,14 +85,14 @@ export function initInstantRead({ chip, panel, barHost, button, fallback }) {
     const sw = mk('label', 'switch'); const cb = mk('input'); cb.type = 'checkbox'; cb.id = 'instantReadToggle'; cb.checked = on; cb.setAttribute('aria-label', T('Instant read'));
     cb.addEventListener('change', async () => { on = cb.checked; await reader.setInstant(on); if (!on) reader.stop(); paintChip(); });
     sw.append(cb, mk('span', 'slider-toggle')); head.append(sw); panel.append(head);
-    panel.append(mk('p', 'sr-note', T('Speaks the title and site first, then the summary sentence by sentence while the model writes.')));
+    panel.append(mk('p', 'sr-note', T("Speaks the title and site first, then the main output sentence by sentence while the model writes.")));
     const vol = mk('div', 'sr-vol'); const rg = mk('input'); rg.type = 'range'; rg.min = '0'; rg.max = '100'; rg.id = 'soundVolume'; rg.value = String(Math.round((prefs.volume >= 0 ? prefs.volume : 1) * 100)); rg.setAttribute('aria-label', T('Volume'));
     rg.addEventListener('change', () => reader.setVolume(Number(rg.value) / 100));
     vol.append(mk('span', '', '🔈'), rg, mk('span', '', '🔊')); panel.append(vol);
     const rates = mk('div', 'rt-rates');
     [0.8, 1, 1.25, 1.5].forEach((r) => { const x = mk('button', 'rt-rate-b' + ((prefs.rate || 1) === r ? ' is-on' : ''), r + '×'); x.type = 'button'; x.addEventListener('click', async () => { await reader.setRate(r); paintPanel(); }); rates.append(x); });
     panel.append(rates);
-    panel.append(mk('p', 'sr-note', v ? T('Voice: {voice} · {lang}. It follows the summary language; title and site are announced in the app language.', { voice: v.name, lang: name }) : T('No voice for {lang} is installed on this device.', { lang: name })));
+    panel.append(mk('p', 'sr-note', v ? T("Voice: {voice} · {lang}. It follows the main output language; title and site are announced in the app language.", { voice: v.name, lang: name }) : T('No voice for {lang} is installed on this device.', { lang: name })));
   }
 
   const ready_ = reader.ready.then(async (ok) => {
@@ -122,7 +122,7 @@ export function initInstantRead({ chip, panel, barHost, button, fallback }) {
     // The announcements are the extension's own texts: they follow the UI language of the extension (text and voice),
     // not the summary language. The title keeps the language it was detected in.
     if (host) units.push({ text: T('From {site}.', { site: host.replace(/^www\./, '') }), lang: ui });
-    units.push({ text: T('Writing a {n}-word summary…', { n: Number(ctx.length) || 200 }), lang: ui });
+    units.push({ text: T("Writing a {n}-word main output…", { n: Number(ctx.length) || 200 }), lang: ui });
     if (!active) return;   // cancelled while we were preparing
     await reader.start(units, ui, { open: true, meta: { tool: 'instant', lang: sumLang } });
   }

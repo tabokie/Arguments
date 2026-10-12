@@ -12,8 +12,7 @@ import { generateRollup, recapSig } from './feedAi.js';
 import { renderAnswer, renderInline } from './qaView.js';
 import { createRecapStatus } from './recapStatus.js';
 import { runningJob, trackJob, notifyReady } from './recapJobs.js';
-import { T, TN, locale, uiLocale } from './feedI18n.js';
-import { groupedLabels } from './topicConcepts.js';
+import { T, TN, locale } from './feedI18n.js';
 
 import { addDays, weekStart, monthStart, isoWeek } from './dateUtils.js';
 export { addDays, weekStart, monthStart, isoWeek };
@@ -87,21 +86,6 @@ export function coverage(scope, anchor, ctx) {
     return { have: days.filter(d => d.recap).length, of };
 }
 
-/** Mood split and top categories from the ratings the items already carry (no AI call). */
-export function tally(items, ctx, from, to, itemMood) {
-    const m = { pos: 0, neu: 0, neg: 0 }, cats = new Map();
-    items.forEach(i => {
-        if (!ctx.inSource(i)) return;
-        const d = ctx.startOfDay(i.published);
-        if (d < from || d > to) return;
-        const k = itemMood(i); if (k) m[k]++;
-        if (i.cat) cats.set(i.cat, (cats.get(i.cat) || 0) + 1);
-    });
-    const rated = m.pos + m.neu + m.neg;
-    const pct = (v) => rated ? Math.round(v * 100 / rated) : 0;
-    return { rated, pos: pct(m.pos), neu: pct(m.neu), neg: pct(m.neg), cats: [...cats].sort((a, b) => b[1] - a[1]).slice(0, 3) };
-}
-
 export function openRollup(scope, anchor, ctx) {
     const { el, btn } = ctx;
     const today = ctx.startOfDay(Date.now());
@@ -163,15 +147,8 @@ export function openRollup(scope, anchor, ctx) {
     const drawResult = (r, P) => {
         const stale = changedOf(r, P).length > 0;
         body.replaceChildren();
-        const chip = { pos: T('😊 Mostly positive'), neu: T('😐 Mixed'), neg: T('😟 Mostly heavy') }[r.mood] || T('😐 Mixed');
-        body.append(el('span', 'feed-recap-mood', chip));
         if (r.overview) { const ov = el('div', 'feed-recap-overview md-body'); renderAnswer(ov, r.overview); body.append(ov); }
         if (r.themes.length) { const ul = el('ul', 'feed-recap-themes'); r.themes.forEach(t => { const li = el('li'); renderInline(li, t); ul.append(li); }); body.append(ul); }
-        const tl = tally(ctx.getItems(), ctx, P.from, P.last, ctx.itemMood);
-        if (tl.rated) {
-            body.append(moodBar(el, tl));
-            if (tl.cats.length) body.append(el('p', 'feed-roll-mood', groupedLabels(tl.cats, uiLocale()).map(([c, n]) => `${c} ${n}`).join(' · ')));
-        }
         if (stale) body.append(el('p', 'feed-recap-stale', T('A source recap changed since this one was written — Refresh to include it.')));
         const row = el('div', 'feed-recap-actions');
         let armed = 0;
@@ -259,16 +236,4 @@ export function isStale(scope, anchor, ctx) {
     const cached = ctx.getRecaps()[rollKey(scope, start, ctx.source)];
     if (!cached || !cached.covered) return false;
     return buildParts(scope, start, ctx).parts.some(p => cached.covered[p.key] !== recapSig(p.recap));
-}
-
-/** Stacked green / yellow / red bar (positive / mixed / heavy) with a legend of percentages — no emoji to squint at. */
-export function moodBar(el, tl) {
-    const wrap = el('div', 'feed-mood-wrap');
-    const bar = el('div', 'feed-mood-bar small');
-    const parts = [['neg', tl.neg, T('😟 Mostly heavy')], ['neu', tl.neu, T('😐 Mixed')], ['pos', tl.pos, T('😊 Mostly positive')]];
-    parts.forEach(([k, v, label]) => { if (!v) return; const seg = el('span', 'feed-mood-seg ' + k); seg.style.flex = String(v); seg.title = `${label} ${v}%`; bar.append(seg); });
-    const legend = el('div', 'feed-mood-legend');
-    parts.forEach(([k, v, label]) => { const it = el('span', k); it.title = label; it.append(el('i'), document.createTextNode(`${v}%`)); legend.append(it); });
-    wrap.append(bar, legend);
-    return wrap;
 }

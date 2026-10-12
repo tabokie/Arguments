@@ -78,7 +78,7 @@ Object.defineProperty($('#feedOpmlInput'), 'files', { value: [file], configurabl
 change($('#feedOpmlInput')); await tick(120);
 const gamma = store['feeds:subs'].find(s => s.id && s.url === 'https://g/feed');
 assert.deepEqual(gamma.tags, ['News', 'Tech', 'Indie']); assert.deepEqual(store['feeds:subs'].find(s => s.url === 'https://l/feed').tags, []);
-assert.ok(!('folder' in store['feeds:subs'][0]), 'legacy folder migrated'); assert.ok(store['feeds:subs'].find(s => s.id === 's1').tags.includes('Dev'));
+assert.equal(store['feeds:subs'][0].folder, 'Dev', 'legacy metadata remains stored without reactivating filters'); assert.equal(store['feeds:subs'].find(s => s.id === 's1').tags, undefined);
 console.log('OPML folders import/export OK; subs:', store['feeds:subs'].length);
 // first-run when all removed
 for (const s of [...store['feeds:subs']]) { const c = $$('#feedSettingsRoot .feed-sub-card'); }

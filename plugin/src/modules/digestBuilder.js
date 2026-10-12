@@ -8,11 +8,9 @@
 //      exists. No new delivery code required.
 //   2. curateDigest() picks a good set of articles for that bundle
 //      automatically: recency + TF-IDF topical diversity (reusing the
-//      same index search/similar-articles already build) + an optional
-//      mood filter using the sentiment scorer.
+//      same index search/similar-articles already build).
 
 import { cosineSim } from './localSearch.js';
-import { sentiment as scoreSentiment } from './textMetrics.js';
 import { T, TN } from './feedI18n.js';
 import { markHighlights, renderAnnotationsHtml } from './annotationExporter.js';
 import { escapeHtml } from './textUtils.js';
@@ -60,7 +58,6 @@ export function buildMagazineArticle(articles, { title, includeContent = false, 
         summary: `${T('A bundle of {count}: {titles}', { count: TN(ordered.length, '{n} article', '{n} articles'), titles: ordered.map(a => a.title).filter(Boolean).slice(0, 5).join(', ') + (ordered.length > 5 ? '…' : '') })}`,
         url: '',
         timestamp: new Date().toISOString(),
-        tags: Array.from(new Set(ordered.flatMap(a => a.tags || []))).slice(0, 10),
         isMagazine: true,
         articleCount: ordered.length,
         sourceTimestamps: ordered.map(a => a.timestamp)
@@ -78,10 +75,6 @@ function recencyScore(article) {
  * Picks up to maxArticles articles for a personal digest.
  *   - Candidate pool: explicit "Save for Later" articles first, topped up
  *     with the most recent other saves if there aren't enough.
- *   - Optional mood filter ('positive' | 'neutral' | 'negative' | 'any'):
- *     scores sentiment only for the (capped) candidate pool, not the
- *     whole archive, and falls back to the unfiltered pool if the filter
- *     would leave too little to choose from.
  *   - Greedy MMR-style selection: pick the best-recency article, then
  *     repeatedly pick whichever remaining candidate maximizes
  *     (recency - diversityWeight * similarity to what's already picked),
@@ -90,9 +83,9 @@ function recencyScore(article) {
  *
  * @param {Array<object>} articles
  * @param {object|null} index - prebuilt TF-IDF index from localSearch.js
- * @param {{ maxArticles?: number, mood?: string, poolSize?: number }} opts
+ * @param {{ maxArticles?: number, poolSize?: number }} opts
  */
-export async function curateDigest(articles, index, { maxArticles = 5, mood = 'any', poolSize = 25 } = {}) {
+export async function curateDigest(articles, index, { maxArticles = 5, poolSize = 25 } = {}) {
     let pool = articles.filter(a => a.isDecision);
     if (pool.length < maxArticles) {
         const rest = articles
@@ -100,20 +93,9 @@ export async function curateDigest(articles, index, { maxArticles = 5, mood = 'a
             .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         pool = pool.concat(rest);
     }
-    pool = pool.slice(0, poolSize); // cap sentiment-scoring cost on large archives
+    pool = pool.slice(0, poolSize); // bound the candidate pool
 
-    let scoredPool = pool.map(a => ({ article: a, recency: recencyScore(a) }));
-
-    if (mood && mood !== 'any') {
-        const withMood = await Promise.all(scoredPool.map(async entry => {
-            const s = await scoreSentiment(entry.article.summary || entry.article.content || '');
-            return { ...entry, moodLabel: (s?.label || 'Neutral').toLowerCase() };
-        }));
-        const filtered = withMood.filter(e => e.moodLabel === mood.toLowerCase());
-        // If the filter is too strict to build a real digest, fall back
-        // rather than returning something tiny or empty.
-        scoredPool = filtered.length >= Math.min(3, maxArticles) ? filtered : withMood;
-    }
+    const scoredPool = pool.map(a => ({ article: a, recency: recencyScore(a) }));
 
     if (scoredPool.length === 0) return [];
 

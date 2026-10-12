@@ -17,7 +17,7 @@ export async function initPromptSettings(rootEl) {
         <textarea id="highlightPrompt" class="ps-text" rows="10" spellcheck="false">${esc(prompts.highlightPrompt)}</textarea>
       </div>
       <div class="ps-group">
-        <div class="ps-row"><label class="ps-label" for="prompt">${esc(T('Summary prompt'))}</label>
+        <div class="ps-row"><label class="ps-label" for="prompt">${esc(T('Main output prompt'))}</label>
           <button type="button" class="ps-link" data-reset="prompt">${esc(T('Reset to default'))}</button></div>
         <textarea id="prompt" class="ps-text" rows="7" spellcheck="false">${esc(prompts.summaryPrompt)}</textarea>
       </div>
@@ -26,10 +26,11 @@ export async function initPromptSettings(rootEl) {
     const summary = root.querySelector('#prompt');
     const status = root.querySelector('#promptSaveStatus');
     let timer;
+    let highlightMode = prompts.highlightPromptMode, mainMode = prompts.mainOutputPromptMode;
     flush = async () => {
         clearTimeout(timer);
         try {
-            await chrome.storage.sync.set({ highlightPrompt: highlight.value, prompt: summary.value, promptType: 'custom' });
+            await chrome.storage.sync.set({ highlightPrompt: highlightMode === 'custom' ? highlight.value : '', prompt: mainMode === 'custom' ? summary.value : '', highlightPromptMode: highlightMode, mainOutputPromptMode: mainMode });
             await chrome.storage.sync.remove(RETIRED_PROMPT_KEYS);
             status.textContent = T('Saved');
         } catch (error) {
@@ -38,17 +39,23 @@ export async function initPromptSettings(rootEl) {
         }
     };
     const save = () => flush().catch(() => {});
-    root.addEventListener('input', () => {
+    root.addEventListener('input', (event) => {
+        if (event.target === highlight) highlightMode = highlight.value.trim() ? 'custom' : 'default';
+        if (event.target === summary) mainMode = summary.value.trim() ? 'custom' : 'default';
         clearTimeout(timer);
         status.textContent = '';
         timer = setTimeout(save, 400);
     });
-    root.addEventListener('change', save);
+    root.addEventListener('change', (event) => {
+        if (event.target === highlight) highlightMode = highlight.value.trim() ? 'custom' : 'default';
+        if (event.target === summary) mainMode = summary.value.trim() ? 'custom' : 'default';
+        save();
+    });
     root.addEventListener('click', (event) => {
         const button = event.target.closest('[data-reset]');
         if (!button || !root.contains(button)) return;
-        if (button.dataset.reset === 'highlightPrompt') highlight.value = DEFAULT_HIGHLIGHT_PROMPT;
-        else summary.value = DEFAULT_SUMMARY_PROMPT;
+        if (button.dataset.reset === 'highlightPrompt') { highlight.value = DEFAULT_HIGHLIGHT_PROMPT; highlightMode = 'default'; }
+        else { summary.value = DEFAULT_SUMMARY_PROMPT; mainMode = 'default'; }
         save();
     });
 }

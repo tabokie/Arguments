@@ -20,49 +20,67 @@ function highlightFallbackSegments(text) {
   return segments;
 }
 
-function highlightSourceSentences(source, language, truncated) {
+function highlightSourceBlocks(source, language, truncated) {
   let segmenter;
   if (typeof Intl.Segmenter === 'function') {
     try { segmenter = new Intl.Segmenter(language || undefined, { granularity: 'sentence' }); }
     catch (_) { segmenter = new Intl.Segmenter(undefined, { granularity: 'sentence' }); }
   }
-  const sentences = [];
+  const blocks = [];
   // Double newlines separate source blocks. Single newlines inside a sentence are whitespace.
   for (const block of source.split(/\n[\t ]*\n+/u)) {
     const text = highlightNormalize(block);
     if (!text) continue;
     const parts = segmenter ? [...segmenter.segment(text)].map(part => part.segment) : highlightFallbackSegments(text);
     const blockSentences = [];
+    let offset = 0;
     for (const part of parts) {
       const sentence = highlightNormalize(part);
+      const start = offset + part.indexOf(sentence);
+      const end = start + sentence.length;
+      offset += part.length;
       if (!sentence) continue;
       const previous = blockSentences.at(-1);
-      if (previous && highlightAbbreviation.test(previous)) blockSentences[blockSentences.length - 1] += ' ' + sentence;
-      else blockSentences.push(sentence);
+      if (previous && highlightAbbreviation.test(text.slice(previous.start, previous.end))) previous.end = end;
+      else blockSentences.push({ start, end });
     }
-    sentences.push(...blockSentences);
+    blocks.push({ text, sentences: blockSentences });
   }
   // The input cap can cut the last sentence in half. Never highlight that fragment.
-  if (truncated && sentences.length && !highlightEnd.test(sentences.at(-1))) sentences.pop();
-  return [...new Set(sentences)];
+  const last = blocks.at(-1);
+  const tail = last?.sentences.at(-1);
+  if (truncated && tail && !highlightEnd.test(last.text.slice(tail.start, tail.end))) last.sentences.pop();
+  return blocks;
 }
 
 /** Keep source recovery failures alongside complete, unambiguous sentences. */
 export function resolveHighlightSelections(prefixes, sourceText, language, truncated = false, sourcePart) {
   if (!Array.isArray(prefixes)) return [{ text: '', status: 'invalid-response' }];
-  let sentences = highlightSourceSentences(String(sourceText || ''), language, truncated);
+  const blocks = highlightSourceBlocks(String(sourceText || ''), language, truncated);
   // A chunk selection must identify a complete original sentence actually present
   // in that chunk. Artificial split boundaries must never become sentence endings.
-  if (typeof sourcePart === 'string') {
-    const part = highlightNormalize(sourcePart);
-    sentences = sentences.filter(sentence => part.includes(sentence));
-  }
+  const part = typeof sourcePart === 'string' ? highlightNormalize(sourcePart) : null;
   const selected = [];
   for (const value of prefixes) {
     if (typeof value !== 'string') { selected.push({ text: '', status: 'invalid-response' }); continue; }
     const prefix = highlightNormalize(value);
     if (!prefix) { selected.push({ text: '', status: 'invalid-response' }); continue; }
-    const matches = sentences.filter(sentence => sentence.startsWith(prefix));
+    const found = new Set();
+    for (const block of blocks) {
+      const { sentences } = block;
+      for (let index = 0; index < sentences.length; index++) {
+        const { start, end } = sentences[index];
+        let text = block.text.slice(start, end);
+        if (!text.startsWith(prefix) && !prefix.startsWith(text)) continue;
+        // A model may copy a short opening sentence followed by part of the next.
+        // Recover every sentence touched by the prefix, without crossing source blocks.
+        for (let next = index + 1; text.length < prefix.length && next < sentences.length; next++) {
+          text = block.text.slice(start, sentences[next].end);
+        }
+        if (text.startsWith(prefix) && (part === null || part.includes(text))) found.add(text);
+      }
+    }
+    const matches = [...found];
     selected.push({ prefix, text: matches.length === 1 ? matches[0] : prefix,
       status: matches.length === 1 ? 'resolved' : matches.length ? 'source-ambiguous' : 'source-unmatched' });
   }

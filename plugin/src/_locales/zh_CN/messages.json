@@ -1,18 +1,18 @@
 {
   "extensionName": {
-    "message": "AI Summary Helper — Summarize, Ask, Listen & Cite (BYOK, Ollama)"
+    "message": "Arguments"
   },
   "extensionNameFirefox": {
-    "message": "AI Summary Helper – Summarize, Ask, Listen, Cite"
+    "message": "Arguments"
   },
   "extensionShortName": {
-    "message": "AI Summary Helper"
+    "message": "Arguments"
   },
   "extensionDescription": {
-    "message": "用自己的 AI 密钥或 Ollama 做摘要。内置 RSS 阅读器、稍后阅读、高亮、发送到 Kindle。开源，无需登录。"
+    "message": "Arguments 使用 AI 高亮网页中的论点，并发现新颖的见解。"
   },
   "fetchSummary": {
-    "message": "获取摘要"
+    "message": "获取主要输出"
   },
   "settings": {
     "message": "设置"
@@ -24,10 +24,10 @@
     "message": "赞助"
   },
   "noRecentSummaries": {
-    "message": "暂无近期摘要"
+    "message": "暂无近期主要输出"
   },
   "summarizePageToSee": {
-    "message": "总结页面后在此处查看"
+    "message": "主要输出页面后在此处查看"
   },
   "whatShouldAiFocus": {
     "message": "AI应该关注什么？"
@@ -36,16 +36,16 @@
     "message": "对这个页面提出具体问题…"
   },
   "summaryLanguage": {
-    "message": "摘要语言"
+    "message": "主要输出语言"
   },
   "searchLanguages": {
     "message": "搜索语言…"
   },
   "summaryLength": {
-    "message": "摘要长度"
+    "message": "主要输出长度"
   },
   "summaryMode": {
-    "message": "摘要模式"
+    "message": "主要输出模式"
   },
   "extension": {
     "message": "扩展程序"
@@ -90,13 +90,13 @@
     "message": "兼容工具"
   },
   "compatibleToolsDesc": {
-    "message": "与AI Summary Helper无缝集成、提升工作效率的扩展程序。"
+    "message": "与Arguments无缝集成、提升工作效率的扩展程序。"
   },
   "loadingTools": {
     "message": "正在加载工具…"
   },
   "navSummarize": {
-    "message": "摘要"
+    "message": "分析"
   },
   "navHistory": {
     "message": "历史记录"
@@ -117,13 +117,13 @@
     "message": "处理中…"
   },
   "summary": {
-    "message": "摘要"
+    "message": "主要输出"
   },
   "noTitleAvailable": {
     "message": "无可用标题"
   },
   "noSummaryAvailable": {
-    "message": "无可用摘要"
+    "message": "无可用主要输出"
   },
   "noContentAvailable": {
     "message": "无可用内容"
@@ -144,7 +144,7 @@
     "message": "🗑️ 删除"
   },
   "aiSummary": {
-    "message": "🧙 AI摘要"
+    "message": "🧙 AI主要输出"
   },
   "originalContent": {
     "message": "📄 原始内容"
@@ -159,10 +159,10 @@
     "message": "加载工具失败。"
   },
   "clickToInsert": {
-    "message": "点击要插入摘要的元素。"
+    "message": "点击要插入主要输出的元素。"
   },
   "fetchingSummary": {
-    "message": "正在获取摘要..."
+    "message": "正在获取主要输出..."
   },
   "openInSidebar": {
     "message": "在侧边栏打开"
@@ -303,7 +303,7 @@
     "message": "账户"
   },
   "settingsCapSummarizing": {
-    "message": "摘要"
+    "message": "主要输出"
   },
   "settingsCapReading": {
     "message": "阅读"
@@ -324,7 +324,7 @@
     "message": "查看分析报告"
   },
   "modelDesc": {
-    "message": "选择用于生成摘要的大语言模型。"
+    "message": "选择用于生成主要输出的大语言模型。"
   },
   "promptDesc": {
     "message": "自定义 AI 分析文本的方式。"
@@ -375,7 +375,7 @@
     "message": "AI 分类"
   },
   "f_ai_recap_of_this_day_d199": {
-    "message": "当日 AI 摘要"
+    "message": "当日 AI 主要输出"
   },
   "f_ai_request_failed_fc5f": {
     "message": "AI 请求失败"
@@ -384,7 +384,7 @@
     "message": "AI 评分失败"
   },
   "f_ai_generated_from_headlines__133f": {
-    "message": "AI 根据 {n} 条标题和摘要生成于 {time}，仅供参考。"
+    "message": "AI 根据 {n} 条标题和主要输出生成于 {time}，仅供参考。"
   },
   "f_ai_rated_heavy_news_8b78": {
     "message": "AI 评级：负面"
@@ -435,7 +435,7 @@
     "message": "后台脚本已过期，请在 chrome://extensions 重新加载扩展"
   },
   "f_batch_summarizing_runs_in_ex_386f": {
-    "message": "批量摘要仅限扩展模式，请在「摘要」页切换。"
+    "message": "批量主要输出仅限扩展模式，请在「主要输出」页切换。"
   },
   "f_behavior_a447": {
     "message": "行为"
@@ -486,7 +486,7 @@
     "message": "单集"
   },
   "f_everything_unread_is_already_a054": {
-    "message": "未读均已摘要"
+    "message": "未读均已主要输出"
   },
   "f_failed_c3d4": {
     "message": "失败"
@@ -531,7 +531,7 @@
     "message": "独立科技报道"
   },
   "f_items_you_open_or_summarize__a71f": {
-    "message": "打开或摘要的条目将移出未读"
+    "message": "打开或主要输出的条目将移出未读"
   },
   "f_last_7_days_d98f": {
     "message": "近 7 天"
@@ -561,7 +561,7 @@
     "message": "情绪（AI 已评 {r}/{n}）：😊 {p} · 😐 {m} · 😟 {g}"
   },
   "f_mood_comes_from_ai_scoring_o_411c": {
-    "message": "情绪仅来自 AI 评分；未评分的条目没有情绪，也不会被情绪筛选隐藏。点击评分时，标题和简短摘要会发送到你的 AI 连接。"
+    "message": "情绪仅来自 AI 评分；未评分的条目没有情绪，也不会被情绪筛选隐藏。点击评分时，标题和简短主要输出会发送到你的 AI 连接。"
   },
   "f_mood_d12b": {
     "message": "情绪 ↓"
@@ -582,7 +582,7 @@
     "message": "有新条目，刷新即可纳入。"
   },
   "f_new_posts_land_here_skim_sum_cf70": {
-    "message": "新文章汇集于此：浏览、摘要重点、清空其余。"
+    "message": "新文章汇集于此：浏览、主要输出重点、清空其余。"
   },
   "f_newer_f04a": {
     "message": "较新"
@@ -600,7 +600,7 @@
     "message": "还没有订阅。在下方添加，或导入 OPML 文件。"
   },
   "f_no_items_to_recap_here_a024": {
-    "message": "这里没有可摘要的条目。"
+    "message": "这里没有可主要输出的条目。"
   },
   "f_no_new_feeds_in_that_file_d161": {
     "message": "文件中没有新订阅"
@@ -672,10 +672,10 @@
     "message": "范围始于 {day}，点选结束日。"
   },
   "f_recap_copied_dc3c": {
-    "message": "已复制摘要"
+    "message": "已复制主要输出"
   },
   "f_recap_failed_6cfd": {
-    "message": "摘要失败"
+    "message": "主要输出失败"
   },
   "f_refresh_aad4": {
     "message": "刷新"
@@ -705,7 +705,7 @@
     "message": "跳转"
   },
   "f_sending_titles_and_short_sni_c7dd": {
-    "message": "正在向 AI 发送 {n} 条标题和简短摘要。"
+    "message": "正在向 AI 发送 {n} 条标题和简短主要输出。"
   },
   "f_show_all_items_7eb7": {
     "message": "显示全部"
@@ -729,7 +729,7 @@
     "message": "来源"
   },
   "f_starring_an_item_summarizes__7621": {
-    "message": "收藏后在后台标签页自动摘要"
+    "message": "收藏后在后台标签页自动主要输出"
   },
   "f_subscribed_to_c4c3": {
     "message": "已订阅 {name}"
@@ -744,19 +744,19 @@
     "message": "推荐"
   },
   "f_summarize_on_a_feed_item_fol_de8a": {
-    "message": "订阅条目上的「摘要」遵循摘要页所选模式（默认扩展）。收藏项始终保留。"
+    "message": "订阅条目上的「主要输出」遵循主要输出页所选模式（默认扩展）。收藏项始终保留。"
   },
   "f_summarized_415a": {
-    "message": "已摘要"
+    "message": "已主要输出"
   },
   "f_summarizing_in_the_backgroun_cfaa": {
-    "message": "后台摘要中，完成后见「摘要」和「历史」"
+    "message": "后台主要输出中，完成后见「主要输出」和「历史」"
   },
   "f_summarizing_the_open_tab_it__826e": {
-    "message": "正在摘要当前页，完成后见「摘要」和「历史」"
+    "message": "正在主要输出当前页，完成后见「主要输出」和「历史」"
   },
   "f_summarizing_in_the_backgroun_6f16": {
-    "message": "后台摘要 {n} 项，见「历史」"
+    "message": "后台主要输出 {n} 项，见「历史」"
   },
   "f_tags_a0c0": {
     "message": "标签"
@@ -765,7 +765,7 @@
     "message": "无法解析 AI 回复"
   },
   "f_the_ai_returned_an_empty_rec_894a": {
-    "message": "AI 返回了空摘要"
+    "message": "AI 返回了空主要输出"
   },
   "f_these_items_are_already_scor_391c": {
     "message": "这些条目已评分"
@@ -801,7 +801,7 @@
     "message": "昨天"
   },
   "f_you_have_a_saved_summary_of__14f8": {
-    "message": "已保存此页摘要"
+    "message": "已保存此页主要输出"
   },
   "f_your_feeds_stay_on_this_devi_3c13": {
     "message": "订阅仅保存在本设备。"
@@ -822,7 +822,7 @@
     "message": "{day}，{n} 项"
   },
   "f_recap_8d18": {
-    "message": "{label}摘要"
+    "message": "{label}主要输出"
   },
   "f_feed_d469": {
     "message": "{n} 个订阅"
@@ -894,28 +894,28 @@
     "message": "✓ 打开即标已读"
   },
   "f_summarized_68b9": {
-    "message": "✓ 已摘要"
+    "message": "✓ 已主要输出"
   },
   "f_ai_recap_of_today_72f6": {
-    "message": "✨  今日 AI 摘要"
+    "message": "✨  今日 AI 主要输出"
   },
   "f_auto_summarize_favorites_32af": {
-    "message": "✨ 自动摘要收藏"
+    "message": "✨ 自动主要输出收藏"
   },
   "f_recap_b8e8": {
-    "message": "✨ 摘要"
+    "message": "✨ 主要输出"
   },
   "f_summarize_570a": {
-    "message": "✨ 摘要"
+    "message": "✨ 主要输出"
   },
   "f_summarize_top_5_unread_d39d": {
-    "message": "✨ 摘要前 5 条未读"
+    "message": "✨ 主要输出前 5 条未读"
   },
   "f_writing_recap_fe02": {
-    "message": "✨ 生成摘要…"
+    "message": "✨ 生成主要输出…"
   },
   "f_view_summary_3c09": {
-    "message": "📄 查看摘要"
+    "message": "📄 查看主要输出"
   },
   "f_pick_a_day_or_range_dd71": {
     "message": "📅  选择日期或范围…"
@@ -972,10 +972,10 @@
     "message": "＋ 添加"
   },
   "f_darker_more_items_recap_done_8cca": {
-    "message": "颜色越深条目越多 · ✨ = 已总结 · 长按一天再点另一天可选范围"
+    "message": "颜色越深条目越多 · ✨ = 已主要输出 · 长按一天再点另一天可选范围"
   },
   "f_recap_done_b098": {
-    "message": "已总结"
+    "message": "已主要输出"
   },
   "f_podcasts_7c90": {
     "message": "播客"
@@ -1047,46 +1047,46 @@
     "message": "在同一次 AI 请求中为每条添加情绪和分类"
   },
   "f_rate_items_with_the_recap_6027": {
-    "message": "🤖 总结时同时评分"
+    "message": "🤖 主要输出时同时评分"
   },
   "f_nothing_new_since_this_recap_45c5": {
-    "message": "自上次总结后无新内容"
+    "message": "自上次主要输出后无新内容"
   },
   "f_sending_new_or_edited_titles_ba69": {
     "message": "正在向你的 AI 连接发送 {n} 个新增或修改的标题和简短摘录。"
   },
   "f_updating_recap_902a": {
-    "message": "✨ 正在更新总结…"
+    "message": "✨ 正在更新主要输出…"
   },
   "f_a_source_recap_changed_since_e89f": {
-    "message": "来源摘要已更改，刷新即可纳入。"
+    "message": "来源主要输出已更改，刷新即可纳入。"
   },
   "f_ai_recap_of_this_month_built_f4e6": {
-    "message": "本月 AI 摘要（基于周摘要和日摘要）"
+    "message": "本月 AI 主要输出（基于周主要输出和日主要输出）"
   },
   "f_ai_recap_of_this_week_built__86af": {
-    "message": "本周 AI 摘要（基于日摘要）"
+    "message": "本周 AI 主要输出（基于日主要输出）"
   },
   "f_built_from_your_day_recaps_i_2520": {
-    "message": "基于你的日摘要生成。已有日摘要的条目不会再次发送。"
+    "message": "基于你的日主要输出生成。已有日主要输出的条目不会再次发送。"
   },
   "f_built_from_recap_5b76": {
-    "message": "基于 {n} 条摘要"
+    "message": "基于 {n} 条主要输出"
   },
   "f_built_from_recaps_48df": {
-    "message": "基于 {n} 条摘要"
+    "message": "基于 {n} 条主要输出"
   },
   "f_cancel_ca3b": {
     "message": "取消"
   },
   "f_create_missing_day_recap_fir_2bd6": {
-    "message": "先创建 {n} 个缺失的日摘要"
+    "message": "先创建 {n} 个缺失的日主要输出"
   },
   "f_create_missing_day_recaps_fi_1cf7": {
-    "message": "先创建 {n} 个缺失的日摘要"
+    "message": "先创建 {n} 个缺失的日主要输出"
   },
   "f_creating_day_recaps_141a": {
-    "message": "正在创建日摘要… {a}/{b}"
+    "message": "正在创建日主要输出… {a}/{b}"
   },
   "f_generated_at_b0a6": {
     "message": "生成于 {time}"
@@ -1101,16 +1101,16 @@
     "message": "暂无可合并的内容。"
   },
   "f_recap_scope_40ec": {
-    "message": "摘要范围"
+    "message": "主要输出范围"
   },
   "f_sends_short_recaps_not_headl_27f5": {
-    "message": "发送 {n} 条短摘要，而非 {m} 个标题"
+    "message": "发送 {n} 条短主要输出，而非 {m} 个标题"
   },
   "f_skip_the_days_without_a_reca_9f80": {
-    "message": "跳过没有摘要的日子"
+    "message": "跳过没有主要输出的日子"
   },
   "f_week_recap_2446": {
-    "message": "周摘要"
+    "message": "周主要输出"
   },
   "f_week_c909": {
     "message": "第 {n} 周"
@@ -1119,25 +1119,25 @@
     "message": "缺失"
   },
   "f_no_recap_yet_d2d7": {
-    "message": "暂无摘要"
+    "message": "暂无主要输出"
   },
   "f_reused_af15": {
     "message": "已复用"
   },
   "f_of_days_have_a_recap_6aaa": {
-    "message": "{b} 天中有 {a} 天有摘要"
+    "message": "{b} 天中有 {a} 天有主要输出"
   },
   "f_day_recap_cb92": {
-    "message": "{n} 个日摘要"
+    "message": "{n} 个日主要输出"
   },
   "f_day_recaps_f333": {
-    "message": "{n} 个日摘要"
+    "message": "{n} 个日主要输出"
   },
   "f_without_recap_7d68": {
-    "message": "{n} 个无摘要"
+    "message": "{n} 个无主要输出"
   },
   "f_create_recap_88d6": {
-    "message": "✨ 创建摘要"
+    "message": "✨ 创建主要输出"
   },
   "f_feed_b245": {
     "message": "订阅"
@@ -1197,7 +1197,7 @@
     "message": "跳转到今天"
   },
   "f_nothing_rated_yet_write_a_re_c4ee": {
-    "message": "尚无评分 — 生成 ✨ 摘要即可为条目评分。"
+    "message": "尚无评分 — 生成 ✨ 主要输出即可为条目评分。"
   },
   "f_filter_e5fe": {
     "message": "‹ 筛选"
@@ -1242,16 +1242,16 @@
     "message": "还没有文章带有情绪 — 让 AI 来评分。"
   },
   "f_no_articles_yet_start_summar_b35e": {
-    "message": "还没有文章 — 总结网页即可查看分析！📖"
+    "message": "还没有文章 — 主要输出网页即可查看分析！📖"
   },
   "f_no_tags_found_add_tags_to_yo_6914": {
-    "message": "未找到标签。请为你的摘要添加标签！"
+    "message": "未找到标签。请为你的主要输出添加标签！"
   },
   "f_saved_79e4": {
     "message": "节省"
   },
   "f_with_summaries_5619": {
-    "message": "使用摘要"
+    "message": "使用主要输出"
   },
   "f_words_read_f576": {
     "message": "已读字数"
@@ -1290,7 +1290,7 @@
     "message": "设备"
   },
   "f_digest_of_summaries_5cea": {
-    "message": "{n} 篇摘要合集"
+    "message": "{n} 篇主要输出合集"
   },
   "f_free_tier_3_kindle_sends_inc_00a8": {
     "message": "免费版：包含 3 次 Kindle 发送。"
@@ -1317,7 +1317,7 @@
     "message": "合并为一份"
   },
   "f_only_summarized_articles_can_ce5a": {
-    "message": "只能发送已生成摘要的文章"
+    "message": "只能发送已生成主要输出的文章"
   },
   "f_open_settings_88b6": {
     "message": "打开设置"
@@ -1338,19 +1338,19 @@
     "message": "全选"
   },
   "f_select_summaries_2cad": {
-    "message": "选择摘要"
+    "message": "选择主要输出"
   },
   "f_select_summaries_to_send_741c": {
-    "message": "选择要发送的摘要"
+    "message": "选择要发送的主要输出"
   },
   "f_send_to_kindle_c8f1": {
     "message": "发送到 Kindle"
   },
   "f_send_summaries_c9c7": {
-    "message": "发送 {n} 篇摘要"
+    "message": "发送 {n} 篇主要输出"
   },
   "f_send_summary_164f": {
-    "message": "发送 {n} 篇摘要"
+    "message": "发送 {n} 篇主要输出"
   },
   "f_sending_to_kindle_8853": {
     "message": "正在发送到 Kindle…"
@@ -1398,10 +1398,10 @@
     "message": "已选 {n} 篇"
   },
   "f_summaries_7bdf": {
-    "message": "{n} 篇摘要"
+    "message": "{n} 篇主要输出"
   },
   "f_summary_0c47": {
-    "message": "{n} 篇摘要"
+    "message": "{n} 篇主要输出"
   },
   "f_send_to_kindle_dc46": {
     "message": "📚 发送到 Kindle"
@@ -1422,10 +1422,10 @@
     "message": "完整文章"
   },
   "f_summary_full_article_3f15": {
-    "message": "摘要 + 完整文章"
+    "message": "主要输出 + 完整文章"
   },
   "f_summary_only_bd43": {
-    "message": "仅摘要"
+    "message": "仅主要输出"
   },
   "f_also_automatic_opening_marks_1cdb": {
     "message": "也会自动更新：打开标为已读，发送标为已发送"
@@ -1446,10 +1446,10 @@
     "message": "标记为…"
   },
   "f_mark_summaries_as_8da6": {
-    "message": "将 {n} 篇摘要标记为…"
+    "message": "将 {n} 篇主要输出标记为…"
   },
   "f_mark_summary_as_4a0a": {
-    "message": "将 {n} 篇摘要标记为…"
+    "message": "将 {n} 篇主要输出标记为…"
   },
   "f_moves_them_to_archive_find_t_1076": {
     "message": "移入归档，之后随时可以在那里找到"
@@ -1659,7 +1659,7 @@
     "message": "UX 设计师梗"
   },
   "f_used_whenever_you_summarize__f213": {
-    "message": "在你总结网页或文章时使用。"
+    "message": "在你主要输出网页或文章时使用。"
   },
   "f_view_edit_bf74": {
     "message": "查看并编辑 ›"
@@ -1698,7 +1698,7 @@
     "message": "在 Chrome 应用店留个简短评价，能帮助更多人发现它。"
   },
   "f_enjoying_ai_summary_helper_75e7": {
-    "message": "喜欢 AI Summary Helper 吗？"
+    "message": "喜欢 Arguments 吗？"
   },
   "f_later_2b49": {
     "message": "稍后"
@@ -1752,7 +1752,7 @@
     "message": "其他"
   },
   "f_rates_the_tone_of_summaries__01bb": {
-    "message": "评估摘要和订阅内容的情绪倾向，用于情绪筛选、图表和来源分析。关闭后将隐藏所有情绪功能。"
+    "message": "评估主要输出和订阅内容的情绪倾向，用于情绪筛选、图表和来源分析。关闭后将隐藏所有情绪功能。"
   },
   "f_reading_339b": {
     "message": "阅读"
@@ -1869,7 +1869,7 @@
     "message": "导出时包含所有提问"
   },
   "f_last_summary_3355": {
-    "message": "上次摘要"
+    "message": "上次主要输出"
   },
   "f_model_is_thinking_3a56": {
     "message": "模型思考中"
@@ -1881,7 +1881,7 @@
     "message": "没有回答。"
   },
   "f_no_recent_summaries_03a5": {
-    "message": "暂无最近摘要"
+    "message": "暂无最近主要输出"
   },
   "f_nothing_new_since_this_recap_f9bc": {
     "message": "自上次回顾后没有新内容——重置会从头重写。"
@@ -1920,7 +1920,7 @@
     "message": "发送"
   },
   "f_send_summaries_96ab": {
-    "message": "发送摘要"
+    "message": "发送主要输出"
   },
   "f_sent_to_your_ai_connection_b919": {
     "message": "已发送到你的 AI 连接"
@@ -1938,13 +1938,13 @@
     "message": "启动中…"
   },
   "f_summarize_a_page_to_see_it_h_ceef": {
-    "message": "总结一个页面后会显示在这里"
+    "message": "主要输出一个页面后会显示在这里"
   },
   "f_summarize_this_page_b1c9": {
-    "message": "总结此页面"
+    "message": "主要输出此页面"
   },
   "f_summary_b5b3": {
-    "message": "摘要"
+    "message": "主要输出"
   },
   "f_that_is_the_maximum_per_reca_170d": {
     "message": "这是每次回顾的上限。想看全貌可用周或月回顾，或按订阅源筛选。"
@@ -1965,10 +1965,10 @@
     "message": "处理中…"
   },
   "f_writing_a_word_summary_dd5f": {
-    "message": "正在撰写 {n} 词的摘要…"
+    "message": "正在撰写 {n} 词的主要输出…"
   },
   "f_writing_the_summary_0fa6": {
-    "message": "正在撰写摘要…"
+    "message": "正在撰写主要输出…"
   },
   "f_your_focus_question_4df6": {
     "message": "你的重点问题"
@@ -2136,10 +2136,10 @@
     "message": "自动检测"
   },
   "f_auto_summarize_favorites_0e1f": {
-    "message": "自动总结收藏"
+    "message": "自动主要输出收藏"
   },
   "f_automatic_light_blue_quote_h_419c": {
-    "message": "根据摘要自动生成浅蓝色引文高亮"
+    "message": "根据主要输出自动生成浅蓝色引文高亮"
   },
   "f_backup_restored_successfully_8819": {
     "message": "备份已成功恢复！\n已导入 {n} 篇文章。\n\n扩展程序将立即重新加载。"
@@ -2391,7 +2391,7 @@
     "message": "免费试用模式"
   },
   "f_generate_a_bookmarklet_that__081e": {
-    "message": "生成一个可在任意浏览器中总结页面的书签小工具，包括无法运行扩展程序的 iOS/Android。它使用你的 byphil Cloud 登录状态。"
+    "message": "生成可在任意浏览器中分析网页的书签脚本，包括无法运行扩展的 iOS/Android。书签脚本使用你的 byphil Cloud 登录信息。"
   },
   "f_generate_237e": {
     "message": "生成 🎙️"
@@ -2460,7 +2460,7 @@
     "message": "密钥无效"
   },
   "f_invalid_backup_file_please_s_54f7": {
-    "message": "备份文件无效。请选择有效的 AI Summary Helper 导出文件。"
+    "message": "备份文件无效。请选择有效的 Arguments 导出文件。"
   },
   "f_invalid_code_4325": {
     "message": "验证码无效"
@@ -2613,10 +2613,10 @@
     "message": "没有与“{query}”匹配的设置。"
   },
   "f_no_summary_available_1155": {
-    "message": "暂无摘要"
+    "message": "暂无主要输出"
   },
   "f_no_summary_returned_5f75": {
-    "message": "未返回摘要。"
+    "message": "未返回主要输出。"
   },
   "f_no_title_available_2723": {
     "message": "暂无标题"
@@ -2670,7 +2670,7 @@
     "message": "面板"
   },
   "f_permanently_removes_all_summ_228d": {
-    "message": "永久删除所有摘要和归档。请先导出备份。"
+    "message": "永久删除所有主要输出和归档。请先导出备份。"
   },
   "f_persist_optional_29ce": {
     "message": "保留（可选）"
@@ -2883,7 +2883,7 @@
     "message": "通过邮箱登录 / 注册"
   },
   "f_sign_in_to_unlock_free_cloud_f976": {
-    "message": "登录即可使用免费云端模型并同步摘要，也可以使用自己的 API 密钥。"
+    "message": "登录即可使用免费云端模型并同步主要输出，也可以使用自己的 API 密钥。"
   },
   "f_signed_in_byphil_cloud_f9ba": {
     "message": "已登录 · byPhil Cloud"
@@ -2916,16 +2916,16 @@
     "message": "连接成功！🧙"
   },
   "f_summarizing_4c71": {
-    "message": "总结中..."
+    "message": "主要输出中..."
   },
   "f_summary_language_a8df": {
-    "message": "摘要语言"
+    "message": "输出语言"
   },
   "f_summary_length_2b31": {
-    "message": "摘要长度"
+    "message": "输出长度"
   },
   "f_summary_mode_5ce6": {
-    "message": "摘要模式"
+    "message": "分析显示方式"
   },
   "f_switch_graph_search_to_filte_7f9d": {
     "message": "将图谱搜索切换为筛选模式"
@@ -2949,7 +2949,7 @@
     "message": "这将从此设备永久删除{what}及归档，且无法撤销。"
   },
   "f_this_resets_every_preference_d3b3": {
-    "message": "这将重置此设备上的所有偏好设置、提示词和 API 密钥。你的摘要会保留。扩展程序将重新加载。"
+    "message": "这将重置此设备上的所有偏好设置、提示词和 API 密钥。你的主要输出会保留。扩展程序将重新加载。"
   },
   "f_this_will_invalidate_the_cur_4995": {
     "message": "这会使当前验证码失效。要继续吗？"
@@ -3006,7 +3006,7 @@
     "message": "视图：已高亮"
   },
   "f_welcome_to_ai_summary_helper_892e": {
-    "message": "欢迎使用 AI Summary Helper"
+    "message": "欢迎使用 Arguments"
   },
   "f_well_connected_1033": {
     "message": "关联紧密"
@@ -3024,7 +3024,7 @@
     "message": "赞助"
   },
   "f_all_summaries_c680": {
-    "message": "所有摘要"
+    "message": "所有主要输出"
   },
   "f_byphil_cloud_17f0": {
     "message": "byPhil Cloud"
@@ -3042,7 +3042,7 @@
     "message": "例如 gpt-5-mini、llama3.2"
   },
   "f_for_unlimited_zero_config_su_82c0": {
-    "message": "，享受无限量、零配置的摘要。"
+    "message": "，享受无限量、零配置的主要输出。"
   },
   "f_from_8075": {
     "message": "来自"
@@ -3078,7 +3078,7 @@
     "message": "到你的 Kindle 认可发件人列表 —"
   },
   "f_curated_from_your_ai_summary_4f55": {
-    "message": "{count}，精选自你的 AI Summary Helper 归档。"
+    "message": "{count}，精选自你的 Arguments 归档。"
   },
   "f_tone_f081": {
     "message": "{label}语气"
@@ -3132,7 +3132,7 @@
     "message": "— 欢迎"
   },
   "f_summarizing_2ba2": {
-    "message": "⏳ 总结中…"
+    "message": "⏳ 主要输出中…"
   },
   "f_settings_eb9e": {
     "message": "⚙️ 设置"
@@ -3207,7 +3207,7 @@
     "message": "🤖 AI 推荐的高亮"
   },
   "f_ai_summary_c72e": {
-    "message": "🧙 AI 摘要"
+    "message": "🧙 AI 主要输出"
   },
   "f_on_device_tools_d85a": {
     "message": "🧠 设备端工具"
@@ -3219,7 +3219,7 @@
     "message": "🪄 生成书签小工具"
   },
   "f_intro_skipped_the_digest_goe_15e9": {
-    "message": "已跳过开场白——摘要合集将不含开场白发送"
+    "message": "已跳过开场白——主要输出合集将不含开场白发送"
   },
   "f_ask_dafd": {
     "message": "💬 提问"
@@ -3285,7 +3285,7 @@
     "message": "🔎 关键信息"
   },
   "f_adds_each_summary_under_its__b17f": {
-    "message": "在每条参考文献下附上对应摘要"
+    "message": "在每条参考文献下附上对应主要输出"
   },
   "f_citation_lookup_failed_try_a_bb2e": {
     "message": "获取引用失败，请重试"
@@ -3309,7 +3309,7 @@
     "message": "获取引用"
   },
   "f_include_my_summaries_aadf": {
-    "message": "包含我的摘要"
+    "message": "包含我的主要输出"
   },
   "f_looking_up_citations_at_doi__563a": {
     "message": "正在 doi.org 查询引用，仅发送 DOI…"
@@ -3348,7 +3348,7 @@
     "message": "❝ 引用"
   },
   "f_attach_a_pdf_to_summarize_b6ff": {
-    "message": "附加 PDF 进行摘要"
+    "message": "附加 PDF 进行主要输出"
   },
   "f_could_not_read_this_pdf_f579": {
     "message": "无法读取此 PDF。"
@@ -3447,7 +3447,7 @@
     "message": "文字大小"
   },
   "f_the_quick_brown_fox_jumps_ov_fd42": {
-    "message": "The quick brown fox jumps over the lazy dog。摘要会使用此大小和行距。"
+    "message": "The quick brown fox jumps over the lazy dog。主要输出会使用此大小和行距。"
   },
   "f_your_system_already_asks_for_8b6f": {
     "message": "你的系统已要求减少动效，我们会一直遵循。"
@@ -3567,7 +3567,7 @@
     "message": "设为永久"
   },
   "f_new_summary_da1d": {
-    "message": "新建摘要"
+    "message": "新建主要输出"
   },
   "f_next_previous_card_c144": {
     "message": "下一张 / 上一张卡片"
@@ -3603,10 +3603,10 @@
     "message": "从“开始”菜单重新启动 Ollama，或在新的命令提示符窗口中以前台服务器方式运行："
   },
   "f_summarize_791a": {
-    "message": "摘要"
+    "message": "主要输出"
   },
   "f_summarize_send_e76b": {
-    "message": "摘要 / 发送"
+    "message": "主要输出 / 发送"
   },
   "f_switch_tab_793a": {
     "message": "切换标签页"
@@ -3714,7 +3714,7 @@
     "message": "回到顶部"
   },
   "f_speaks_the_title_and_site_fi_196b": {
-    "message": "先朗读标题和网站，然后在模型撰写时逐句朗读摘要。"
+    "message": "先朗读标题和网站，然后在模型撰写时逐句朗读主要输出。"
   },
   "f_start_097f": {
     "message": "开始"
@@ -3723,13 +3723,13 @@
     "message": "停止朗读"
   },
   "f_the_voice_follows_the_langua_55b1": {
-    "message": "语音跟随文本语言：德语文章的英文摘要用英语朗读，原文用德语朗读。"
+    "message": "语音跟随文本语言：德语文章的英文主要输出用英语朗读，原文用德语朗读。"
   },
   "f_voice_auto_8e1b": {
     "message": "语音 · 自动"
   },
   "f_voice_it_follows_the_summary_2f51": {
-    "message": "语音：{voice} · {lang}。跟随摘要语言；标题和网站使用应用语言播报。"
+    "message": "语音：{voice} · {lang}。跟随主要输出语言；标题和网站使用应用语言播报。"
   },
   "f_add_model_id_e_g_gemma4_e2b_127a": {
     "message": "添加模型 ID，例如 gemma4:e2b"
@@ -3753,10 +3753,10 @@
     "message": "输入验证码"
   },
   "f_free_cloud_models_and_your_s_71ce": {
-    "message": "免费云端模型，摘要同步到每台设备。也可以跳过，使用自己的 API 密钥。"
+    "message": "免费云端模型，主要输出同步到每台设备。也可以跳过，使用自己的 API 密钥。"
   },
   "f_sign_in_to_ai_summary_helper_d8be": {
-    "message": "登录 AI Summary Helper"
+    "message": "登录 Arguments"
   },
   "f_thinking_more_de1c": {
     "message": "继续思考中…"
@@ -3822,7 +3822,7 @@
     "message": "打开模型设置"
   },
   "f_queued_it_will_start_when_th_cd8f": {
-    "message": "已排队——当前摘要完成后开始"
+    "message": "已排队——当前主要输出完成后开始"
   },
   "f_queued_4ebe": {
     "message": "已排队：{title}"
@@ -3843,7 +3843,7 @@
     "message": "保存选项"
   },
   "f_saved_without_an_ai_summary__ff94": {
-    "message": "已保存，但没有 AI 摘要。打开页面并点按 ✨ 摘要即可添加。"
+    "message": "已保存，但没有 AI 主要输出。打开页面并点按 ✨ 主要输出即可添加。"
   },
   "f_search_installed_models_959b": {
     "message": "搜索已安装的模型…"
@@ -3855,13 +3855,13 @@
     "message": "无法保存此页面。"
   },
   "f_waiting_for_the_running_summ_1f1c": {
-    "message": "正在等待当前摘要——点击可从队列中移除"
+    "message": "正在等待当前主要输出——点击可从队列中移除"
   },
   "f_your_api_key_is_missing_or_w_264b": {
     "message": "你的 API 密钥缺失或被拒绝。请在设置中检查。"
   },
   "f_starts_when_the_current_summ_b50e": {
-    "message": "当前摘要完成后开始"
+    "message": "当前主要输出完成后开始"
   },
   "f_this_page_a108": {
     "message": "此页面"
@@ -3909,7 +3909,7 @@
     "message": "标准"
   },
   "f_summary_length_in_words_ab69": {
-    "message": "摘要长度（字数）"
+    "message": "主要输出长度（字数）"
   },
   "f_items_could_not_be_scored_31d6": {
     "message": "{n} 个条目无法评分"
@@ -4020,13 +4020,13 @@
     "message": "请求 {a}/{b}"
   },
   "f_runs_on_your_own_machine_wit_1728": {
-    "message": "使用 Ollama 在你自己的电脑上运行，不消耗 token，即使摘要当前使用的是其他模型。请保持此面板打开：关闭会暂停运行，重新开始会从中断处继续。只处理仍保存的条目（见“条目保留时间”）。今天的回顾在你打开时生成。"
+    "message": "使用 Ollama 在你自己的电脑上运行，不消耗 token，即使主要输出当前使用的是其他模型。请保持此面板打开：关闭会暂停运行，重新开始会从中断处继续。只处理仍保存的条目（见“条目保留时间”）。今天的回顾在你打开时生成。"
   },
   "f_sending_the_batch_to_ollama_ac2f": {
     "message": "正在将这一批发送给 Ollama…"
   },
   "f_not_your_active_summary_mode_78a8": {
-    "message": "不是你当前的摘要模型"
+    "message": "不是你当前的主要输出模型"
   },
   "f_left_db92": {
     "message": "还剩 {eta}"
@@ -4047,7 +4047,7 @@
     "message": "更新日志"
   },
   "f_how_should_ai_summary_helper_b4d7": {
-    "message": "让 AI Summary Helper 用什么来思考？"
+    "message": "让 Arguments 用什么来思考？"
   },
   "f_local_models_no_account_no_k_a783": {
     "message": "本地模型。无需账号、无需密钥，数据不会离开你的电脑。"
@@ -4062,7 +4062,7 @@
     "message": "OpenAI、Gemini、Mistral、DeepSeek 等。无需账号，密钥只保存在此设备上。"
   },
   "f_pick_one_you_can_change_it_a_a7d6": {
-    "message": "选择一种。你可以随时在模型设置中更改，在你总结页面之前不会发送任何内容。"
+    "message": "选择一种。你可以随时在模型设置中更改，在你主要输出页面之前不会发送任何内容。"
   },
   "f_privacy_policy_16ff": {
     "message": "隐私政策"
@@ -4071,10 +4071,10 @@
     "message": "安全政策"
   },
   "f_sign_in_with_your_email_no_a_5518": {
-    "message": "使用邮箱登录，无需 API 密钥。你的摘要会同步到所有设备。"
+    "message": "使用邮箱登录，无需 API 密钥。你的主要输出会同步到所有设备。"
   },
   "f_tip_press_on_any_page_to_sum_8aff": {
-    "message": "提示：在任意页面按 {key} 即可总结。"
+    "message": "提示：在任意页面按 {key} 即可主要输出。"
   },
   "f_free_cloud_models_3602": {
     "message": "☁️ 免费云端模型"
@@ -4107,10 +4107,10 @@
     "message": "Kindle 和 LocalSend 目标"
   },
   "f_permanently_removes_your_sum_782d": {
-    "message": "从此设备永久删除你的摘要、归档和高亮。设置和订阅会保留，除非你勾选它们。此操作无法撤销。"
+    "message": "从此设备永久删除你的主要输出、归档和高亮。设置和订阅会保留，除非你勾选它们。此操作无法撤销。"
   },
   "f_permanently_removes_your_sum_2de7": {
-    "message": "永久删除你的摘要、归档和高亮。设置和订阅会保留。请先导出备份。"
+    "message": "永久删除你的主要输出、归档和高亮。设置和订阅会保留。请先导出备份。"
   },
   "f_preferences_prompts_d7ac": {
     "message": "偏好设置和提示词"
@@ -4119,16 +4119,16 @@
     "message": "删除此扩展在此设备上存储的所有内容，并从头开始。此操作无法撤销。你在我们服务器上的账号不受影响：如需删除，请联系我们（见隐私政策）。"
   },
   "f_removes_everything_this_exte_b9a8": {
-    "message": "删除此扩展在此设备上存储的所有内容：摘要、高亮、订阅、密钥和设置。请先导出备份。"
+    "message": "删除此扩展在此设备上存储的所有内容：主要输出、高亮、订阅、密钥和设置。请先导出备份。"
   },
   "f_resets_preferences_prompts_a_02e0": {
-    "message": "重置此设备上的偏好设置、提示词、API 密钥、登录信息和发送目标。摘要、高亮和订阅会保留，除非你勾选它们。扩展将重新加载。"
+    "message": "重置此设备上的偏好设置、提示词、API 密钥、登录信息和发送目标。主要输出、高亮和订阅会保留，除非你勾选它们。扩展将重新加载。"
   },
   "f_resets_preferences_prompts_a_aab7": {
-    "message": "重置此设备上的偏好设置、提示词、API 密钥、登录信息和发送目标。摘要、高亮和订阅会保留。"
+    "message": "重置此设备上的偏好设置、提示词、API 密钥、登录信息和发送目标。主要输出、高亮和订阅会保留。"
   },
   "f_summaries_archive_b387": {
-    "message": "摘要和归档"
+    "message": "主要输出和归档"
   },
   "f_website_access_is_off_allow__f6c7": {
     "message": "网站访问已关闭。请在 about:addons → 此扩展 → 权限中允许“访问所有网站上的数据”，然后刷新。"
@@ -4335,7 +4335,7 @@
     "message": "无需账号。密钥只保存在此设备上。"
   },
   "f_pick_one_nothing_is_sent_unt_722b": {
-    "message": "请选择一种。在你总结页面之前不会发送任何内容。"
+    "message": "请选择一种。在你主要输出页面之前不会发送任何内容。"
   },
   "f_sign_in_with_your_email_no_a_b96b": {
     "message": "用邮箱登录，无需 API 密钥。"
@@ -4344,7 +4344,7 @@
     "message": "省心：只需邮箱，无需 API 密钥。同时也是在支持独立开发者。"
   },
   "f_pick_a_way_to_run_your_summa_5c59": {
-    "message": "选择运行摘要的方式。之后可随时在设置中更改。"
+    "message": "选择运行主要输出的方式。之后可随时在设置中更改。"
   },
   "f_back_to_top_bd70": {
     "message": "回到顶部"
@@ -4362,7 +4362,7 @@
     "message": "高亮提示词"
   },
   "f_summary_prompt_5157": {
-    "message": "摘要提示词"
+    "message": "主要输出提示词"
   },
   "f_reset_to_default_f7dc": {
     "message": "恢复默认"
@@ -4371,10 +4371,10 @@
     "message": "无法保存提示词。"
   },
   "f_highlight_and_summary_prompt_ef01": {
-    "message": "高亮和摘要提示词"
+    "message": "高亮和主要输出提示词"
   },
   "pagePromptsHint": {
-    "message": "高亮和摘要提示词"
+    "message": "高亮和主要输出提示词"
   },
   "highlightNotFound": {
     "message": "未在网页中找到"
@@ -4405,5 +4405,257 @@
   },
   "highlightInvalidResponse": {
     "message": "无法解析高亮结果"
+  },
+  "f_available_when_ollama_is_set_f9e0": {
+    "message": "配置 Ollama 后可用。在您的电脑上分小批次生成订阅库回顾。"
+  },
+  "f_creates_recaps_of_your_feed__0737": {
+    "message": "在您的电脑上分小批次生成订阅条目回顾。"
+  },
+  "f_edit_feeds_in_settings_6774": {
+    "message": "在设置中编辑订阅"
+  },
+  "f_every_stored_day_has_a_compl_5d0c": {
+    "message": "所有已存储日期都有完整回顾。"
+  },
+  "f_sources_rename_mute_713c": {
+    "message": "来源 · 重命名 · 静音"
+  },
+  "f_day_recaps_written_71f0": {
+    "message": "已生成 {b} 篇每日回顾",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_recapped_4012": {
+    "message": "已回顾 {b} 天",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_to_recap_ai_requests_f01d": {
+    "message": "待回顾 {b} 天 · {n} 次 AI 请求",
+    "description": "Placeholders: {b} {n} (keep as is)"
+  },
+  "f_manage_feeds_in_settings_a66f": {
+    "message": "⚙️  在设置中管理订阅  ›"
+  },
+  "f_main_output_prompt_c085": {
+    "message": "主要输出提示词"
+  },
+  "f_subscriptions_opml_697e": {
+    "message": "订阅 · OPML"
+  },
+  "f_backup_delete_5d95": {
+    "message": "备份 · 删除"
+  },
+  "f_no_articles_yet_start_analyz_01e3": {
+    "message": "还没有文章 — 主要输出网页即可查看分析！📖"
+  },
+  "f_with_results_f383": {
+    "message": "使用主要输出"
+  },
+  "f_analyze_a663": {
+    "message": "✨ 分析"
+  },
+  "f_analyzing_8bc5": {
+    "message": "⏳ 主要输出中…"
+  },
+  "f_saved_without_an_ai_main_out_a5cb": {
+    "message": "已保存，但没有 AI 主要输出。打开页面并点按 ✨ 主要输出即可添加。"
+  },
+  "f_no_main_output_available_2d4f": {
+    "message": "暂无主要输出"
+  },
+  "f_main_output_1742": {
+    "message": "🧙 AI 主要输出"
+  },
+  "f_sign_in_to_arguments_1d5c": {
+    "message": "登录 Arguments"
+  },
+  "f_free_cloud_models_and_your_r_153c": {
+    "message": "免费云端模型，主要输出同步到每台设备。也可以跳过，使用自己的 API 密钥。"
+  },
+  "f_writing_a_word_main_output_82b9": {
+    "message": "正在撰写 {n} 词的主要输出…"
+  },
+  "f_analyzed_7135": {
+    "message": "已主要输出"
+  },
+  "f_waiting_for_the_running_main_f4e2": {
+    "message": "正在等待当前主要输出——点击可从队列中移除"
+  },
+  "f_queued_it_will_start_when_th_31fd": {
+    "message": "已排队——当前主要输出完成后开始"
+  },
+  "f_analyzing_in_the_background__dd2a": {
+    "message": "后台主要输出中，完成后见「主要输出」和「历史」"
+  },
+  "f_new_posts_land_here_skim_ana_6e81": {
+    "message": "新文章汇集于此：浏览、主要输出重点、清空其余。"
+  },
+  "f_analyzed_f2f6": {
+    "message": "✓ 已主要输出"
+  },
+  "f_you_have_a_saved_main_output_fc8e": {
+    "message": "已保存此页主要输出"
+  },
+  "f_view_main_output_090b": {
+    "message": "📄 查看主要输出"
+  },
+  "f_not_your_active_main_output__ce26": {
+    "message": "不是你当前的主要输出模型"
+  },
+  "f_runs_on_your_own_machine_wit_290a": {
+    "message": "使用 Ollama 在你自己的电脑上运行，不消耗 token，即使主要输出当前使用的是其他模型。请保持此面板打开：关闭会暂停运行，重新开始会从中断处继续。只处理仍保存的条目（见“条目保留时间”）。今天的回顾在你打开时生成。"
+  },
+  "f_items_you_open_or_analyze_le_4138": {
+    "message": "打开或主要输出的条目将移出未读"
+  },
+  "f_auto_analyze_favorites_a662": {
+    "message": "✨ 自动主要输出收藏"
+  },
+  "f_analyze_on_a_feed_item_follo_6202": {
+    "message": "订阅条目上的「主要输出」遵循主要输出页所选模式（默认扩展）。收藏项始终保留。"
+  },
+  "f_speaks_the_title_and_site_fi_7a35": {
+    "message": "先朗读标题和网站，然后在模型撰写时逐句朗读主要输出。"
+  },
+  "f_voice_it_follows_the_main_ou_7f8f": {
+    "message": "语音：{voice} · {lang}。跟随主要输出语言；标题和网站使用应用语言播报。"
+  },
+  "f_main_output_length_in_words_bc0f": {
+    "message": "主要输出长度（字数）"
+  },
+  "f_attach_a_pdf_to_analyze_388e": {
+    "message": "附加 PDF 进行主要输出"
+  },
+  "f_no_recent_results_527f": {
+    "message": "暂无最近主要输出"
+  },
+  "f_analyze_a_page_to_see_it_her_a8ca": {
+    "message": "主要输出一个页面后会显示在这里"
+  },
+  "f_analyze_this_page_7fec": {
+    "message": "主要输出此页面"
+  },
+  "f_writing_the_main_output_cff0": {
+    "message": "正在撰写主要输出…"
+  },
+  "f_analyze_9f73": {
+    "message": "分析"
+  },
+  "f_starts_when_the_current_main_1a7c": {
+    "message": "当前主要输出完成后开始"
+  },
+  "f_pick_a_way_to_run_your_resul_269b": {
+    "message": "选择运行主要输出的方式。之后可随时在设置中更改。"
+  },
+  "f_tip_press_on_any_page_to_ana_0f1e": {
+    "message": "提示：在任意页面按 {key} 即可主要输出。"
+  },
+  "f_main_output_c815": {
+    "message": "主要输出"
+  },
+  "f_the_voice_follows_the_langua_d773": {
+    "message": "语音跟随文本语言：德语文章的英文主要输出用英语朗读，原文用德语朗读。"
+  },
+  "f_enjoying_arguments_991d": {
+    "message": "喜欢 Arguments 吗？"
+  },
+  "f_only_analyzed_articles_can_b_dfaf": {
+    "message": "只能发送已生成主要输出的文章"
+  },
+  "f_select_results_cac7": {
+    "message": "选择主要输出"
+  },
+  "f_send_results_0ecd": {
+    "message": "发送主要输出"
+  },
+  "f_send_main_output_fc91": {
+    "message": "发送 {n} 篇主要输出"
+  },
+  "f_send_results_f1a9": {
+    "message": "发送 {n} 篇主要输出"
+  },
+  "f_main_output_only_7011": {
+    "message": "仅主要输出"
+  },
+  "f_main_output_full_article_b1cb": {
+    "message": "主要输出 + 完整文章"
+  },
+  "f_main_output_db19": {
+    "message": "{n} 篇主要输出"
+  },
+  "f_results_eb81": {
+    "message": "{n} 篇主要输出"
+  },
+  "f_mark_main_output_as_bf44": {
+    "message": "将 {n} 篇主要输出标记为…"
+  },
+  "f_mark_results_as_6bf0": {
+    "message": "将 {n} 篇主要输出标记为…"
+  },
+  "f_digest_of_results_776c": {
+    "message": "{n} 篇主要输出合集"
+  },
+  "f_select_results_to_send_9cf2": {
+    "message": "选择要发送的主要输出"
+  },
+  "f_analyzing_cdca": {
+    "message": "主要输出中..."
+  },
+  "f_no_main_output_returned_3af7": {
+    "message": "未返回主要输出。"
+  },
+  "f_results_archive_73d9": {
+    "message": "主要输出和归档"
+  },
+  "f_resets_preferences_prompts_a_9142": {
+    "message": "重置此设备上的偏好设置、提示词、API 密钥、登录信息和发送目标。主要输出、高亮和订阅会保留，除非你勾选它们。扩展将重新加载。"
+  },
+  "f_permanently_removes_your_res_cd53": {
+    "message": "从此设备永久删除你的主要输出、归档和高亮。设置和订阅会保留，除非你勾选它们。此操作无法撤销。"
+  },
+  "f_invalid_backup_file_please_s_0b0d": {
+    "message": "备份文件无效。请选择有效的 Arguments 导出文件。"
+  },
+  "f_auto_analyze_favorites_3012": {
+    "message": "自动主要输出收藏"
+  },
+  "f_highlight_and_main_output_pr_49e7": {
+    "message": "高亮和主要输出提示词"
+  },
+  "f_analyze_send_e8ec": {
+    "message": "主要输出 / 发送"
+  },
+  "f_new_main_output_5b1f": {
+    "message": "新建主要输出"
+  },
+  "f_output_language_7616": {
+    "message": "输出语言"
+  },
+  "f_output_length_cc00": {
+    "message": "输出长度"
+  },
+  "f_analysis_display_a211": {
+    "message": "分析显示方式"
+  },
+  "f_automatic_light_blue_quote_h_cb6e": {
+    "message": "根据主要输出自动生成浅蓝色引文高亮"
+  },
+  "f_for_unlimited_zero_config_re_80ba": {
+    "message": "，享受无限量、零配置的主要输出。"
+  },
+  "f_the_quick_brown_fox_jumps_ov_22b0": {
+    "message": "The quick brown fox jumps over the lazy dog。主要输出会使用此大小和行距。"
+  },
+  "f_permanently_removes_your_res_12e9": {
+    "message": "永久删除你的主要输出、归档和高亮。设置和订阅会保留。请先导出备份。"
+  },
+  "f_removes_everything_this_exte_6b82": {
+    "message": "删除此扩展在此设备上存储的所有内容：主要输出、高亮、订阅、密钥和设置。请先导出备份。"
+  },
+  "f_resets_preferences_prompts_a_cfb1": {
+    "message": "重置此设备上的偏好设置、提示词、API 密钥、登录信息和发送目标。主要输出、高亮和订阅会保留。"
+  },
+  "f_generate_a_bookmarklet_that__658d": {
+    "message": "生成可在任意浏览器中分析网页的书签脚本，包括无法运行扩展的 iOS/Android。书签脚本使用你的 byphil Cloud 登录信息。"
   }
 }

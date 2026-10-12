@@ -16,10 +16,8 @@ store['articles:index'] = [art('a', ['Fußball', 'Wetter']), art('b', ['Fußball
 const sm = await imp('modules/settingsManager.js');
 await sm.initSettingsManager({ showToast() {}, showScreen() {} });
 await tick(50);
-const btn = w.document.getElementById('nameTagsButton'), out = w.document.getElementById('nameTagsResult');
-assert(btn && out, 'button exists');
-btn.click();
-for (let k = 0; k < 60 && !/Named|wrong|nothing to do/.test(out.textContent); k++) await tick(50);
-console.log('RESULT:', out.textContent, '| calls', calls.length);
-assert(/Named \d+ of \d+ tags/.test(out.textContent), 'finished with a result: ' + out.textContent);
-console.log('TEST 116 OK'); process.exit(0);
+assert(!w.document.getElementById('nameTagsButton') && !w.document.getElementById('cleanupTagsButton'));
+assert.equal(calls.length, 0);
+assert.deepEqual(store['articles:index'].map(article => article.tags), [['Fußball', 'Wetter'], ['Fußball', 'Wetter'], ['Wetter']], 'legacy tags remain stored');
+console.log('TEST 116 OK');
+w.close();

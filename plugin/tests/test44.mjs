@@ -17,7 +17,7 @@ const page = '<p>The committee voted on Tuesday to approve the new budget after 
 const raw = 'It was approved.\nSOURCES: "voted on Tuesday to approve the new budget" | "this sentence is invented by the model" | "Voted on Tuesday to approve the new budget"';
 const p = C.parseAnswer(raw, page);
 assert.equal(p.a, 'It was approved.'); assert.deepEqual(p.sources, ['voted on Tuesday to approve the new budget']);
-assert.deepEqual(C.parseAnswer('Just text', page), { a: 'Just text', sources: [], questions: [], quick: {} });
+assert.deepEqual(C.parseAnswer('Just text', page), { a: 'Just text', sources: [] });
 assert.deepEqual(C.parseSuggestions('Sure!\n["Who disagrees?", "What are the costs?", "ab", "Next steps for users?", "extra one here"]'), ['Who disagrees?', 'What are the costs?', 'Next steps for users?']);
 assert.deepEqual(C.parseSuggestions('no json'), []);
 
@@ -44,11 +44,11 @@ assert.equal(store['articles:rec:' + id].content, '<p>c</p>', 'record content un
 assert.equal((await SM.getArticleFull(id)).conversation.length, 2);
 assert(!(await SM.saveConversation('nope', [t1])));
 await SM.saveConversation(id, []); assert(!('qaCount' in store[SK.articlesIndex].find(a => a.id === id)));
-// suggested follow-up questions are kept with the article for later (and survive a turn being saved without them)
-assert(await SM.saveConversation(id, [t1], ['Who paid?', '', 'How long?']));
-assert.deepEqual(await SM.getSuggested(id), ['Who paid?', 'How long?']);
-await SM.saveConversation(id, [t1]); assert.deepEqual(await SM.getSuggested(id), ['Who paid?', 'How long?'], 'pool untouched when not passed');
-assert.deepEqual(await SM.getSuggested('nope'), []);
+// Legacy suggestion data is preserved, but no new suggestions are generated or saved.
+store['articles:rec:' + id].suggested = ['Legacy question?'];
+assert(await SM.saveConversation(id, [t1]));
+assert.deepEqual(store['articles:rec:' + id].suggested, ['Legacy question?']);
+assert(!('getSuggested' in SM));
 await SM.saveConversation(id, [t1, t2]);
 // the pinned question is part of the stored summary (and the index), the original is kept as summaryBase
 let rec = store['articles:rec:' + id]; let ix = store[SK.articlesIndex].find(a => a.id === id);

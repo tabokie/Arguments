@@ -24,8 +24,5 @@ const fm = await imp('modules/feedManager.js'); const ui = { showToast() {}, sho
 fm.initFeedManager(ui); await tick(50); await fm.onFeedsScreenShown(ui); await tick(50);
 assert.ok(/3 of 3 days have a recap/.test($('#feedRecapCard').textContent));
 assert.ok($('.feed-recap-stale'), 'stale shown on the card');
-const bar = $('#feedRecapCard .feed-mood-bar'); assert.ok(bar, 'mood bar on the week card');
-assert.deepEqual([...bar.children].map(c => c.className.replace('feed-mood-seg ', '')), ['neg', 'neu', 'pos'], 'red, yellow, green');
-const leg = $('#feedRecapCard .feed-mood-legend').textContent; assert.equal(leg, '50%25%25%', leg);
-assert.ok(!/😊 \d+%/.test($('#feedRecapCard').textContent), 'no emoji percent line');
+assert(!$('#feedRecapCard .feed-mood-bar') && !$('#feedRecapCard .feed-mood-legend'), 'legacy ratings do not produce mood controls');
 console.log('TEST 20 OK');

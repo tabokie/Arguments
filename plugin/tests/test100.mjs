@@ -27,13 +27,13 @@ assert(start, 'available although Ollama is not the active model: ' + card.textC
 start.click();
 for (let k = 0; k < 120 && !/Done\./.test(card.textContent); k++) await tick(50);
 assert(/Done\./.test(card.textContent), 'finished: ' + card.textContent);
-assert(services.length >= 6 && services.every(s => s === 'ollama'), 'every request is addressed to Ollama: ' + services);
-assert(heads.some(h => /Rating and categorizing: batch 1 of 3 · items 1–20 of 45/.test(h)), 'rating status names batch and items: ' + heads[0]);
+assert(services.length === 3 && services.every(s => s === 'ollama'), 'every request is addressed to Ollama: ' + services);
+assert(heads.every(h => !/Rating|Tagging/.test(h)), 'no metadata jobs');
 assert(heads.some(h => /Day recap 1 of 1 .*batch 2 of 3/.test(h)), 'recap status names day and batch: ' + heads.join(' | '));
-assert(texts.some(t => /Model: llama3\.2/.test(t) && /not your active summary model/.test(t)), 'names the model and that it is not the active one: ' + texts[0]);
-assert(texts.some(t => /Request \d+ of 7/.test(t) && /elapsed/.test(t)), 'totals line: ' + texts[0]);
-assert(heads.some(h => /Tagging feed 1 of 1/.test(h)), 'tagging status: ' + heads.join(' | '));
-assert.deepEqual(store['feeds:subs'][0].topics, ['Tech', 'News', 'Gadgets'], 'feed gets up to 3 topic tags');
-assert.equal(store['feeds:subs'][0].topicsLang, 'en');
-assert(store['feeds:items'].every(i => i.ai && i.cat === 'Tech'));
+assert(texts.some(t => /Model: llama3\.2/.test(t) && /not your active main output model/.test(t)), 'names the model and that it is not the active one: ' + texts[0]);
+assert(texts.some(t => /Request \d+ of 3/.test(t) && /elapsed/.test(t)), 'totals line: ' + texts[0]);
+
+assert(!store['feeds:subs'][0].topics, 'feed topic generation retired');
+
+assert(store['feeds:items'].every(i => !i.ai && !i.cat));
 console.log('TEST 100 OK'); process.exit(0);

@@ -16,9 +16,9 @@ const items = [
 const ctx = (recaps = {}) => ({ items, recaps, source: 'all', inSource: () => true, startOfDay, itemSig, today });
 
 let plan = planLibrary(ctx());
-assert.equal(plan.rate.length, 48, 'every unrated item, today included (rating is cheap)');
+assert.deepEqual(Object.keys(plan), ['days'], 'only recap work is planned');
 assert.deepEqual(plan.days.map(d => d.todo.length), [5, 45], 'oldest day first, today skipped');
-assert.equal(countRequests(plan, 20), 3 + 1 + 3, '48/20 rating batches + 1 + 3 recap batches');
+assert.equal(countRequests(plan, 20), 4, 'one older recap batch plus three yesterday batches');
 assert.deepEqual(chunksOf([1, 2, 3, 4, 5], 2), [[1, 2], [3, 4], [5]]);
 assert.equal(cleanBatchSize(20), 20); assert.equal(cleanBatchSize(7), 20); assert.equal(cleanBatchSize('40'), 40);
 
@@ -36,26 +36,24 @@ assert(!planLibrary(ctx({ [`${yDay}|all`]: { covered: full } })).days.some(d => 
 plan = planLibrary(ctx());
 const calls = [], progress = [];
 let out = await runLibrary(plan, 20, {
-    rateChunk: async (c) => { calls.push('rate' + c.length); if (calls.length === 2) throw new Error('unreadable reply'); },
-    recapDay: async (d) => { calls.push('recap' + d.todo.length); },
+    recapDay: async (d) => { calls.push('recap' + d.todo.length); if (calls.length === 1) throw new Error('unreadable reply'); },
     onProgress: (p) => progress.push(p),
 });
-assert.deepEqual(calls, ['rate20', 'rate20', 'rate8', 'recap5', 'recap45']);
-assert.equal(out.failed, 20, 'the failed batch is counted and the run goes on');
-assert.equal(out.rated, 28); assert.equal(out.recaps, 2); assert.equal(out.stopped, false);
+assert.deepEqual(calls, ['recap5', 'recap45']);
+assert.equal(out.failed, 1, 'the failed batch is counted and the run goes on');
+assert.equal(out.recaps, 1); assert.equal(out.stopped, false);
 assert.equal(progress.at(-1).doneRequests, progress.at(-1).totalRequests);
 
 // stop: the signal ends the run between batches, nothing after it runs
 const ctl = new AbortController(); const seen = [];
 out = await runLibrary(plan, 20, {
     signal: ctl.signal,
-    rateChunk: async (c) => { seen.push('rate'); ctl.abort(); },
-    recapDay: async () => { seen.push('recap'); },
+    recapDay: async () => { seen.push('recap'); ctl.abort(); },
 });
-assert.deepEqual(seen, ['rate']); assert.equal(out.stopped, true);
+assert.deepEqual(seen, ['recap']); assert.equal(out.stopped, true);
 // a cancelled request counts as a stop, not as a failure
 const ctl2 = new AbortController();
-out = await runLibrary(plan, 20, { signal: ctl2.signal, rateChunk: async () => { ctl2.abort(); throw Object.assign(new Error('x'), { cancelled: true }); }, recapDay: async () => {} });
+out = await runLibrary(plan, 20, { signal: ctl2.signal, recapDay: async () => { ctl2.abort(); throw Object.assign(new Error('x'), { cancelled: true }); } });
 assert.equal(out.failed, 0); assert.equal(out.stopped, true);
 
 const T = (s, v = {}) => s.replace(/\{(\w+)\}/g, (_, k) => v[k]);

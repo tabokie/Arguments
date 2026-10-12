@@ -1,18 +1,18 @@
 {
   "extensionName": {
-    "message": "AI Summary Helper — Summarize, Ask, Listen & Cite (BYOK, Ollama)"
+    "message": "Arguments"
   },
   "extensionNameFirefox": {
-    "message": "AI Summary Helper – Summarize, Ask, Listen, Cite"
+    "message": "Arguments"
   },
   "extensionShortName": {
-    "message": "AI Summary Helper"
+    "message": "Arguments"
   },
   "extensionDescription": {
-    "message": "Résumez avec votre clé IA ou Ollama. Lecteur RSS, lire plus tard, surlignage, envoi Kindle. Open source, sans compte."
+    "message": "Arguments utilise l’IA pour surligner les arguments et découvrir des idées nouvelles sur les pages web."
   },
   "fetchSummary": {
-    "message": "Obtenir le résumé"
+    "message": "Obtenir le sortie principale"
   },
   "settings": {
     "message": "Paramètres"
@@ -24,7 +24,7 @@
     "message": "Faire un don"
   },
   "noRecentSummaries": {
-    "message": "Aucun résumé récent"
+    "message": "Aucun sortie principale récent"
   },
   "summarizePageToSee": {
     "message": "Résumez une page pour la voir ici"
@@ -36,16 +36,16 @@
     "message": "Posez des questions spécifiques sur cette page…"
   },
   "summaryLanguage": {
-    "message": "Langue du résumé"
+    "message": "Langue du sortie principale"
   },
   "searchLanguages": {
     "message": "Rechercher des langues…"
   },
   "summaryLength": {
-    "message": "Longueur du résumé"
+    "message": "Longueur du sortie principale"
   },
   "summaryMode": {
-    "message": "Mode de résumé"
+    "message": "Mode de sortie principale"
   },
   "extension": {
     "message": "Extension"
@@ -96,7 +96,7 @@
     "message": "Chargement des outils…"
   },
   "navSummarize": {
-    "message": "Résumer"
+    "message": "Analyser"
   },
   "navHistory": {
     "message": "Historique"
@@ -117,13 +117,13 @@
     "message": "Traitement en cours…"
   },
   "summary": {
-    "message": "Résumé"
+    "message": "Sortie principale"
   },
   "noTitleAvailable": {
     "message": "Aucun titre disponible"
   },
   "noSummaryAvailable": {
-    "message": "Aucun résumé disponible"
+    "message": "Aucun sortie principale disponible"
   },
   "noContentAvailable": {
     "message": "Aucun contenu disponible"
@@ -144,7 +144,7 @@
     "message": "🗑️ Supprimer"
   },
   "aiSummary": {
-    "message": "🧙 Résumé IA"
+    "message": "🧙 sortie principale IA"
   },
   "originalContent": {
     "message": "📄 Contenu original"
@@ -159,10 +159,10 @@
     "message": "Échec du chargement des outils."
   },
   "clickToInsert": {
-    "message": "Cliquez sur l'élément où vous souhaitez insérer le résumé."
+    "message": "Cliquez sur l'élément où vous souhaitez insérer le sortie principale."
   },
   "fetchingSummary": {
-    "message": "Récupération du résumé..."
+    "message": "Récupération du sortie principale..."
   },
   "openInSidebar": {
     "message": "Ouvrir dans la barre latérale"
@@ -303,7 +303,7 @@
     "message": "COMPTE"
   },
   "settingsCapSummarizing": {
-    "message": "RÉSUMÉS"
+    "message": "résultats"
   },
   "settingsCapReading": {
     "message": "LECTURE"
@@ -324,7 +324,7 @@
     "message": "Afficher le rapport d’analyse"
   },
   "modelDesc": {
-    "message": "Choisissez le modèle de langage qui génère vos résumés."
+    "message": "Choisissez le modèle de langage qui génère vos résultats."
   },
   "promptDesc": {
     "message": "Personnalisez la façon dont l’IA analyse le texte."
@@ -375,7 +375,7 @@
     "message": "Catégorie IA"
   },
   "f_ai_recap_of_this_day_d199": {
-    "message": "Résumé IA de ce jour"
+    "message": "sortie principale IA de ce jour"
   },
   "f_ai_request_failed_fc5f": {
     "message": "Échec de la requête IA"
@@ -435,7 +435,7 @@
     "message": "Script d’arrière-plan obsolète : rechargez l’extension sur chrome://extensions"
   },
   "f_batch_summarizing_runs_in_ex_386f": {
-    "message": "Le résumé par lot fonctionne en mode extension. Changez-le dans Résumer."
+    "message": "Le sortie principale par lot fonctionne en mode extension. Changez-le dans Analyser."
   },
   "f_behavior_a447": {
     "message": "Comportement"
@@ -486,7 +486,7 @@
     "message": "Épisode"
   },
   "f_everything_unread_is_already_a054": {
-    "message": "Tout le non lu est déjà résumé"
+    "message": "Tout le non lu est déjà sortie principale"
   },
   "f_failed_c3d4": {
     "message": "Échec"
@@ -531,7 +531,7 @@
     "message": "Journalisme tech indépendant"
   },
   "f_items_you_open_or_summarize__a71f": {
-    "message": "Les éléments ouverts ou résumés quittent vos non lus"
+    "message": "Les éléments ouverts ou résultats quittent vos non lus"
   },
   "f_last_7_days_d98f": {
     "message": "7 derniers jours"
@@ -579,7 +579,7 @@
     "message": "Couper (hors Toutes les sources)"
   },
   "f_new_items_arrived_since_this_bb0f": {
-    "message": "Du nouveau depuis ce résumé : actualisez pour l’inclure."
+    "message": "Du nouveau depuis ce sortie principale : actualisez pour l’inclure."
   },
   "f_new_posts_land_here_skim_sum_cf70": {
     "message": "Les nouveaux articles arrivent ici. Parcourez, résumez l’essentiel, videz le reste."
@@ -600,7 +600,7 @@
     "message": "Aucun flux. Ajoutez-en un ci-dessous ou importez un fichier OPML."
   },
   "f_no_items_to_recap_here_a024": {
-    "message": "Rien à résumer ici."
+    "message": "Rien à analyser ici."
   },
   "f_no_new_feeds_in_that_file_d161": {
     "message": "Aucun nouveau flux dans ce fichier"
@@ -672,10 +672,10 @@
     "message": "La plage débute le {day} : touchez le dernier jour."
   },
   "f_recap_copied_dc3c": {
-    "message": "Résumé copié"
+    "message": "sortie principale copié"
   },
   "f_recap_failed_6cfd": {
-    "message": "Échec du résumé"
+    "message": "Échec du sortie principale"
   },
   "f_refresh_aad4": {
     "message": "Actualiser"
@@ -744,19 +744,19 @@
     "message": "Suggestions"
   },
   "f_summarize_on_a_feed_item_fol_de8a": {
-    "message": "Résumer sur un élément suit le mode choisi dans Résumer (extension par défaut). Les favoris sont toujours conservés."
+    "message": "Analyser sur un élément suit le mode choisi dans Analyser (extension par défaut). Les favoris sont toujours conservés."
   },
   "f_summarized_415a": {
-    "message": "Résumé"
+    "message": "sortie principale"
   },
   "f_summarizing_in_the_backgroun_cfaa": {
-    "message": "Résumé en arrière-plan : visible dans Résumer et Historique"
+    "message": "sortie principale en arrière-plan : visible dans Analyser et Historique"
   },
   "f_summarizing_the_open_tab_it__826e": {
-    "message": "Résumé de l’onglet ouvert : visible dans Résumer et Historique"
+    "message": "sortie principale de l’onglet ouvert : visible dans Analyser et Historique"
   },
   "f_summarizing_in_the_backgroun_6f16": {
-    "message": "Résumé de {n} en arrière-plan : voir Historique"
+    "message": "sortie principale de {n} en arrière-plan : voir Historique"
   },
   "f_tags_a0c0": {
     "message": "Tags"
@@ -765,7 +765,7 @@
     "message": "Réponse de l’IA illisible"
   },
   "f_the_ai_returned_an_empty_rec_894a": {
-    "message": "L’IA a renvoyé un résumé vide"
+    "message": "L’IA a renvoyé un sortie principale vide"
   },
   "f_these_items_are_already_scor_391c": {
     "message": "Ces éléments sont déjà évalués"
@@ -801,7 +801,7 @@
     "message": "Hier"
   },
   "f_you_have_a_saved_summary_of__14f8": {
-    "message": "Vous avez un résumé enregistré de cette page"
+    "message": "Vous avez un sortie principale enregistré de cette page"
   },
   "f_your_feeds_stay_on_this_devi_3c13": {
     "message": "Vos flux restent sur cet appareil."
@@ -822,7 +822,7 @@
     "message": "{day}, {n} éléments"
   },
   "f_recap_8d18": {
-    "message": "Résumé {label}"
+    "message": "sortie principale {label}"
   },
   "f_feed_d469": {
     "message": "{n} flux"
@@ -894,28 +894,28 @@
     "message": "✓ Marquer lu à l’ouverture"
   },
   "f_summarized_68b9": {
-    "message": "✓ Résumé"
+    "message": "✓ sortie principale"
   },
   "f_ai_recap_of_today_72f6": {
-    "message": "✨  Résumé IA du jour"
+    "message": "✨  sortie principale IA du jour"
   },
   "f_auto_summarize_favorites_32af": {
-    "message": "✨ Résumer les favoris auto"
+    "message": "✨ Analyser les favoris auto"
   },
   "f_recap_b8e8": {
-    "message": "✨ Résumé"
+    "message": "✨ sortie principale"
   },
   "f_summarize_570a": {
-    "message": "✨ Résumer"
+    "message": "✨ Analyser"
   },
   "f_summarize_top_5_unread_d39d": {
-    "message": "✨ Résumer les 5 non lus"
+    "message": "✨ Analyser les 5 non lus"
   },
   "f_writing_recap_fe02": {
-    "message": "✨ Rédaction du résumé…"
+    "message": "✨ Rédaction du sortie principale…"
   },
   "f_view_summary_3c09": {
-    "message": "📄 Voir le résumé"
+    "message": "📄 Voir le sortie principale"
   },
   "f_pick_a_day_or_range_dd71": {
     "message": "📅  Choisir un jour ou une plage…"
@@ -1068,7 +1068,7 @@
     "message": "Récap IA de cette semaine, à partir des récaps quotidiens"
   },
   "f_built_from_your_day_recaps_i_2520": {
-    "message": "À partir de vos récaps quotidiens. Les articles déjà résumés ne sont pas renvoyés."
+    "message": "À partir de vos récaps quotidiens. Les articles déjà résultats ne sont pas renvoyés."
   },
   "f_built_from_recap_5b76": {
     "message": "Basé sur {n} récap"
@@ -1197,7 +1197,7 @@
     "message": "Aller à aujourd’hui"
   },
   "f_nothing_rated_yet_write_a_re_c4ee": {
-    "message": "Rien n’est encore évalué — rédigez un ✨ Résumé pour évaluer les articles."
+    "message": "Rien n’est encore évalué — rédigez un ✨ sortie principale pour évaluer les articles."
   },
   "f_filter_e5fe": {
     "message": "‹ Filtre"
@@ -1245,13 +1245,13 @@
     "message": "Pas encore d’articles — résumez des pages pour voir vos statistiques ! 📖"
   },
   "f_no_tags_found_add_tags_to_yo_6914": {
-    "message": "Aucun tag trouvé. Ajoutez des tags à vos résumés !"
+    "message": "Aucun tag trouvé. Ajoutez des tags à vos résultats !"
   },
   "f_saved_79e4": {
     "message": "Gagné"
   },
   "f_with_summaries_5619": {
-    "message": "Avec résumés"
+    "message": "Avec résultats"
   },
   "f_words_read_f576": {
     "message": "Mots lus"
@@ -1290,7 +1290,7 @@
     "message": "Appareil"
   },
   "f_digest_of_summaries_5cea": {
-    "message": "Digest de {n} résumés"
+    "message": "Digest de {n} résultats"
   },
   "f_free_tier_3_kindle_sends_inc_00a8": {
     "message": "Offre gratuite : 3 envois Kindle inclus."
@@ -1317,7 +1317,7 @@
     "message": "Un seul digest"
   },
   "f_only_summarized_articles_can_ce5a": {
-    "message": "Seuls les articles résumés peuvent être envoyés"
+    "message": "Seuls les articles résultats peuvent être envoyés"
   },
   "f_open_settings_88b6": {
     "message": "Ouvrir les Réglages"
@@ -1338,19 +1338,19 @@
     "message": "Tout sélectionner"
   },
   "f_select_summaries_2cad": {
-    "message": "Sélectionner des résumés"
+    "message": "Sélectionner des résultats"
   },
   "f_select_summaries_to_send_741c": {
-    "message": "Sélectionner des résumés à envoyer"
+    "message": "Sélectionner des résultats à envoyer"
   },
   "f_send_to_kindle_c8f1": {
     "message": "Envoyer vers Kindle"
   },
   "f_send_summaries_c9c7": {
-    "message": "Envoyer {n} résumés"
+    "message": "Envoyer {n} résultats"
   },
   "f_send_summary_164f": {
-    "message": "Envoyer {n} résumé"
+    "message": "Envoyer {n} sortie principale"
   },
   "f_sending_to_kindle_8853": {
     "message": "Envoi vers Kindle…"
@@ -1398,10 +1398,10 @@
     "message": "{n} sélectionnés"
   },
   "f_summaries_7bdf": {
-    "message": "{n} résumés"
+    "message": "{n} résultats"
   },
   "f_summary_0c47": {
-    "message": "{n} résumé"
+    "message": "{n} sortie principale"
   },
   "f_send_to_kindle_dc46": {
     "message": "📚 Envoyer vers Kindle"
@@ -1422,10 +1422,10 @@
     "message": "Article complet"
   },
   "f_summary_full_article_3f15": {
-    "message": "Résumé + article complet"
+    "message": "sortie principale + article complet"
   },
   "f_summary_only_bd43": {
-    "message": "Résumé seul"
+    "message": "sortie principale seul"
   },
   "f_also_automatic_opening_marks_1cdb": {
     "message": "Aussi automatique : ouvrir marque Lu, envoyer marque Envoyé"
@@ -1446,10 +1446,10 @@
     "message": "Marquer comme…"
   },
   "f_mark_summaries_as_8da6": {
-    "message": "Marquer {n} résumés comme…"
+    "message": "Marquer {n} résultats comme…"
   },
   "f_mark_summary_as_4a0a": {
-    "message": "Marquer {n} résumé comme…"
+    "message": "Marquer {n} sortie principale comme…"
   },
   "f_moves_them_to_archive_find_t_1076": {
     "message": "Les déplace dans les Archives — retrouvez-les à tout moment"
@@ -1698,7 +1698,7 @@
     "message": "Un petit avis sur le Chrome Web Store aide d’autres personnes à la trouver."
   },
   "f_enjoying_ai_summary_helper_75e7": {
-    "message": "Vous aimez AI Summary Helper ?"
+    "message": "Vous aimez Arguments ?"
   },
   "f_later_2b49": {
     "message": "Plus tard"
@@ -1752,7 +1752,7 @@
     "message": "Autres"
   },
   "f_rates_the_tone_of_summaries__01bb": {
-    "message": "Évalue le ton des résumés et des éléments du flux. Alimente les filtres d’humeur, les graphiques et le bilan des sources. Désactivez pour masquer toutes les fonctions d’humeur."
+    "message": "Évalue le ton des résultats et des éléments du flux. Alimente les filtres d’humeur, les graphiques et le bilan des sources. Désactivez pour masquer toutes les fonctions d’humeur."
   },
   "f_reading_339b": {
     "message": "Lecture"
@@ -1869,7 +1869,7 @@
     "message": "Inclure toutes les questions dans les exports"
   },
   "f_last_summary_3355": {
-    "message": "Dernier résumé"
+    "message": "Dernier sortie principale"
   },
   "f_model_is_thinking_3a56": {
     "message": "Le modèle réfléchit"
@@ -1881,7 +1881,7 @@
     "message": "Aucune réponse."
   },
   "f_no_recent_summaries_03a5": {
-    "message": "Aucun résumé récent"
+    "message": "Aucun sortie principale récent"
   },
   "f_nothing_new_since_this_recap_f9bc": {
     "message": "Rien de nouveau depuis ce récapitulatif — Réinitialiser le réécrit à zéro."
@@ -1920,7 +1920,7 @@
     "message": "Envoyer"
   },
   "f_send_summaries_96ab": {
-    "message": "Envoyer les résumés"
+    "message": "Envoyer les résultats"
   },
   "f_sent_to_your_ai_connection_b919": {
     "message": "Envoyé à votre connexion IA"
@@ -1941,10 +1941,10 @@
     "message": "Résumez une page pour la voir ici"
   },
   "f_summarize_this_page_b1c9": {
-    "message": "Résumer cette page"
+    "message": "Analyser cette page"
   },
   "f_summary_b5b3": {
-    "message": "Résumé"
+    "message": "sortie principale"
   },
   "f_that_is_the_maximum_per_reca_170d": {
     "message": "C'est le maximum par récapitulatif. Utilisez le récap hebdo ou mensuel pour une vue d'ensemble, ou filtrez par flux."
@@ -1965,10 +1965,10 @@
     "message": "En cours…"
   },
   "f_writing_a_word_summary_dd5f": {
-    "message": "Rédaction d'un résumé de {n} mots…"
+    "message": "Rédaction d'un sortie principale de {n} mots…"
   },
   "f_writing_the_summary_0fa6": {
-    "message": "Rédaction du résumé…"
+    "message": "Rédaction du sortie principale…"
   },
   "f_your_focus_question_4df6": {
     "message": "Votre question de focus"
@@ -2136,10 +2136,10 @@
     "message": "Détection auto"
   },
   "f_auto_summarize_favorites_0e1f": {
-    "message": "Résumer auto les favoris"
+    "message": "Analyser auto les favoris"
   },
   "f_automatic_light_blue_quote_h_419c": {
-    "message": "Citations surlignées en bleu clair automatiquement à partir des résumés"
+    "message": "Citations surlignées en bleu clair automatiquement à partir des résultats"
   },
   "f_backup_restored_successfully_8819": {
     "message": "Sauvegarde restaurée avec succès !\n{n} articles importés.\n\nL’extension va maintenant se recharger."
@@ -2391,7 +2391,7 @@
     "message": "Mode d’essai gratuit"
   },
   "f_generate_a_bookmarklet_that__081e": {
-    "message": "Générez un bookmarklet qui résume n’importe quelle page dans n’importe quel navigateur, y compris sur iOS/Android où l’extension ne fonctionne pas. Il utilise votre connexion byphil Cloud."
+    "message": "Créez un bookmarklet qui analyse toute page dans tout navigateur, y compris sur iOS/Android où l’extension ne fonctionne pas. Il utilise votre connexion à byphil Cloud."
   },
   "f_generate_237e": {
     "message": "Générer 🎙️"
@@ -2460,7 +2460,7 @@
     "message": "Clé invalide"
   },
   "f_invalid_backup_file_please_s_54f7": {
-    "message": "Fichier de sauvegarde invalide. Sélectionnez un export AI Summary Helper valide."
+    "message": "Fichier de sauvegarde invalide. Sélectionnez un export Arguments valide."
   },
   "f_invalid_code_4325": {
     "message": "Code invalide"
@@ -2613,10 +2613,10 @@
     "message": "Aucun réglage ne correspond à « {query} »."
   },
   "f_no_summary_available_1155": {
-    "message": "Aucun résumé disponible"
+    "message": "Aucun sortie principale disponible"
   },
   "f_no_summary_returned_5f75": {
-    "message": "Aucun résumé reçu."
+    "message": "Aucun sortie principale reçu."
   },
   "f_no_title_available_2723": {
     "message": "Aucun titre disponible"
@@ -2670,7 +2670,7 @@
     "message": "Panneau"
   },
   "f_permanently_removes_all_summ_228d": {
-    "message": "Supprime définitivement tous les résumés et l’archive. Exportez d’abord une sauvegarde."
+    "message": "Supprime définitivement tous les résultats et l’archive. Exportez d’abord une sauvegarde."
   },
   "f_persist_optional_29ce": {
     "message": "Conserver (facultatif)"
@@ -2883,7 +2883,7 @@
     "message": "Se connecter / s’inscrire par e-mail"
   },
   "f_sign_in_to_unlock_free_cloud_f976": {
-    "message": "Connectez-vous pour débloquer les modèles cloud gratuits et synchroniser vos résumés, ou utilisez vos propres clés API."
+    "message": "Connectez-vous pour débloquer les modèles cloud gratuits et synchroniser vos résultats, ou utilisez vos propres clés API."
   },
   "f_signed_in_byphil_cloud_f9ba": {
     "message": "Connecté · byPhil Cloud"
@@ -2916,16 +2916,16 @@
     "message": "Connexion réussie ! 🧙"
   },
   "f_summarizing_4c71": {
-    "message": "Résumé en cours..."
+    "message": "sortie principale en cours..."
   },
   "f_summary_language_a8df": {
-    "message": "Langue du résumé"
+    "message": "Langue de sortie"
   },
   "f_summary_length_2b31": {
-    "message": "Longueur du résumé"
+    "message": "Longueur de sortie"
   },
   "f_summary_mode_5ce6": {
-    "message": "Mode de résumé"
+    "message": "Affichage de l’analyse"
   },
   "f_switch_graph_search_to_filte_7f9d": {
     "message": "Passer la recherche du graphe en mode filtre"
@@ -2949,7 +2949,7 @@
     "message": "Cela supprime définitivement {what} et l’archive de cet appareil. Cette action est irréversible."
   },
   "f_this_resets_every_preference_d3b3": {
-    "message": "Cela réinitialise tous les réglages, prompts et clés API sur cet appareil. Vos résumés sont conservés. L’extension va se recharger."
+    "message": "Cela réinitialise tous les réglages, prompts et clés API sur cet appareil. Vos résultats sont conservés. L’extension va se recharger."
   },
   "f_this_will_invalidate_the_cur_4995": {
     "message": "Le code actuel sera invalidé. Continuer ?"
@@ -3006,7 +3006,7 @@
     "message": "Vue : surlignée"
   },
   "f_welcome_to_ai_summary_helper_892e": {
-    "message": "Bienvenue dans AI Summary Helper"
+    "message": "Bienvenue dans Arguments"
   },
   "f_well_connected_1033": {
     "message": "Bien connecté"
@@ -3024,7 +3024,7 @@
     "message": "un don"
   },
   "f_all_summaries_c680": {
-    "message": "tous les résumés"
+    "message": "tous les résultats"
   },
   "f_byphil_cloud_17f0": {
     "message": "byPhil Cloud"
@@ -3042,7 +3042,7 @@
     "message": "p. ex. gpt-5-mini, llama3.2"
   },
   "f_for_unlimited_zero_config_su_82c0": {
-    "message": "pour des résumés illimités sans configuration."
+    "message": "pour des résultats illimités sans configuration."
   },
   "f_from_8075": {
     "message": "de"
@@ -3078,7 +3078,7 @@
     "message": "aux expéditeurs approuvés de votre Kindle —"
   },
   "f_curated_from_your_ai_summary_4f55": {
-    "message": "{count}, sélectionnés dans votre archive AI Summary Helper."
+    "message": "{count}, sélectionnés dans votre archive Arguments."
   },
   "f_tone_f081": {
     "message": "Ton {label}"
@@ -3132,7 +3132,7 @@
     "message": "— N’hésitez pas à"
   },
   "f_summarizing_2ba2": {
-    "message": "⏳ Résumé en cours…"
+    "message": "⏳ sortie principale en cours…"
   },
   "f_settings_eb9e": {
     "message": "⚙️ Réglages"
@@ -3207,7 +3207,7 @@
     "message": "🤖 Surlignages suggérés par l’IA"
   },
   "f_ai_summary_c72e": {
-    "message": "🧙 Résumé IA"
+    "message": "🧙 sortie principale IA"
   },
   "f_on_device_tools_d85a": {
     "message": "🧠 Outils sur l’appareil"
@@ -3285,7 +3285,7 @@
     "message": "🔎 Points clés"
   },
   "f_adds_each_summary_under_its__b17f": {
-    "message": "Ajoute chaque résumé sous sa référence"
+    "message": "Ajoute chaque sortie principale sous sa référence"
   },
   "f_citation_lookup_failed_try_a_bb2e": {
     "message": "Échec de la recherche de citation — réessayez"
@@ -3309,7 +3309,7 @@
     "message": "Obtenir la citation"
   },
   "f_include_my_summaries_aadf": {
-    "message": "Inclure mes résumés"
+    "message": "Inclure mes résultats"
   },
   "f_looking_up_citations_at_doi__563a": {
     "message": "Recherche des citations sur doi.org — seuls les DOI sont envoyés…"
@@ -3348,7 +3348,7 @@
     "message": "❝ Citer"
   },
   "f_attach_a_pdf_to_summarize_b6ff": {
-    "message": "Joindre un PDF à résumer"
+    "message": "Joindre un PDF à analyser"
   },
   "f_could_not_read_this_pdf_f579": {
     "message": "Impossible de lire ce PDF."
@@ -3447,7 +3447,7 @@
     "message": "Taille du texte"
   },
   "f_the_quick_brown_fox_jumps_ov_fd42": {
-    "message": "Portez ce vieux whisky au juge blond qui fume. Les résumés utilisent cette taille et cet espacement."
+    "message": "Portez ce vieux whisky au juge blond qui fume. Les résultats utilisent cette taille et cet espacement."
   },
   "f_your_system_already_asks_for_8b6f": {
     "message": "Votre système demande déjà moins d'animations : c'est toujours respecté."
@@ -3567,7 +3567,7 @@
     "message": "Le rendre permanent"
   },
   "f_new_summary_da1d": {
-    "message": "Nouveau résumé"
+    "message": "Nouveau sortie principale"
   },
   "f_next_previous_card_c144": {
     "message": "Carte suivante / précédente"
@@ -3603,10 +3603,10 @@
     "message": "Relancez Ollama depuis le menu Démarrer, ou lancez-le comme serveur au premier plan dans une nouvelle fenêtre d’invite de commandes :"
   },
   "f_summarize_791a": {
-    "message": "Résumer"
+    "message": "Analyser"
   },
   "f_summarize_send_e76b": {
-    "message": "Résumer / envoyer"
+    "message": "Analyser / envoyer"
   },
   "f_switch_tab_793a": {
     "message": "Changer d’onglet"
@@ -3714,7 +3714,7 @@
     "message": "Haut de page"
   },
   "f_speaks_the_title_and_site_fi_196b": {
-    "message": "Annonce d'abord le titre et le site, puis lit le résumé phrase par phrase pendant que le modèle écrit."
+    "message": "Annonce d'abord le titre et le site, puis lit le sortie principale phrase par phrase pendant que le modèle écrit."
   },
   "f_start_097f": {
     "message": "Démarrer"
@@ -3723,13 +3723,13 @@
     "message": "Arrêter la lecture"
   },
   "f_the_voice_follows_the_langua_55b1": {
-    "message": "La voix suit la langue du texte : un résumé anglais d'un article allemand est lu en anglais, l'original en allemand."
+    "message": "La voix suit la langue du texte : un sortie principale anglais d'un article allemand est lu en anglais, l'original en allemand."
   },
   "f_voice_auto_8e1b": {
     "message": "Voix · auto"
   },
   "f_voice_it_follows_the_summary_2f51": {
-    "message": "Voix : {voice} · {lang}. Elle suit la langue du résumé ; le titre et le site sont annoncés dans la langue de l'app."
+    "message": "Voix : {voice} · {lang}. Elle suit la langue du sortie principale ; le titre et le site sont annoncés dans la langue de l'app."
   },
   "f_add_model_id_e_g_gemma4_e2b_127a": {
     "message": "Ajouter un ID de modèle, p. ex. gemma4:e2b"
@@ -3753,10 +3753,10 @@
     "message": "Saisissez votre code"
   },
   "f_free_cloud_models_and_your_s_71ce": {
-    "message": "Modèles cloud gratuits et vos résumés sur tous vos appareils. Ou passez cette étape et utilisez votre propre clé API."
+    "message": "Modèles cloud gratuits et vos résultats sur tous vos appareils. Ou passez cette étape et utilisez votre propre clé API."
   },
   "f_sign_in_to_ai_summary_helper_d8be": {
-    "message": "Connectez-vous à AI Summary Helper"
+    "message": "Connectez-vous à Arguments"
   },
   "f_thinking_more_de1c": {
     "message": "Je réfléchis davantage…"
@@ -3822,7 +3822,7 @@
     "message": "Ouvrir les réglages des modèles"
   },
   "f_queued_it_will_start_when_th_cd8f": {
-    "message": "En attente — démarrera à la fin du résumé en cours"
+    "message": "En attente — démarrera à la fin du sortie principale en cours"
   },
   "f_queued_4ebe": {
     "message": "En attente : {title}"
@@ -3843,7 +3843,7 @@
     "message": "Options d’enregistrement"
   },
   "f_saved_without_an_ai_summary__ff94": {
-    "message": "Enregistré sans résumé IA. Ouvrez la page et touchez ✨ Résumer pour en ajouter un."
+    "message": "Enregistré sans sortie principale IA. Ouvrez la page et touchez ✨ Analyser pour en ajouter un."
   },
   "f_search_installed_models_959b": {
     "message": "Rechercher parmi les modèles installés…"
@@ -3855,13 +3855,13 @@
     "message": "Cette page ne peut pas être enregistrée."
   },
   "f_waiting_for_the_running_summ_1f1c": {
-    "message": "En attente du résumé en cours — cliquez pour retirer de la file"
+    "message": "En attente du sortie principale en cours — cliquez pour retirer de la file"
   },
   "f_your_api_key_is_missing_or_w_264b": {
     "message": "Votre clé API est absente ou a été refusée. Vérifiez-la dans les réglages."
   },
   "f_starts_when_the_current_summ_b50e": {
-    "message": "démarre à la fin du résumé en cours"
+    "message": "démarre à la fin du sortie principale en cours"
   },
   "f_this_page_a108": {
     "message": "cette page"
@@ -3909,7 +3909,7 @@
     "message": "Standard"
   },
   "f_summary_length_in_words_ab69": {
-    "message": "Longueur du résumé en mots"
+    "message": "Longueur du sortie principale en mots"
   },
   "f_items_could_not_be_scored_31d6": {
     "message": "{n} éléments n’ont pas pu être évalués"
@@ -3927,7 +3927,7 @@
     "message": "Terminé."
   },
   "f_everything_in_your_library_i_47fb": {
-    "message": "Tout dans votre bibliothèque est évalué, catégorisé et résumé."
+    "message": "Tout dans votre bibliothèque est évalué, catégorisé et sortie principale."
   },
   "f_process_the_whole_library_e3a9": {
     "message": "Traiter toute la bibliothèque"
@@ -3936,7 +3936,7 @@
     "message": "Évaluation et catégorisation…"
   },
   "f_runs_on_your_own_machine_wit_7a25": {
-    "message": "Fonctionne sur votre propre machine avec Ollama et ne dépense aucun jeton. Gardez ce panneau ouvert : le fermer met l’exécution en pause, et la relancer reprend là où elle s’est arrêtée. Seuls les éléments encore stockés sont traités (voir « Conserver les éléments »). Le résumé du jour est écrit quand vous l’ouvrez."
+    "message": "Fonctionne sur votre propre machine avec Ollama et ne dépense aucun jeton. Gardez ce panneau ouvert : le fermer met l’exécution en pause, et la relancer reprend là où elle s’est arrêtée. Seuls les éléments encore stockés sont traités (voir « Conserver les éléments »). Le sortie principale du jour est écrit quand vous l’ouvrez."
   },
   "f_stop_7705": {
     "message": "Arrêter"
@@ -3948,7 +3948,7 @@
     "message": "Toute la bibliothèque · Ollama"
   },
   "f_writing_day_recaps_9c43": {
-    "message": "Rédaction des résumés quotidiens…"
+    "message": "Rédaction des résultats quotidiens…"
   },
   "f_about_h_min_64c7": {
     "message": "environ {h} h {m} min"
@@ -3957,10 +3957,10 @@
     "message": "environ {m} min"
   },
   "f_items_rated_days_recapped_fc36": {
-    "message": "{a} éléments évalués · {b} jours résumés"
+    "message": "{a} éléments évalués · {b} jours résultats"
   },
   "f_items_to_rate_days_to_recap__44f6": {
-    "message": "{a} éléments à évaluer · {b} jours à résumer · {n} requêtes IA"
+    "message": "{a} éléments à évaluer · {b} jours à analyser · {n} requêtes IA"
   },
   "f_recommended_44c5": {
     "message": "{n} (recommandé)"
@@ -4002,7 +4002,7 @@
     "message": "Disponible lorsque Ollama est configuré. Il évalue, catégorise et résume toute votre bibliothèque de flux par petits lots sur votre propre machine. Cela peut prendre des heures, mais ne dépense aucun jeton."
   },
   "f_day_recap_of_batch_of_items_67b5": {
-    "message": "Résumé du jour {d} sur {t} ({date}) : lot {a} sur {b} · {n} éléments"
+    "message": "sortie principale du jour {d} sur {t} ({date}) : lot {a} sur {b} · {n} éléments"
   },
   "f_model_is_writing_46fc": {
     "message": "Le modèle écrit…"
@@ -4020,13 +4020,13 @@
     "message": "Requête {a} sur {b}"
   },
   "f_runs_on_your_own_machine_wit_1728": {
-    "message": "Fonctionne sur votre propre machine avec Ollama et ne dépense aucun jeton, même si un autre modèle est actif pour les résumés. Gardez ce panneau ouvert : le fermer met l’exécution en pause, et la relancer reprend là où elle s’est arrêtée. Seuls les éléments encore stockés sont traités (voir « Conserver les éléments »). Le résumé du jour est écrit quand vous l’ouvrez."
+    "message": "Fonctionne sur votre propre machine avec Ollama et ne dépense aucun jeton, même si un autre modèle est actif pour les résultats. Gardez ce panneau ouvert : le fermer met l’exécution en pause, et la relancer reprend là où elle s’est arrêtée. Seuls les éléments encore stockés sont traités (voir « Conserver les éléments »). Le sortie principale du jour est écrit quand vous l’ouvrez."
   },
   "f_sending_the_batch_to_ollama_ac2f": {
     "message": "Envoi du lot à Ollama…"
   },
   "f_not_your_active_summary_mode_78a8": {
-    "message": "pas votre modèle de résumé actif"
+    "message": "pas votre modèle de sortie principale actif"
   },
   "f_left_db92": {
     "message": "reste {eta}"
@@ -4047,7 +4047,7 @@
     "message": "Journal des modifications"
   },
   "f_how_should_ai_summary_helper_b4d7": {
-    "message": "Avec quoi AI Summary Helper doit-il réfléchir ?"
+    "message": "Avec quoi Arguments doit-il réfléchir ?"
   },
   "f_local_models_no_account_no_k_a783": {
     "message": "Modèles locaux. Pas de compte, pas de clé, rien ne quitte votre machine."
@@ -4071,10 +4071,10 @@
     "message": "Politique de sécurité"
   },
   "f_sign_in_with_your_email_no_a_5518": {
-    "message": "Connectez-vous avec votre e-mail, sans clé API. Vos résumés vous suivent sur tous vos appareils."
+    "message": "Connectez-vous avec votre e-mail, sans clé API. Vos résultats vous suivent sur tous vos appareils."
   },
   "f_tip_press_on_any_page_to_sum_8aff": {
-    "message": "Astuce : appuyez sur {key} sur n’importe quelle page pour la résumer."
+    "message": "Astuce : appuyez sur {key} sur n’importe quelle page pour la analyser."
   },
   "f_free_cloud_models_3602": {
     "message": "☁️ Modèles cloud gratuits"
@@ -4107,10 +4107,10 @@
     "message": "Destinations Kindle et LocalSend"
   },
   "f_permanently_removes_your_sum_782d": {
-    "message": "Supprime définitivement vos résumés, l’archive et vos surlignages de cet appareil. Les réglages et les flux restent, sauf si vous les cochez. Action irréversible."
+    "message": "Supprime définitivement vos résultats, l’archive et vos surlignages de cet appareil. Les réglages et les flux restent, sauf si vous les cochez. Action irréversible."
   },
   "f_permanently_removes_your_sum_2de7": {
-    "message": "Supprime définitivement vos résumés, l’archive et vos surlignages. Les réglages et les flux restent. Faites d’abord une sauvegarde."
+    "message": "Supprime définitivement vos résultats, l’archive et vos surlignages. Les réglages et les flux restent. Faites d’abord une sauvegarde."
   },
   "f_preferences_prompts_d7ac": {
     "message": "Préférences et prompts"
@@ -4119,16 +4119,16 @@
     "message": "Supprime tout ce que cette extension stocke sur cet appareil et repart de zéro. Action irréversible. Votre compte sur notre serveur n’est pas concerné : pour le faire supprimer, contactez-nous (voir la politique de confidentialité)."
   },
   "f_removes_everything_this_exte_b9a8": {
-    "message": "Supprime tout ce que cette extension stocke sur cet appareil : résumés, surlignages, flux, clés et réglages. Faites d’abord une sauvegarde."
+    "message": "Supprime tout ce que cette extension stocke sur cet appareil : résultats, surlignages, flux, clés et réglages. Faites d’abord une sauvegarde."
   },
   "f_resets_preferences_prompts_a_02e0": {
-    "message": "Réinitialise les préférences, prompts, clés API, connexion et destinations d’envoi sur cet appareil. Les résumés, surlignages et flux restent, sauf si vous les cochez. L’extension sera rechargée."
+    "message": "Réinitialise les préférences, prompts, clés API, connexion et destinations d’envoi sur cet appareil. Les résultats, surlignages et flux restent, sauf si vous les cochez. L’extension sera rechargée."
   },
   "f_resets_preferences_prompts_a_aab7": {
-    "message": "Réinitialise les préférences, prompts, clés API, connexion et destinations d’envoi sur cet appareil. Les résumés, surlignages et flux restent."
+    "message": "Réinitialise les préférences, prompts, clés API, connexion et destinations d’envoi sur cet appareil. Les résultats, surlignages et flux restent."
   },
   "f_summaries_archive_b387": {
-    "message": "Résumés et archive"
+    "message": "résultats et archive"
   },
   "f_website_access_is_off_allow__f6c7": {
     "message": "L’accès aux sites web est désactivé. Autorisez-le dans about:addons → cette extension → Autorisations (« Accéder à vos données pour tous les sites web »), puis actualisez."
@@ -4344,7 +4344,7 @@
     "message": "Pratique : juste ton e-mail, sans clé API. Tu soutiens aussi un développeur indépendant."
   },
   "f_pick_a_way_to_run_your_summa_5c59": {
-    "message": "Choisis comment générer tes résumés. Modifiable à tout moment dans les réglages."
+    "message": "Choisis comment générer tes résultats. Modifiable à tout moment dans les réglages."
   },
   "f_back_to_top_bd70": {
     "message": "Retour en haut"
@@ -4362,7 +4362,7 @@
     "message": "Instructions de surlignage"
   },
   "f_summary_prompt_5157": {
-    "message": "Instructions de résumé"
+    "message": "Instructions de sortie principale"
   },
   "f_reset_to_default_f7dc": {
     "message": "Rétablir la valeur par défaut"
@@ -4371,10 +4371,10 @@
     "message": "Impossible d’enregistrer les instructions."
   },
   "f_highlight_and_summary_prompt_ef01": {
-    "message": "Instructions de surlignage et de résumé"
+    "message": "Instructions de surlignage et de sortie principale"
   },
   "pagePromptsHint": {
-    "message": "Instructions de surlignage et de résumé"
+    "message": "Instructions pour les passages surlignés et la sortie principale"
   },
   "highlightNotFound": {
     "message": "Introuvable sur la page"
@@ -4405,5 +4405,257 @@
   },
   "highlightInvalidResponse": {
     "message": "Impossible de lire la réponse de surlignage"
+  },
+  "f_available_when_ollama_is_set_f9e0": {
+    "message": "Disponible une fois Ollama configuré. Crée des récapitulatifs de votre bibliothèque de flux par petits lots sur votre ordinateur."
+  },
+  "f_creates_recaps_of_your_feed__0737": {
+    "message": "Crée des récapitulatifs des articles de vos flux par petits lots sur votre ordinateur."
+  },
+  "f_edit_feeds_in_settings_6774": {
+    "message": "Modifier les flux dans les paramètres"
+  },
+  "f_every_stored_day_has_a_compl_5d0c": {
+    "message": "Chaque jour enregistré dispose d’un récapitulatif complet."
+  },
+  "f_sources_rename_mute_713c": {
+    "message": "Sources · renommer · masquer"
+  },
+  "f_day_recaps_written_71f0": {
+    "message": "{b} récapitulatifs quotidiens créés",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_recapped_4012": {
+    "message": "{b} jours récapitulés",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_to_recap_ai_requests_f01d": {
+    "message": "{b} jours à récapituler · {n} requêtes IA",
+    "description": "Placeholders: {b} {n} (keep as is)"
+  },
+  "f_manage_feeds_in_settings_a66f": {
+    "message": "⚙️  Gérer les flux dans les paramètres  ›"
+  },
+  "f_main_output_prompt_c085": {
+    "message": "Instructions de sortie principale"
+  },
+  "f_subscriptions_opml_697e": {
+    "message": "Abonnements · OPML"
+  },
+  "f_backup_delete_5d95": {
+    "message": "Sauvegarde · supprimer"
+  },
+  "f_no_articles_yet_start_analyz_01e3": {
+    "message": "Pas encore d’articles — résumez des pages pour voir vos statistiques ! 📖"
+  },
+  "f_with_results_f383": {
+    "message": "Avec résultats"
+  },
+  "f_analyze_a663": {
+    "message": "✨ Analyser"
+  },
+  "f_analyzing_8bc5": {
+    "message": "⏳ sortie principale en cours…"
+  },
+  "f_saved_without_an_ai_main_out_a5cb": {
+    "message": "Enregistré sans sortie principale IA. Ouvrez la page et touchez ✨ Analyser pour en ajouter un."
+  },
+  "f_no_main_output_available_2d4f": {
+    "message": "Aucun sortie principale disponible"
+  },
+  "f_main_output_1742": {
+    "message": "🧙 sortie principale IA"
+  },
+  "f_sign_in_to_arguments_1d5c": {
+    "message": "Se connecter à Arguments"
+  },
+  "f_free_cloud_models_and_your_r_153c": {
+    "message": "Modèles cloud gratuits et vos résultats sur tous vos appareils. Ou passez cette étape et utilisez votre propre clé API."
+  },
+  "f_writing_a_word_main_output_82b9": {
+    "message": "Rédaction d'un sortie principale de {n} mots…"
+  },
+  "f_analyzed_7135": {
+    "message": "sortie principale"
+  },
+  "f_waiting_for_the_running_main_f4e2": {
+    "message": "En attente du sortie principale en cours — cliquez pour retirer de la file"
+  },
+  "f_queued_it_will_start_when_th_31fd": {
+    "message": "En attente — démarrera à la fin du sortie principale en cours"
+  },
+  "f_analyzing_in_the_background__dd2a": {
+    "message": "sortie principale en arrière-plan : visible dans Analyser et Historique"
+  },
+  "f_new_posts_land_here_skim_ana_6e81": {
+    "message": "Les nouveaux articles arrivent ici. Parcourez, résumez l’essentiel, videz le reste."
+  },
+  "f_analyzed_f2f6": {
+    "message": "✓ sortie principale"
+  },
+  "f_you_have_a_saved_main_output_fc8e": {
+    "message": "Vous avez un sortie principale enregistré de cette page"
+  },
+  "f_view_main_output_090b": {
+    "message": "📄 Voir le sortie principale"
+  },
+  "f_not_your_active_main_output__ce26": {
+    "message": "pas votre modèle de sortie principale actif"
+  },
+  "f_runs_on_your_own_machine_wit_290a": {
+    "message": "Fonctionne sur votre propre machine avec Ollama et ne dépense aucun jeton, même si un autre modèle est actif pour les résultats. Gardez ce panneau ouvert : le fermer met l’exécution en pause, et la relancer reprend là où elle s’est arrêtée. Seuls les éléments encore stockés sont traités (voir « Conserver les éléments »). Le sortie principale du jour est écrit quand vous l’ouvrez."
+  },
+  "f_items_you_open_or_analyze_le_4138": {
+    "message": "Les éléments ouverts ou résultats quittent vos non lus"
+  },
+  "f_auto_analyze_favorites_a662": {
+    "message": "✨ Analyser les favoris auto"
+  },
+  "f_analyze_on_a_feed_item_follo_6202": {
+    "message": "Analyser sur un élément suit le mode choisi dans Analyser (extension par défaut). Les favoris sont toujours conservés."
+  },
+  "f_speaks_the_title_and_site_fi_7a35": {
+    "message": "Annonce d'abord le titre et le site, puis lit le sortie principale phrase par phrase pendant que le modèle écrit."
+  },
+  "f_voice_it_follows_the_main_ou_7f8f": {
+    "message": "Voix : {voice} · {lang}. Elle suit la langue du sortie principale ; le titre et le site sont annoncés dans la langue de l'app."
+  },
+  "f_main_output_length_in_words_bc0f": {
+    "message": "Longueur du sortie principale en mots"
+  },
+  "f_attach_a_pdf_to_analyze_388e": {
+    "message": "Joindre un PDF à analyser"
+  },
+  "f_no_recent_results_527f": {
+    "message": "Aucun sortie principale récent"
+  },
+  "f_analyze_a_page_to_see_it_her_a8ca": {
+    "message": "Résumez une page pour la voir ici"
+  },
+  "f_analyze_this_page_7fec": {
+    "message": "Analyser cette page"
+  },
+  "f_writing_the_main_output_cff0": {
+    "message": "Rédaction du sortie principale…"
+  },
+  "f_analyze_9f73": {
+    "message": "Analyser"
+  },
+  "f_starts_when_the_current_main_1a7c": {
+    "message": "démarre à la fin du sortie principale en cours"
+  },
+  "f_pick_a_way_to_run_your_resul_269b": {
+    "message": "Choisis comment générer tes résultats. Modifiable à tout moment dans les réglages."
+  },
+  "f_tip_press_on_any_page_to_ana_0f1e": {
+    "message": "Astuce : appuyez sur {key} sur n’importe quelle page pour la analyser."
+  },
+  "f_main_output_c815": {
+    "message": "Sortie principale"
+  },
+  "f_the_voice_follows_the_langua_d773": {
+    "message": "La voix suit la langue du texte : un sortie principale anglais d'un article allemand est lu en anglais, l'original en allemand."
+  },
+  "f_enjoying_arguments_991d": {
+    "message": "Vous aimez Arguments ?"
+  },
+  "f_only_analyzed_articles_can_b_dfaf": {
+    "message": "Seuls les articles résultats peuvent être envoyés"
+  },
+  "f_select_results_cac7": {
+    "message": "Sélectionner des résultats"
+  },
+  "f_send_results_0ecd": {
+    "message": "Envoyer les résultats"
+  },
+  "f_send_main_output_fc91": {
+    "message": "Envoyer {n} sortie principale"
+  },
+  "f_send_results_f1a9": {
+    "message": "Envoyer {n} résultats"
+  },
+  "f_main_output_only_7011": {
+    "message": "sortie principale seul"
+  },
+  "f_main_output_full_article_b1cb": {
+    "message": "sortie principale + article complet"
+  },
+  "f_main_output_db19": {
+    "message": "{n} sortie principale"
+  },
+  "f_results_eb81": {
+    "message": "{n} résultats"
+  },
+  "f_mark_main_output_as_bf44": {
+    "message": "Marquer {n} sortie principale comme…"
+  },
+  "f_mark_results_as_6bf0": {
+    "message": "Marquer {n} résultats comme…"
+  },
+  "f_digest_of_results_776c": {
+    "message": "Digest de {n} résultats"
+  },
+  "f_select_results_to_send_9cf2": {
+    "message": "Sélectionner des résultats à envoyer"
+  },
+  "f_analyzing_cdca": {
+    "message": "sortie principale en cours..."
+  },
+  "f_no_main_output_returned_3af7": {
+    "message": "Aucun sortie principale reçu."
+  },
+  "f_results_archive_73d9": {
+    "message": "résultats et archive"
+  },
+  "f_resets_preferences_prompts_a_9142": {
+    "message": "Réinitialise les préférences, prompts, clés API, connexion et destinations d’envoi sur cet appareil. Les résultats, surlignages et flux restent, sauf si vous les cochez. L’extension sera rechargée."
+  },
+  "f_permanently_removes_your_res_cd53": {
+    "message": "Supprime définitivement vos résultats, l’archive et vos surlignages de cet appareil. Les réglages et les flux restent, sauf si vous les cochez. Action irréversible."
+  },
+  "f_invalid_backup_file_please_s_0b0d": {
+    "message": "Fichier de sauvegarde invalide. Sélectionnez un export Arguments valide."
+  },
+  "f_auto_analyze_favorites_3012": {
+    "message": "Analyser auto les favoris"
+  },
+  "f_highlight_and_main_output_pr_49e7": {
+    "message": "Instructions pour les passages surlignés et la sortie principale"
+  },
+  "f_analyze_send_e8ec": {
+    "message": "Analyser / envoyer"
+  },
+  "f_new_main_output_5b1f": {
+    "message": "Nouveau sortie principale"
+  },
+  "f_output_language_7616": {
+    "message": "Langue de sortie"
+  },
+  "f_output_length_cc00": {
+    "message": "Longueur de sortie"
+  },
+  "f_analysis_display_a211": {
+    "message": "Affichage de l’analyse"
+  },
+  "f_automatic_light_blue_quote_h_cb6e": {
+    "message": "Citations surlignées en bleu clair automatiquement à partir des résultats"
+  },
+  "f_for_unlimited_zero_config_re_80ba": {
+    "message": "pour des résultats illimités sans configuration."
+  },
+  "f_the_quick_brown_fox_jumps_ov_22b0": {
+    "message": "Portez ce vieux whisky au juge blond qui fume. Les résultats utilisent cette taille et cet espacement."
+  },
+  "f_permanently_removes_your_res_12e9": {
+    "message": "Supprime définitivement vos résultats, l’archive et vos surlignages. Les réglages et les flux restent. Faites d’abord une sauvegarde."
+  },
+  "f_removes_everything_this_exte_6b82": {
+    "message": "Supprime tout ce que cette extension stocke sur cet appareil : résultats, surlignages, flux, clés et réglages. Faites d’abord une sauvegarde."
+  },
+  "f_resets_preferences_prompts_a_cfb1": {
+    "message": "Réinitialise les préférences, prompts, clés API, connexion et destinations d’envoi sur cet appareil. Les résultats, surlignages et flux restent."
+  },
+  "f_generate_a_bookmarklet_that__658d": {
+    "message": "Créez un bookmarklet qui analyse toute page dans tout navigateur, y compris sur iOS/Android où l’extension ne fonctionne pas. Il utilise votre connexion à byphil Cloud."
   }
 }

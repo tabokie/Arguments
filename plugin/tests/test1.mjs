@@ -46,52 +46,20 @@ assert.ok(heads.some(h => h.includes('Yesterday')));
 assert.equal(store['feeds:items'].length, 5, 'all 5 items kept');
 console.log('items stored', store['feeds:items'].length, 'unscored:', store['feeds:items'].every(i => i.sent === undefined && !i.ai));
 assert.ok(store['feeds:items'].every(i => i.sent === undefined), 'no local scoring');
-// 5 folders via settings panel
+// Removed metadata controls stay absent; feed names remain editable.
 document.dispatchEvent(new w.CustomEvent('aish:settings-panel', { detail: { name: 'feeds' } }));
 await tick(50);
-const alphaIdx = store['feeds:subs'].findIndex(s => s.title === 'Alpha Blog');
-const tagIns = $$('#feedSettingsRoot .feed-tag-input'); assert.equal(tagIns.length, 2);
-tagIns[alphaIdx].value = 'Dev'; tagIns[alphaIdx].dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-await tick(30);
-assert.deepEqual(store['feeds:subs'][alphaIdx].tags, ['Dev']);
-// second tag, case-insensitive dedupe
-let ti = $$('#feedSettingsRoot .feed-tag-input')[alphaIdx]; ti.value = 'dev'; ti.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); await tick(30);
-ti = $$('#feedSettingsRoot .feed-tag-input')[alphaIdx]; ti.value = 'Blogs'; ti.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); await tick(30);
-assert.deepEqual(store['feeds:subs'][alphaIdx].tags, ['Dev', 'Blogs']);
-// 6 source picker
-click($('#feedSourcePill')); await tick();
-const rows = $$('#feedSheetBody .feed-pick-row').map(r => r.textContent.replace(/\s+/g, ' ').trim());
-console.log('picker rows:', rows);
-assert.ok($$('#feedSheetBody .feed-pick-label').some(l => l.textContent === 'TAGS'), 'tags label');
-click($$('#feedSheetBody .feed-tag-chip').find(r => r.textContent.includes('# Dev'))); await tick();
-assert.ok($('#feedSourceLabel').textContent.includes('Dev'));
-const titlesDev = $$('.feed-item h4').map(h => h.textContent);
-console.log('Dev folder items:', titlesDev);
-assert.ok(titlesDev.every(t => !t.includes('Attack')), 'beta excluded');
-// back to all
-click($('#feedSourcePill')); await tick(); click($$('#feedSheetBody .feed-pick-row')[0]); await tick();
-// 7 status chips
-click($('#feedChipRow [data-status=fav]')); await tick();
-assert.equal($$('.feed-item').length, 0, 'no favorites yet'); assert.ok($('#feedEmpty').textContent.includes('Nothing matches'));
-click($('#feedChipRow [data-status=all]')); await tick();
-assert.equal($$('.feed-item').length, 5);
-console.log('ALL ok items:', $$('.feed-item').length);
-// 8 mood filter — needs AI scores
-globalThis.__ai = (m) => ({ ok: true, text: JSON.stringify({ scores: m.user.split('\n').slice(1).map(l => /award/i.test(l) ? 0.8 : /Attack/.test(l) ? -0.8 : 0) }) });
-store['feeds:items'].forEach(i => { i.ai = true; i.sent = /award/i.test(i.title) ? 0.8 : /Attack/.test(i.title) ? -0.8 : 0; }); await fm.onFeedsScreenShown(uiStub); await tick(50);   // scoring entry point moved (Insights/recap)
-assert.ok(store['feeds:items'].some(i => i.ai), 'AI scored');
+assert.equal($$('#feedSettingsRoot .feed-tag-input').length, 0);
+assert.equal($$('#feedSettingsRoot input[aria-label="Feed name"]').length, 2);
+assert(!$('#feedSetMood') && !$('#feedSetRate') && !$('#feedMoodChip'));
 click($('#feedFilterChip')); await tick();
-click($$('#feedSheetBody .feed-pick-row').find(r => r.textContent.includes('Positive only'))); await tick();
-let t2 = $$('.feed-item h4').map(h => h.textContent); console.log('positive only:', t2);
-assert.ok(t2.length >= 1 && t2.every(t => /award/.test(t)));
-click($$('#feedSheetBody .feed-pick-row').find(r => r.textContent.includes('Hide negative'))); await tick();
-t2 = $$('.feed-item h4').map(h => h.textContent); console.log('hide negative:', t2);
-assert.ok(!t2.some(t => /Attack/.test(t)));
-click($$('#feedSheetBody .feed-pick-row').find(r => r.textContent.includes('Any mood')));
-click($$('#feedSheetBody .feed-pick-row').find(r => r.textContent.includes('Most positive first'))); await tick();
-t2 = $$('.feed-item h4').map(h => h.textContent); console.log('mood sort:', t2);
-assert.ok(/award/.test(t2[0]) && /Attack/.test(t2[t2.length - 1]));
-click($$('#feedSheetBody .feed-pick-row').find(r => r.textContent.includes('Newest first')));
+assert(!/Any mood|Most positive first/.test($('#feedSheetBody').textContent));
 click($('.feed-sheet-done')); await tick();
+// Status filtering remains available after the metadata controls are removed.
+click($('#feedChipRow [data-status=fav]')); await tick();
+assert.equal($$('.feed-item').length, 0, 'no favorites yet');
+assert($('#feedEmpty').textContent.includes('Nothing matches'));
+click($('#feedChipRow [data-status=all]')); await tick();
+assert.equal($$('.feed-item').length, 5, 'All restores the complete feed list');
 console.log('PART 1 OK');
 globalThis.__ctx = { store, sent, w, fm, uiStub, shown };

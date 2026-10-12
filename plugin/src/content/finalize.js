@@ -1,12 +1,10 @@
 import { ttsLang, langBase } from '../modules/languages.js';
-import { applyScholarly, paperIndexFields } from './paper.js';
-import { ensureGeneralTag, extractSummaryTitle, saveToLocalStorage } from './core.js';
+import { extractSummaryTitle, saveToLocalStorage } from './core.js';
 import { readHighlightSelections } from './highlightSentences.js';
 import { markdownToHtml, stripReasoning } from './markdown.js';
-import { parseSuggestionList } from '../modules/suggestions.js';
 // content/finalize.js
 // Everything that happens AFTER the model has finished writing: pull the metadata comments out of the raw text,
-// build the HTML, tags, language tags, title. It needs no page DOM, so it runs in the content script (normal case)
+// build the HTML, language metadata, title. It needs no page DOM, so it runs in the content script (normal case)
 // and in the background worker (when the tab navigated away while the model was still writing).
 
 /** Incremental parser for the streamed API response: {summary, thinking} so far. */
@@ -50,50 +48,23 @@ export function detectContentLang(text, htmlLang) {
 /**
  * @param {object} o  raw, thinking, contentText, highlightSourceText (exact source sent to the model), highlightSourceTruncated,
  *   highlights (already recovered selections from chunked reading, when present),
- *   pageTitle (title for tag matching), selectedLanguage, htmlLang,
+ *   selectedLanguage, htmlLang,
  *   pageMeta (base metadata, may be {}), fixedTitle ('' = derive), attachedTitle (string when a PDF was attached, else null)
- * @returns {Promise<{error:string}|{cleanHtml,tags,highlights,ghostQuotes,moodScore,questions,quick,pageMeta,title}>}
+ * @returns {Promise<{error:string}|{cleanHtml,highlights,ghostQuotes,pageMeta,title}>}
  */
 export async function finalizeSummary(o) {
-  let summary = stripReasoning(o.raw || '');
-  if (!summary.trim() && (o.thinking || '').trim()) summary = stripReasoning(o.thinking);
-  if (!summary.trim()) return { error: 'The model wrote its own notes instead of a summary. Try again or pick another model.' };
+  const summary = stripReasoning(o.raw || '');
+  // Main output and highlights are independent results. Valid empty main output
+  // must retain highlight rendering, storage, and exports.
+  if (!summary.trim() && !Array.isArray(o.highlights)) return { error: 'The model returned no response. Try again or pick another model.' };
 
-  let tags = [];
-  const tagMatch = summary.match(/<!--\s*TAGS?\s*:\s*([\s\S]*?)\s*-->/i);
-  if (tagMatch) {
-    const seen = new Set();
-    tags = tagMatch[1].replace(/^\s*\[|\]\s*$/g, '').split(/[,;\n]+/)
-      .map(t => t.trim().replace(/^["'#]+|["']+$/g, '')).filter(Boolean)
-      .filter(t => { const key = t.toLowerCase(); if (seen.has(key)) return false; seen.add(key); return true; });
-  }
-  tags = await ensureGeneralTag(tags, o.contentText || '', o.pageTitle || '');
-  // Language tags: "🌐 de" for the text the page is written in, plus "🌐 en" when the summary is in another language.
   const sumLang = langBase(ttsLang(o.selectedLanguage));
   const srcLang = await detectContentLang(o.contentText || '', o.htmlLang || '');
-  {
-    const have = new Set(tags.map(t => t.toLowerCase()));
-    [srcLang, sumLang !== srcLang ? sumLang : ''].filter(Boolean).forEach((l) => { const t = '🌐 ' + l; if (!have.has(t.toLowerCase())) tags.push(t); });
-  }
   const highlights = Array.isArray(o.highlights) ? o.highlights
     : readHighlightSelections(summary, o.highlightSourceText ?? o.contentText, srcLang || o.htmlLang, o.highlightSourceTruncated);
   const ghostQuotes = highlights.filter(selection => selection.status === 'resolved').map(selection => selection.text);
-  // Mood (-1..1) the model rated for the whole article; anything unparsable or out of range is ignored.
-  let moodScore;
-  const moodMatch = summary.match(/<!--\s*MOOD:\s*(-?\d*\.?\d+)\s*-->/i);
-  if (moodMatch) { const v = parseFloat(moodMatch[1]); if (isFinite(v) && v >= -1 && v <= 1) moodScore = Math.round(v * 100) / 100; }
-
-  let pageMeta = { ...(o.pageMeta || {}), ...(srcLang ? { contentLang: srcLang } : {}), summaryLang: sumLang };   // read aloud picks voices from these
-  // The model's verdict on "is this a paper?" (works for PDFs and pages without metadata); merged with the page signals.
-  try {
-    const sm = summary.match(/<!--\s*SCHOLARLY:\s*([\s\S]*?)\s*(?:-->|$)/i);
-    if (sm) { const merged = applyScholarly(pageMeta.paper || null, sm[1]); if (merged) pageMeta.paper = merged; else delete pageMeta.paper; }
-  } catch (_) { /* optional */ }
-
-  // Suggested follow-up questions: parsing is forgiving (a missing "-->" or non-JSON list still yields the quoted questions).
-  let questions = [], quick = {};
-  const qMatch = summary.match(/<!--\s*QUESTIONS:\s*([\s\S]*?)\s*(?:-->|$)/i);
-  if (qMatch) ({ questions, quick } = parseSuggestionList(qMatch[1]));
+  const { paper: _paper, ...baseMeta } = o.pageMeta || {};
+  const pageMeta = { ...baseMeta, ...(srcLang ? { contentLang: srcLang } : {}), summaryLang: sumLang };
 
   const cleanRawText = summary
     .replace(/<!--\s*GHOST_HIGHLIGHTS:\s*([\s\S]*?)\s*(?:-->|$)/gi, '')
@@ -107,13 +78,13 @@ export async function finalizeSummary(o) {
   const title = o.attachedTitle !== null && o.attachedTitle !== undefined
     ? (extractSummaryTitle(cleanHtml) || o.attachedTitle || 'Untitled')
     : (o.fixedTitle || extractSummaryTitle(cleanHtml) || 'Untitled');
-  return { cleanHtml, tags, highlights, ghostQuotes, moodScore, questions, quick, pageMeta, title };
+  return { cleanHtml, highlights, ghostQuotes, pageMeta, title };
 }
 
 /** Same as the in-page path: store the finished summary. `ctx` is what the page handed to the background when the run started. */
 export function saveFinished(ctx, f, contentHtml) {
-  const extra = { ...(ctx.feedUrl && ctx.feedUrl !== ctx.sourceUrl ? { feedUrl: ctx.feedUrl } : {}), ...paperIndexFields(f.pageMeta && f.pageMeta.paper) };
-  return saveToLocalStorage(contentHtml, f.cleanHtml, ctx.sourceUrl, f.title, '', f.tags, ctx.modelIdentifier, ctx.summaryLength, f.moodScore, extra, f.pageMeta, f.highlights);
+  const extra = { ...(ctx.feedUrl && ctx.feedUrl !== ctx.sourceUrl ? { feedUrl: ctx.feedUrl } : {}) };
+  return saveToLocalStorage(contentHtml, f.cleanHtml, ctx.sourceUrl, f.title, '', [], ctx.modelIdentifier, ctx.summaryLength, undefined, extra, f.pageMeta, f.highlights);
 }
 
 /** Background: a run whose page went away is finished here. */

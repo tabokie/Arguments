@@ -1,0 +1,28 @@
+- Has the extension package name and description been updated to be consistent with the fork's description?
+- Update it
+- I tested the extension on this webpage: [https://news.ycombinator.com/item?id=50047422](https://news.ycombinator.com/item?id=50047422) . The model outputted 203 highlights, the extension says 6 of them don't match. The issues is (1) None of the 203 highlights is marked on the page. (2) prefix always causes failure, but I can manually locate the prefix (e.g. "It's very true to me. Another effect I noticed in less tech inclined jobs"). (3) Many long sentences are not emitted by model using prefix, i.e. prefix use is too light 6 out of 203.
+- Are there words like "summary" in the assembled prompt we send to the model? I'm afraid it will lure the model to use a summary-like mindset which is unintended.
+- I think we should use a neutral word, like "main output", "response", or "answer". What do you think?
+- Go ahead.
+- Show me the actual prompt, use placeholder for user-configured content.
+- (1) Remove the TAGS, MOOD, QUESTIONS, SCHOLARLY section,  from the prompt and from the system's UI. (2) Move output format to just after output instructions, move highlight format to just after highlight instructions. The "Identify complete sentences to highlight ..." seems duplicated with the later format description. The "The main output may use at most .." should be part of main output format. (3) The highlights format is really long, is there room for reduction without causing output format issues?
+- Show me the full prompt now, use placeholder for user prompts.
+- "The extension will recover and highlight the complete source sentence." this sounds redundant?
+"Use the shortest unique prefix, extending only to resolve ambiguity. Long sentences must use a short prefix, usually 6–12 words; copy a whole sentence only if short or needed for uniqueness." this sounds too verbose.
+- The main output format is a bit mouthful, consolidate it.
+- Change the default main output prompt to:
+
+> Read and extract insights. Focus on:
+>
+> - **Zeitgeist:** strong high-level conclusions about what the discussion reveals about current beliefs, incentives, fears, blind spots, or shifts in the field.
+> - **Rare gems:** ideas or opinions that are genuinely unusual, non-obvious, or surprising even to an expert.
+> - **Emergent patterns:** cross-page patterns, surprising connections, tensions, contradictions, or context that only become visible from reading multiple parts together.
+>
+> Use an absolute bar for inclusion. If the page contains no exceptional insight, return little or nothing. Do not fill a quota.
+>
+> Write each item as a short, bold argument with a clear point of view. Synthesize across the discussion when useful. Favor memorable judgments over balanced summaries.
+>
+> No recap, no chronology, no background, no repetition, no hedging, no filler.
+- [$gap](/Users/xyt/.agents/skills/gap/SKILL.md)
+- Fix them all
+- [$finish](/Users/xyt/.agents/skills/finish/SKILL.md) co-author=GPT-6.1 Sol

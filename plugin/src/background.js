@@ -553,21 +553,14 @@ async function pollFeeds() {
         const mergedItems = FEED_WORKER.mergeWorkerItems(
             favoriteItems(d.feedItems), favoriteItems(state.items), d.feedSettings.keepDays, Date.now(), FEED_MAX_ITEMS_TOTAL
         )
-            .map(item => {
-                const rating = state.ratings[item.id];
-                return { ...item, ...(rating || {}), favorite: backgroundItemFav(item, articleFavs) };
-            })
             .filter(item => item.published >= Date.now() - (Math.max(1, Number(d.feedSettings.keepDays) || 30) * 86400000) || item.favorite);
         const recaps = { ...d.feedRecaps };
         Object.entries(state.recaps).forEach(([key, recap]) => {
             if (!recaps[key] || (Number(recap.at) || 0) >= (Number(recaps[key].at) || 0)) recaps[key] = recap;
         });
-        const topicLang = (await FEED_WORKER.uiLanguage()).code;
-        await FEED_WORKER.loadLexicon();
         const plan = FEED_WORKER.planLibrary({
             items: mergedItems, recaps, source: 'all', inSource: () => true,
-            startOfDay: FEED_WORKER.startOfDay, itemSig: FEED_WORKER.itemSig, includeToday: true, rateWithRecap: d.feedSettings.rateWithRecap !== false,
-            subs: d.feedSubs, topicLang, articleTags: d.articles.flatMap(a => a.tags || [])
+            startOfDay: FEED_WORKER.startOfDay, itemSig: FEED_WORKER.itemSig, includeToday: true
         });
         // A timeout lowers the batch size for this machine (state.batchSize); a new batch size in the settings (e.g. another profile) wins again.
         const settingBatch = [10, 20, 40].includes(Number(d.feedSettings.libraryBatch)) ? Number(d.feedSettings.libraryBatch) : 20;
@@ -575,16 +568,10 @@ async function pollFeeds() {
         const configuredBatch = [10, 20, 40].includes(fallbackBatch) ? fallbackBatch : settingBatch;
         const requestsPerTick = [1, 2, 3, 4, 6, 8].includes(Number(d.feedSettings.requestsPerTick)) ? Number(d.feedSettings.requestsPerTick) : FEED_MAX_REQUESTS_PER_TICK;
         const work = FEED_WORKER.boundedLibraryPlan(plan, configuredBatch, requestsPerTick);
-        if (!work.rate.length && !work.days.length && !(work.tag && work.tag.length) && !(work.lex && work.lex.length)) return;
+        if (!work.days.length) return;
 
         const subscriptions = new Map(d.feedSubs.map(sub => [sub.id, sub]));
         let timedOut = false;
-        const saveRatings = (items) => {
-            for (const item of items) {
-                const { ai, sent, cat } = item;
-                if (ai || sent !== undefined || cat) state.ratings[item.id] = { ...(ai ? { ai } : {}), ...(sent !== undefined ? { sent } : {}), ...(cat ? { cat } : {}) };
-            }
-        };
         const aiCall = async (fn, signal) => {
             const timeout = withFeedAiTimeout(signal);
             try { return await fn(timeout.signal); }
@@ -592,33 +579,6 @@ async function pollFeeds() {
                 if (timeout.timedOut()) { timedOut = true; throw Object.assign(new Error('Ollama request timed out'), { timeout: true }); }
                 throw e;
             } finally { timeout.close(); }
-        };
-        const rateChunk = async (chunk, signal) => {
-            const result = await aiCall(aiSignal => FEED_WORKER.scoreItems(chunk, i => (subscriptions.get(i.feedId) || {}).customTitle || (subscriptions.get(i.feedId) || {}).title || '', { signal: aiSignal, service: 'ollama' }), signal);
-            chunk.forEach((item, index) => {
-                if (!item.ai && result.scores[index] !== null) { item.sent = result.scores[index]; item.ai = true; }
-                if (!item.cat && result.labels && result.labels[index]) item.cat = result.labels[index];
-            });
-            saveRatings(chunk);
-            await chrome.storage.local.set({ [SK.feedBackground]: state });
-        };
-        // Up to 3 topic tags per feed in the UI language, stored as `topics` (the user's own `tags` are never touched).
-        const tagFeed = async (entry, signal) => {
-            const sub = subscriptions.get(entry.id) || {};
-            const result = entry.keys
-                ? { ...(await aiCall(aiSignal => FEED_WORKER.translateFeedTopics(entry.keys, { signal: aiSignal, service: 'ollama' }), signal)), keys: entry.keys }
-                : await aiCall(aiSignal => FEED_WORKER.generateFeedTopics(sub.customTitle || sub.title || '', entry.items, { cats: FEED_WORKER.categoryCounts(entry.all), signal: aiSignal, service: 'ollama' }), signal);
-            const stored = (await localGet(SK.feedSubs))[SK.feedSubs] || [];
-            const target = stored.find(x => x.id === entry.id);
-            if (!target) return;
-            target.topics = result.tags.slice(0, 3); target.topicKeys = result.keys; target.topicsLang = result.lang;
-            await chrome.storage.local.set({ [SK.feedSubs]: stored });
-            await FEED_WORKER.saveLexicon();
-        };
-        // Tags of saved articles that are neither built-in nor learned: named once, kept only in the lexicon.
-        const nameTags = async (batch, signal) => {
-            await aiCall(aiSignal => FEED_WORKER.learnTagNames(batch, { signal: aiSignal, service: 'ollama' }), signal);
-            await FEED_WORKER.saveLexicon();
         };
         const recapDay = async (entry, size, signal, ctx = {}) => {
             const key = `${entry.day}|all`;
@@ -633,38 +593,29 @@ async function pollFeeds() {
                 let recap;
                 if (!current) {
                     recap = await aiCall(aiSignal => FEED_WORKER.generateRecap(chunk, i => (subscriptions.get(i.feedId) || {}).customTitle || (subscriptions.get(i.feedId) || {}).title || '', {
-                        rate: d.feedSettings.rateWithRecap !== false, signal: aiSignal, service: 'ollama'
+                        signal: aiSignal, service: 'ollama'
                     }), signal);
-                    if (d.feedSettings.rateWithRecap !== false) chunk.forEach((item, n) => {
-                        if (!item.ai && recap.scores && recap.scores[n] != null) { item.sent = recap.scores[n]; item.ai = true; }
-                        if (!item.cat && recap.labels && recap.labels[n]) item.cat = recap.labels[n];
-                    });
                     const { labels: _labels, scores: _scores, ...base } = recap;
                     recap = { ...base, covered: sigs(chunk) };
                 } else {
                     recap = await aiCall(aiSignal => FEED_WORKER.generateRecapUpdate(current, chunk, i => (subscriptions.get(i.feedId) || {}).customTitle || (subscriptions.get(i.feedId) || {}).title || '', {
-                        rate: d.feedSettings.rateWithRecap !== false, edited: item => item.id in current.covered, signal: aiSignal, service: 'ollama'
+                        edited: item => item.id in current.covered, signal: aiSignal, service: 'ollama'
                     }), signal);
-                    if (d.feedSettings.rateWithRecap !== false && recap.sent) recap.sent.forEach((item, n) => {
-                        if (!item.ai && recap.scores && recap.scores[n] != null) { item.sent = recap.scores[n]; item.ai = true; }
-                        if (!item.cat && recap.labels && recap.labels[n]) item.cat = recap.labels[n];
-                    });
                     const { labels: _labels, scores: _scores, sent: _sent, ...base } = recap;
                     recap = { ...base, covered: { ...current.covered, ...sigs(chunk) } };
                 }
                 current = state.recaps[key] = { ...recap, hash: FEED_WORKER.hash(dayItems.map(i => i.id).sort().join(',')), at: Date.now(), n: dayItems.length, total: dayItems.length };
                 recaps[key] = current;
-                saveRatings(chunk);
-                await chrome.storage.local.set({ [SK.feedBackground]: state });
+                    await chrome.storage.local.set({ [SK.feedBackground]: state });
                 if (ctx.tick) ctx.tick();
             }
         };
-        const result = await FEED_WORKER.runLibrary(work, configuredBatch, { rateChunk, tagFeed, nameTags, recapDay, signal: runController.signal });
+        const result = await FEED_WORKER.runLibrary(work, configuredBatch, { recapDay, signal: runController.signal });
         if (timedOut && configuredBatch > 10) { state.batchSize = 10; state.batchBase = settingBatch; }
-        state.status = { at: Date.now(), rated: result.rated, recaps: result.recaps, failed: result.failed };
+        state.status = { at: Date.now(), recaps: result.recaps, failed: result.failed };
         await chrome.storage.local.set({ [SK.feedBackground]: state });
-        if (result.rated || result.recaps) {
-            const message = `${result.rated} new items rated · ${result.recaps} day recaps written`;
+        if (result.recaps) {
+            const message = `${result.recaps} day recaps written`;
             try {
                 await chrome.notifications.create(`feed-background-${state.status.at}`, {
                     type: 'basic', iconUrl: 'icons/icon48.png', title: 'Feed processing finished', message
@@ -971,7 +922,7 @@ async function notifySumDone(job) {
         chrome.notifications.create(`sumdone_${job.tabId == null ? 'x' : job.tabId}_${Date.now()}`, {
             type: 'basic',
             iconUrl: 'icons/icon48.png',
-            title: 'AI Summary Helper',
+            title: 'Arguments',
             message: job.title ? `Summary ready: ${job.title}` : 'Your summary is ready'
         });
     } catch (_) { /* notifications unavailable */ }
@@ -1514,7 +1465,7 @@ async function finishRun(r) {
         const out = await FIN.finishDetached(r.ctx, r.parser.summary, r.parser.thinking);
         if (out.error) { if (r.ctx.summaryMode === 'extension') broadcast({ action: 'summaryError', error: out.error }); return; }
         if (r.ctx.summaryMode === 'extension') {
-            broadcast({ action: 'summaryComplete', summary: out.cleanHtml, title: out.title, url: r.ctx.sourceUrl, timestamp: new Date().toISOString(), tags: out.tags, modelId: r.ctx.modelIdentifier, moodScore: out.moodScore, questions: out.questions, quick: out.quick, meta: out.pageMeta, content: r.ctx.contentHtml, highlights: out.highlights });
+            broadcast({ action: 'summaryComplete', summary: out.cleanHtml, title: out.title, url: r.ctx.sourceUrl, timestamp: new Date().toISOString(), modelId: r.ctx.modelIdentifier, meta: out.pageMeta, content: r.ctx.contentHtml, highlights: out.highlights });
         }
         if (out.article && out.article.id) broadcast({ action: 'summarySaved', id: out.article.id, url: r.ctx.sourceUrl });
     } catch (e) {

@@ -332,10 +332,10 @@ export function showPlaceholder(targetElement, donationMessage) {
         to { transform: rotate(360deg); }
       }
     </style>
-    <div style="font-size: 24px; color: ${textColor} !important;">Fetching summary... <span style="display: inline-block; animation: spin 2s linear infinite;">⏳</span></div>
+    <div style="font-size: 24px; color: ${textColor} !important;">Analyzing page... <span style="display: inline-block; animation: spin 2s linear infinite;">⏳</span></div>
     <div style="font-size: 16px; margin-top: 10px; font-weight: bold;">
     Questions, bugs or ideas? 💡, feel free to <a href="https://philwornath.com/?ref=aish#contact" target="_blank" style="color: ${linkColor} !important; font-weight: bold;">contact me</a>
-      ${donationMessage} <a href="https://link.philwornath.com/?source=aish#donate" style="color: ${linkColor} !important; font-weight: bold;" target="_blank">Support AI Summary Helper</a><br>
+      ${donationMessage} <a href="https://link.philwornath.com/?source=aish#donate" style="color: ${linkColor} !important; font-weight: bold;" target="_blank">Support Phil Wornath</a><br>
     </div>
   `;
 
@@ -363,7 +363,7 @@ export function selectTargetElement() {
   return new Promise((resolve) => {
     const messageDiv = document.createElement('div');
     messageDiv.id = 'ai-summary-message';
-    messageDiv.textContent = 'Click on the element where you want to insert the summary.';
+    messageDiv.textContent = 'Click on the element where you want to insert the main output.';
     document.body.appendChild(messageDiv);
 
     messageDiv.style.position = 'absolute';

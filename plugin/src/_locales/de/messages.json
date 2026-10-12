@@ -1,18 +1,18 @@
 {
   "extensionName": {
-    "message": "AI Summary Helper — Summarize, Ask, Listen & Cite (BYOK, Ollama)"
+    "message": "Arguments"
   },
   "extensionNameFirefox": {
-    "message": "AI Summary Helper – Summarize, Ask, Listen, Cite"
+    "message": "Arguments"
   },
   "extensionShortName": {
-    "message": "AI Summary Helper"
+    "message": "Arguments"
   },
   "extensionDescription": {
-    "message": "Zusammenfassen mit eigenem KI-Key oder Ollama. RSS-Reader, Später-lesen, Markierungen, Kindle-Export. Open Source, ohne Login."
+    "message": "Arguments nutzt KI, um Argumente hervorzuheben und neue Ideen auf Webseiten zu entdecken."
   },
   "fetchSummary": {
-    "message": "Zusammenfassung abrufen"
+    "message": "Hauptausgabe abrufen"
   },
   "settings": {
     "message": "Einstellungen"
@@ -24,7 +24,7 @@
     "message": "Spenden"
   },
   "noRecentSummaries": {
-    "message": "Keine aktuellen Zusammenfassungen"
+    "message": "Keine aktuellen Ergebnisse"
   },
   "summarizePageToSee": {
     "message": "Fasse eine Seite zusammen, um sie hier zu sehen"
@@ -36,16 +36,16 @@
     "message": "Spezifische Fragen zu dieser Seite stellen…"
   },
   "summaryLanguage": {
-    "message": "Sprache der Zusammenfassung"
+    "message": "Sprache der Hauptausgabe"
   },
   "searchLanguages": {
     "message": "Sprachen suchen…"
   },
   "summaryLength": {
-    "message": "Länge der Zusammenfassung"
+    "message": "Länge der Hauptausgabe"
   },
   "summaryMode": {
-    "message": "Modus der Zusammenfassung"
+    "message": "Modus der Hauptausgabe"
   },
   "extension": {
     "message": "Erweiterung"
@@ -90,13 +90,13 @@
     "message": "Kompatible Tools"
   },
   "compatibleToolsDesc": {
-    "message": "Erweiterungen, die nahtlos mit dem AI Summary Helper integriert sind, um deinen Workflow zu verbessern."
+    "message": "Erweiterungen, die nahtlos mit dem Arguments integriert sind, um deinen Workflow zu verbessern."
   },
   "loadingTools": {
     "message": "Tools werden geladen…"
   },
   "navSummarize": {
-    "message": "Zusammenfassen"
+    "message": "Analysieren"
   },
   "navHistory": {
     "message": "Verlauf"
@@ -117,13 +117,13 @@
     "message": "Arbeite daran…"
   },
   "summary": {
-    "message": "Zusammenfassung"
+    "message": "Hauptausgabe"
   },
   "noTitleAvailable": {
     "message": "Kein Titel verfügbar"
   },
   "noSummaryAvailable": {
-    "message": "Keine Zusammenfassung verfügbar"
+    "message": "Keine Hauptausgabe verfügbar"
   },
   "noContentAvailable": {
     "message": "Kein Inhalt verfügbar"
@@ -144,7 +144,7 @@
     "message": "🗑️ Löschen"
   },
   "aiSummary": {
-    "message": "🧙 KI-Zusammenfassung"
+    "message": "🧙 KI-Hauptausgabe"
   },
   "originalContent": {
     "message": "📄 Originalinhalt"
@@ -159,10 +159,10 @@
     "message": "Tools konnten nicht geladen werden."
   },
   "clickToInsert": {
-    "message": "Klicke auf das Element, in das die Zusammenfassung eingefügt werden soll."
+    "message": "Klicke auf das Element, in das die Hauptausgabe eingefügt werden soll."
   },
   "fetchingSummary": {
-    "message": "Zusammenfassung wird abgerufen..."
+    "message": "Hauptausgabe wird abgerufen..."
   },
   "openInSidebar": {
     "message": "In Seitenleiste öffnen"
@@ -219,7 +219,7 @@
     "message": "🤖 Modellkonfiguration"
   },
   "modelDesc": {
-    "message": "Wähle das LLM-Modell aus, um deine Zusammenfassungen zu generieren."
+    "message": "Wähle das LLM-Modell aus, um deine Ergebnisse zu generieren."
   },
   "promptCustomization": {
     "message": "💬 Prompt-Anpassung"
@@ -441,7 +441,7 @@
     "message": "Hintergrundskript veraltet – Erweiterung unter chrome://extensions neu laden"
   },
   "f_batch_summarizing_runs_in_ex_386f": {
-    "message": "Sammelzusammenfassung läuft im Erweiterungsmodus. Im Bildschirm „Zusammenfassen“ umschalten."
+    "message": "Sammelzusammenfassung läuft im Erweiterungsmodus. Im Bildschirm „Analysieren“ umschalten."
   },
   "f_behavior_a447": {
     "message": "Verhalten"
@@ -492,7 +492,7 @@
     "message": "Folge"
   },
   "f_everything_unread_is_already_a054": {
-    "message": "Alles Ungelesene bereits zusammengefasst"
+    "message": "Alles Ungelesene bereits analysiert"
   },
   "f_failed_c3d4": {
     "message": "Fehlgeschlagen"
@@ -537,7 +537,7 @@
     "message": "Unabhängiger Tech-Journalismus"
   },
   "f_items_you_open_or_summarize__a71f": {
-    "message": "Geöffnete oder zusammengefasste Einträge verlassen „Ungelesen“"
+    "message": "Geöffnete oder analysierte Einträge verlassen „Ungelesen“"
   },
   "f_last_7_days_d98f": {
     "message": "Letzte 7 Tage"
@@ -588,7 +588,7 @@
     "message": "Neue Einträge seit diesem Rückblick – Aktualisieren, um sie einzubeziehen."
   },
   "f_new_posts_land_here_skim_sum_cf70": {
-    "message": "Neue Beiträge landen hier. Überfliegen, Wichtiges zusammenfassen, Rest löschen."
+    "message": "Neue Beiträge landen hier. Überfliegen, Wichtiges analysieren, Rest löschen."
   },
   "f_newer_f04a": {
     "message": "Neuer"
@@ -606,7 +606,7 @@
     "message": "Noch keine Feeds. Unten hinzufügen oder OPML-Datei importieren."
   },
   "f_no_items_to_recap_here_a024": {
-    "message": "Nichts zum Zusammenfassen."
+    "message": "Nichts zum Analysieren."
   },
   "f_no_new_feeds_in_that_file_d161": {
     "message": "Keine neuen Feeds in der Datei"
@@ -735,7 +735,7 @@
     "message": "Quellen"
   },
   "f_starring_an_item_summarizes__7621": {
-    "message": "Mit Stern wird im Hintergrund-Tab zusammengefasst"
+    "message": "Mit Stern wird im Hintergrund-Tab analysiert"
   },
   "f_subscribed_to_c4c3": {
     "message": "{name} abonniert"
@@ -750,19 +750,19 @@
     "message": "Vorschläge"
   },
   "f_summarize_on_a_feed_item_fol_de8a": {
-    "message": "„Zusammenfassen“ bei einem Eintrag folgt dem Modus im Bildschirm „Zusammenfassen“ (standardmäßig Erweiterung). Favoriten bleiben immer erhalten."
+    "message": "„Analysieren“ bei einem Eintrag folgt dem Modus im Bildschirm „Analysieren“ (standardmäßig Erweiterung). Favoriten bleiben immer erhalten."
   },
   "f_summarized_415a": {
     "message": "Zusammengefasst"
   },
   "f_summarizing_in_the_backgroun_cfaa": {
-    "message": "Wird im Hintergrund zusammengefasst – erscheint unter Zusammenfassen und Verlauf"
+    "message": "Wird im Hintergrund analysiert – erscheint unter Analysieren und Verlauf"
   },
   "f_summarizing_the_open_tab_it__826e": {
-    "message": "Offener Tab wird zusammengefasst – erscheint unter Zusammenfassen und Verlauf"
+    "message": "Offener Tab wird analysiert – erscheint unter Analysieren und Verlauf"
   },
   "f_summarizing_in_the_backgroun_6f16": {
-    "message": "{n} werden im Hintergrund zusammengefasst – siehe Verlauf"
+    "message": "{n} werden im Hintergrund analysiert – siehe Verlauf"
   },
   "f_tags_a0c0": {
     "message": "Tags"
@@ -807,7 +807,7 @@
     "message": "Gestern"
   },
   "f_you_have_a_saved_summary_of__14f8": {
-    "message": "Zusammenfassung dieser Seite gespeichert"
+    "message": "Hauptausgabe dieser Seite gespeichert"
   },
   "f_your_feeds_stay_on_this_devi_3c13": {
     "message": "Deine Feeds bleiben auf diesem Gerät."
@@ -906,22 +906,22 @@
     "message": "✨  KI-Rückblick heute"
   },
   "f_auto_summarize_favorites_32af": {
-    "message": "✨ Favoriten auto-zusammenfassen"
+    "message": "✨ Favoriten auto-analysieren"
   },
   "f_recap_b8e8": {
     "message": "✨ Rückblick"
   },
   "f_summarize_570a": {
-    "message": "✨ Zusammenfassen"
+    "message": "✨ Analysieren"
   },
   "f_summarize_top_5_unread_d39d": {
-    "message": "✨ Top 5 Ungelesene zusammenfassen"
+    "message": "✨ Top 5 Ungelesene analysieren"
   },
   "f_writing_recap_fe02": {
     "message": "✨ Rückblick wird erstellt…"
   },
   "f_view_summary_3c09": {
-    "message": "📄 Zusammenfassung ansehen"
+    "message": "📄 Hauptausgabe ansehen"
   },
   "f_pick_a_day_or_range_dd71": {
     "message": "📅  Tag oder Zeitraum wählen…"
@@ -1251,13 +1251,13 @@
     "message": "Noch keine Artikel — fasse Seiten zusammen, um deine Analysen zu sehen! 📖"
   },
   "f_no_tags_found_add_tags_to_yo_6914": {
-    "message": "Keine Tags gefunden. Füge deinen Zusammenfassungen Tags hinzu!"
+    "message": "Keine Tags gefunden. Füge deinen Ergebnisse Tags hinzu!"
   },
   "f_saved_79e4": {
     "message": "Gespart"
   },
   "f_with_summaries_5619": {
-    "message": "Mit Zusammenfassungen"
+    "message": "Mit Ergebnisse"
   },
   "f_words_read_f576": {
     "message": "Gelesene Wörter"
@@ -1296,7 +1296,7 @@
     "message": "Gerät"
   },
   "f_digest_of_summaries_5cea": {
-    "message": "Digest aus {n} Zusammenfassungen"
+    "message": "Digest aus {n} Ergebnisse"
   },
   "f_free_tier_3_kindle_sends_inc_00a8": {
     "message": "Free-Tarif: 3 Kindle-Sendungen inklusive."
@@ -1323,7 +1323,7 @@
     "message": "Ein Digest"
   },
   "f_only_summarized_articles_can_ce5a": {
-    "message": "Nur zusammengefasste Artikel können gesendet werden"
+    "message": "Nur analysierte Artikel können gesendet werden"
   },
   "f_open_settings_88b6": {
     "message": "Einstellungen öffnen"
@@ -1344,19 +1344,19 @@
     "message": "Alle auswählen"
   },
   "f_select_summaries_2cad": {
-    "message": "Zusammenfassungen auswählen"
+    "message": "Ergebnisse auswählen"
   },
   "f_select_summaries_to_send_741c": {
-    "message": "Zusammenfassungen zum Senden auswählen"
+    "message": "Ergebnisse zum Senden auswählen"
   },
   "f_send_to_kindle_c8f1": {
     "message": "An Kindle senden"
   },
   "f_send_summaries_c9c7": {
-    "message": "{n} Zusammenfassungen senden"
+    "message": "{n} Ergebnisse senden"
   },
   "f_send_summary_164f": {
-    "message": "{n} Zusammenfassung senden"
+    "message": "{n} Hauptausgabe senden"
   },
   "f_sending_to_kindle_8853": {
     "message": "Sende an Kindle…"
@@ -1404,10 +1404,10 @@
     "message": "{n} ausgewählt"
   },
   "f_summaries_7bdf": {
-    "message": "{n} Zusammenfassungen"
+    "message": "{n} Ergebnisse"
   },
   "f_summary_0c47": {
-    "message": "{n} Zusammenfassung"
+    "message": "{n} Hauptausgabe"
   },
   "f_send_to_kindle_dc46": {
     "message": "📚 An Kindle senden"
@@ -1428,10 +1428,10 @@
     "message": "Vollständiger Artikel"
   },
   "f_summary_full_article_3f15": {
-    "message": "Zusammenfassung + ganzer Artikel"
+    "message": "Hauptausgabe + ganzer Artikel"
   },
   "f_summary_only_bd43": {
-    "message": "Nur Zusammenfassung"
+    "message": "Nur Hauptausgabe"
   },
   "f_also_automatic_opening_marks_1cdb": {
     "message": "Auch automatisch: Öffnen markiert als Gelesen, Senden als Gesendet"
@@ -1452,10 +1452,10 @@
     "message": "Markieren als…"
   },
   "f_mark_summaries_as_8da6": {
-    "message": "{n} Zusammenfassungen markieren als…"
+    "message": "{n} Ergebnisse markieren als…"
   },
   "f_mark_summary_as_4a0a": {
-    "message": "{n} Zusammenfassung markieren als…"
+    "message": "{n} Hauptausgabe markieren als…"
   },
   "f_moves_them_to_archive_find_t_1076": {
     "message": "Verschiebt sie ins Archiv — dort jederzeit auffindbar"
@@ -1704,7 +1704,7 @@
     "message": "Eine kurze Bewertung im Chrome Web Store hilft anderen, die Erweiterung zu finden."
   },
   "f_enjoying_ai_summary_helper_75e7": {
-    "message": "Gefällt dir AI Summary Helper?"
+    "message": "Gefällt dir Arguments?"
   },
   "f_later_2b49": {
     "message": "Später"
@@ -1758,7 +1758,7 @@
     "message": "Sonstige"
   },
   "f_rates_the_tone_of_summaries__01bb": {
-    "message": "Bewertet den Ton von Zusammenfassungen und Feed-Beiträgen. Steuert Stimmungsfilter, Diagramme und die Quellen-Bilanz. Ausschalten blendet alle Stimmungsfunktionen aus."
+    "message": "Bewertet den Ton von Ergebnisse und Feed-Beiträgen. Steuert Stimmungsfilter, Diagramme und die Quellen-Bilanz. Ausschalten blendet alle Stimmungsfunktionen aus."
   },
   "f_reading_339b": {
     "message": "Lesen"
@@ -1875,7 +1875,7 @@
     "message": "Alle Fragen in Exporte aufnehmen"
   },
   "f_last_summary_3355": {
-    "message": "Letzte Zusammenfassung"
+    "message": "Letzte Hauptausgabe"
   },
   "f_model_is_thinking_3a56": {
     "message": "Modell denkt nach"
@@ -1887,7 +1887,7 @@
     "message": "Keine Antwort."
   },
   "f_no_recent_summaries_03a5": {
-    "message": "Keine aktuellen Zusammenfassungen"
+    "message": "Keine aktuellen Ergebnisse"
   },
   "f_nothing_new_since_this_recap_f9bc": {
     "message": "Seit diesem Rückblick nichts Neues — Zurücksetzen schreibt ihn neu."
@@ -1926,7 +1926,7 @@
     "message": "Senden"
   },
   "f_send_summaries_96ab": {
-    "message": "Zusammenfassungen senden"
+    "message": "Ergebnisse senden"
   },
   "f_sent_to_your_ai_connection_b919": {
     "message": "An deine KI-Verbindung gesendet"
@@ -1947,10 +1947,10 @@
     "message": "Fasse eine Seite zusammen, um sie hier zu sehen"
   },
   "f_summarize_this_page_b1c9": {
-    "message": "Diese Seite zusammenfassen"
+    "message": "Diese Seite analysieren"
   },
   "f_summary_b5b3": {
-    "message": "Zusammenfassung"
+    "message": "Hauptausgabe"
   },
   "f_that_is_the_maximum_per_reca_170d": {
     "message": "Das ist das Maximum pro Rückblick. Nutze den Wochen- oder Monatsrückblick für den Überblick oder filtere nach Feed."
@@ -1971,10 +1971,10 @@
     "message": "Bin dran …"
   },
   "f_writing_a_word_summary_dd5f": {
-    "message": "Schreibe Zusammenfassung ({n} Wörter) …"
+    "message": "Schreibe Hauptausgabe ({n} Wörter) …"
   },
   "f_writing_the_summary_0fa6": {
-    "message": "Schreibe die Zusammenfassung …"
+    "message": "Schreibe die Hauptausgabe …"
   },
   "f_your_focus_question_4df6": {
     "message": "Deine Fokusfrage"
@@ -2142,10 +2142,10 @@
     "message": "Automatisch"
   },
   "f_auto_summarize_favorites_0e1f": {
-    "message": "Favoriten automatisch zusammenfassen"
+    "message": "Favoriten automatisch analysieren"
   },
   "f_automatic_light_blue_quote_h_419c": {
-    "message": "Automatische hellblaue Zitat-Highlights aus Zusammenfassungen"
+    "message": "Automatische hellblaue Zitat-Highlights aus Ergebnisse"
   },
   "f_backup_restored_successfully_8819": {
     "message": "Backup erfolgreich wiederhergestellt!\n{n} Artikel importiert.\n\nDie Erweiterung wird jetzt neu geladen."
@@ -2397,7 +2397,7 @@
     "message": "Gratis-Testmodus"
   },
   "f_generate_a_bookmarklet_that__081e": {
-    "message": "Erstelle ein Bookmarklet, das jede Seite in jedem Browser zusammenfasst – auch unter iOS/Android, wo die Erweiterung nicht läuft. Es nutzt dein byphil-Cloud-Login."
+    "message": "Erstelle ein Bookmarklet, das jede Seite in jedem Browser analysiert – auch auf iOS/Android, wo die Erweiterung nicht läuft. Es verwendet deine Anmeldung bei byphil Cloud."
   },
   "f_generate_237e": {
     "message": "Erstellen 🎙️"
@@ -2619,10 +2619,10 @@
     "message": "Keine Einstellungen zu „{query}“."
   },
   "f_no_summary_available_1155": {
-    "message": "Keine Zusammenfassung verfügbar"
+    "message": "Keine Hauptausgabe verfügbar"
   },
   "f_no_summary_returned_5f75": {
-    "message": "Keine Zusammenfassung erhalten."
+    "message": "Keine Hauptausgabe erhalten."
   },
   "f_no_title_available_2723": {
     "message": "Kein Titel verfügbar"
@@ -2676,7 +2676,7 @@
     "message": "Leiste"
   },
   "f_permanently_removes_all_summ_228d": {
-    "message": "Löscht alle Zusammenfassungen und das Archiv dauerhaft. Exportiere vorher ein Backup."
+    "message": "Löscht alle Ergebnisse und das Archiv dauerhaft. Exportiere vorher ein Backup."
   },
   "f_persist_optional_29ce": {
     "message": "Speichern (optional)"
@@ -2889,7 +2889,7 @@
     "message": "Mit E-Mail anmelden / registrieren"
   },
   "f_sign_in_to_unlock_free_cloud_f976": {
-    "message": "Melde dich an, um kostenlose Cloud-Modelle und die Synchronisierung deiner Zusammenfassungen freizuschalten – oder nutze deine eigenen API-Schlüssel."
+    "message": "Melde dich an, um kostenlose Cloud-Modelle und die Synchronisierung deiner Ergebnisse freizuschalten – oder nutze deine eigenen API-Schlüssel."
   },
   "f_signed_in_byphil_cloud_f9ba": {
     "message": "Angemeldet · byPhil Cloud"
@@ -2922,16 +2922,16 @@
     "message": "Verbindung hergestellt! 🧙"
   },
   "f_summarizing_4c71": {
-    "message": "Wird zusammengefasst …"
+    "message": "Wird analysiert …"
   },
   "f_summary_language_a8df": {
-    "message": "Sprache der Zusammenfassung"
+    "message": "Ausgabesprache"
   },
   "f_summary_length_2b31": {
-    "message": "Länge der Zusammenfassung"
+    "message": "Ausgabelänge"
   },
   "f_summary_mode_5ce6": {
-    "message": "Zusammenfassungsmodus"
+    "message": "Analysedarstellung"
   },
   "f_switch_graph_search_to_filte_7f9d": {
     "message": "Graph-Suche auf Filtermodus umstellen"
@@ -2955,7 +2955,7 @@
     "message": "Das entfernt {what} und das Archiv dauerhaft von diesem Gerät. Das lässt sich nicht rückgängig machen."
   },
   "f_this_resets_every_preference_d3b3": {
-    "message": "Das setzt alle Einstellungen, Prompts und API-Schlüssel auf diesem Gerät zurück. Deine Zusammenfassungen bleiben erhalten. Die Erweiterung wird neu geladen."
+    "message": "Das setzt alle Einstellungen, Prompts und API-Schlüssel auf diesem Gerät zurück. Deine Ergebnisse bleiben erhalten. Die Erweiterung wird neu geladen."
   },
   "f_this_will_invalidate_the_cur_4995": {
     "message": "Der aktuelle Code wird dadurch ungültig. Fortfahren?"
@@ -3012,7 +3012,7 @@
     "message": "Ansicht: hervorgehoben"
   },
   "f_welcome_to_ai_summary_helper_892e": {
-    "message": "Willkommen bei AI Summary Helper"
+    "message": "Willkommen bei Arguments"
   },
   "f_well_connected_1033": {
     "message": "Gut vernetzt"
@@ -3030,7 +3030,7 @@
     "message": "eine Spende"
   },
   "f_all_summaries_c680": {
-    "message": "alle Zusammenfassungen"
+    "message": "alle Ergebnisse"
   },
   "f_byphil_cloud_17f0": {
     "message": "byPhil Cloud"
@@ -3048,7 +3048,7 @@
     "message": "z. B. gpt-5-mini, llama3.2"
   },
   "f_for_unlimited_zero_config_su_82c0": {
-    "message": "für unbegrenzte Zusammenfassungen ohne Konfiguration."
+    "message": "für unbegrenzte Ergebnisse ohne Konfiguration."
   },
   "f_from_8075": {
     "message": "von"
@@ -3138,7 +3138,7 @@
     "message": "– Melde dich gern"
   },
   "f_summarizing_2ba2": {
-    "message": "⏳ Wird zusammengefasst …"
+    "message": "⏳ Wird analysiert …"
   },
   "f_settings_eb9e": {
     "message": "⚙️ Einstellungen"
@@ -3213,7 +3213,7 @@
     "message": "🤖 KI-vorgeschlagene Highlights"
   },
   "f_ai_summary_c72e": {
-    "message": "🧙 KI-Zusammenfassung"
+    "message": "🧙 KI-Hauptausgabe"
   },
   "f_on_device_tools_d85a": {
     "message": "🧠 Tools auf dem Gerät"
@@ -3291,7 +3291,7 @@
     "message": "🔎 Kernaussagen"
   },
   "f_adds_each_summary_under_its__b17f": {
-    "message": "Fügt jede Zusammenfassung unter ihrer Quelle ein"
+    "message": "Fügt jede Hauptausgabe unter ihrer Quelle ein"
   },
   "f_citation_lookup_failed_try_a_bb2e": {
     "message": "Zitat-Abfrage fehlgeschlagen – erneut versuchen"
@@ -3315,7 +3315,7 @@
     "message": "Zitat holen"
   },
   "f_include_my_summaries_aadf": {
-    "message": "Meine Zusammenfassungen einbeziehen"
+    "message": "Meine Ergebnisse einbeziehen"
   },
   "f_looking_up_citations_at_doi__563a": {
     "message": "Zitate werden bei doi.org abgefragt – nur die DOIs werden gesendet…"
@@ -3354,7 +3354,7 @@
     "message": "❝ Zitieren"
   },
   "f_attach_a_pdf_to_summarize_b6ff": {
-    "message": "PDF zum Zusammenfassen anhängen"
+    "message": "PDF zum Analysieren anhängen"
   },
   "f_could_not_read_this_pdf_f579": {
     "message": "Dieses PDF konnte nicht gelesen werden."
@@ -3453,7 +3453,7 @@
     "message": "Textgröße"
   },
   "f_the_quick_brown_fox_jumps_ov_fd42": {
-    "message": "Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich. Zusammenfassungen nutzen diese Größe und diesen Abstand."
+    "message": "Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich. Ergebnisse nutzen diese Größe und diesen Abstand."
   },
   "f_your_system_already_asks_for_8b6f": {
     "message": "Dein System verlangt bereits weniger Bewegung – das wird immer beachtet."
@@ -3567,7 +3567,7 @@
     "message": "Dauerhaft machen"
   },
   "f_new_summary_da1d": {
-    "message": "Neue Zusammenfassung"
+    "message": "Neue Hauptausgabe"
   },
   "f_next_previous_card_c144": {
     "message": "Nächste / vorherige Karte"
@@ -3603,10 +3603,10 @@
     "message": "Starte Ollama erneut über das Startmenü oder als Vordergrund-Server in einem neuen Eingabeaufforderungsfenster:"
   },
   "f_summarize_791a": {
-    "message": "Zusammenfassen"
+    "message": "Analysieren"
   },
   "f_summarize_send_e76b": {
-    "message": "Zusammenfassen / senden"
+    "message": "Analysieren / senden"
   },
   "f_switch_tab_793a": {
     "message": "Tab wechseln"
@@ -3714,7 +3714,7 @@
     "message": "Nach oben"
   },
   "f_speaks_the_title_and_site_fi_196b": {
-    "message": "Liest zuerst Titel und Website vor, dann die Zusammenfassung Satz für Satz, während das Modell schreibt."
+    "message": "Liest zuerst Titel und Website vor, dann die Hauptausgabe Satz für Satz, während das Modell schreibt."
   },
   "f_start_097f": {
     "message": "Start"
@@ -3723,13 +3723,13 @@
     "message": "Vorlesen beenden"
   },
   "f_the_voice_follows_the_langua_55b1": {
-    "message": "Die Stimme folgt der Sprache des Textes: Eine englische Zusammenfassung eines deutschen Artikels wird auf Englisch gelesen, das Original auf Deutsch."
+    "message": "Die Stimme folgt der Sprache des Textes: Eine englische Hauptausgabe eines deutschen Artikels wird auf Englisch gelesen, das Original auf Deutsch."
   },
   "f_voice_auto_8e1b": {
     "message": "Stimme · automatisch"
   },
   "f_voice_it_follows_the_summary_2f51": {
-    "message": "Stimme: {voice} · {lang}. Sie folgt der Sprache der Zusammenfassung; Titel und Website werden in der App-Sprache angesagt."
+    "message": "Stimme: {voice} · {lang}. Sie folgt der Sprache der Hauptausgabe; Titel und Website werden in der App-Sprache angesagt."
   },
   "f_add_model_id_e_g_gemma4_e2b_127a": {
     "message": "Modell-ID hinzufügen, z. B. gemma4:e2b"
@@ -3753,10 +3753,10 @@
     "message": "Code eingeben"
   },
   "f_free_cloud_models_and_your_s_71ce": {
-    "message": "Kostenlose Cloud-Modelle und deine Zusammenfassungen auf jedem Gerät. Oder überspringen und den eigenen API-Schlüssel nutzen."
+    "message": "Kostenlose Cloud-Modelle und deine Ergebnisse auf jedem Gerät. Oder überspringen und den eigenen API-Schlüssel nutzen."
   },
   "f_sign_in_to_ai_summary_helper_d8be": {
-    "message": "Bei AI Summary Helper anmelden"
+    "message": "Bei Arguments anmelden"
   },
   "f_thinking_more_de1c": {
     "message": "Denke weiter nach…"
@@ -3822,7 +3822,7 @@
     "message": "Modelleinstellungen öffnen"
   },
   "f_queued_it_will_start_when_th_cd8f": {
-    "message": "In der Warteschlange – startet, sobald die aktuelle Zusammenfassung fertig ist"
+    "message": "In der Warteschlange – startet, sobald die aktuelle Hauptausgabe fertig ist"
   },
   "f_queued_4ebe": {
     "message": "In der Warteschlange: {title}"
@@ -3843,7 +3843,7 @@
     "message": "Speicheroptionen"
   },
   "f_saved_without_an_ai_summary__ff94": {
-    "message": "Ohne KI-Zusammenfassung gespeichert. Öffne die Seite und tippe auf ✨ Zusammenfassen, um eine hinzuzufügen."
+    "message": "Ohne KI-Hauptausgabe gespeichert. Öffne die Seite und tippe auf ✨ Analysieren, um eine hinzuzufügen."
   },
   "f_search_installed_models_959b": {
     "message": "Installierte Modelle durchsuchen…"
@@ -3855,13 +3855,13 @@
     "message": "Diese Seite kann nicht gespeichert werden."
   },
   "f_waiting_for_the_running_summ_1f1c": {
-    "message": "Wartet auf die laufende Zusammenfassung – klicken, um sie aus der Warteschlange zu entfernen"
+    "message": "Wartet auf die laufende Hauptausgabe – klicken, um sie aus der Warteschlange zu entfernen"
   },
   "f_your_api_key_is_missing_or_w_264b": {
     "message": "Dein API-Schlüssel fehlt oder wurde abgelehnt. Prüfe ihn in den Einstellungen."
   },
   "f_starts_when_the_current_summ_b50e": {
-    "message": "startet, sobald die aktuelle Zusammenfassung fertig ist"
+    "message": "startet, sobald die aktuelle Hauptausgabe fertig ist"
   },
   "f_this_page_a108": {
     "message": "diese Seite"
@@ -3909,7 +3909,7 @@
     "message": "Standard"
   },
   "f_summary_length_in_words_ab69": {
-    "message": "Länge der Zusammenfassung in Wörtern"
+    "message": "Länge der Hauptausgabe in Wörtern"
   },
   "f_items_could_not_be_scored_31d6": {
     "message": "{n} Einträge konnten nicht bewertet werden"
@@ -3927,7 +3927,7 @@
     "message": "Fertig."
   },
   "f_everything_in_your_library_i_47fb": {
-    "message": "Alles in deiner Bibliothek ist bewertet, kategorisiert und zusammengefasst."
+    "message": "Alles in deiner Bibliothek ist bewertet, kategorisiert und analysiert."
   },
   "f_process_the_whole_library_e3a9": {
     "message": "Ganze Bibliothek verarbeiten"
@@ -3957,7 +3957,7 @@
     "message": "etwa {m} Min."
   },
   "f_items_rated_days_recapped_fc36": {
-    "message": "{a} Einträge bewertet · {b} Tage zusammengefasst"
+    "message": "{a} Einträge bewertet · {b} Tage analysiert"
   },
   "f_items_to_rate_days_to_recap__44f6": {
     "message": "{a} Einträge zu bewerten · {b} Tage zu fassen · {n} KI-Anfragen"
@@ -4020,13 +4020,13 @@
     "message": "Anfrage {a} von {b}"
   },
   "f_runs_on_your_own_machine_wit_1728": {
-    "message": "Läuft auf deinem eigenen Rechner mit Ollama und kostet keine Tokens, auch wenn für Zusammenfassungen ein anderes Modell aktiv ist. Lass dieses Fenster offen: Schließt du es, pausiert der Lauf, und beim erneuten Start geht es dort weiter, wo er stehen blieb. Verarbeitet werden nur noch gespeicherte Einträge (siehe „Einträge behalten für“). Der Recap von heute entsteht, wenn du ihn öffnest."
+    "message": "Läuft auf deinem eigenen Rechner mit Ollama und kostet keine Tokens, auch wenn für Ergebnisse ein anderes Modell aktiv ist. Lass dieses Fenster offen: Schließt du es, pausiert der Lauf, und beim erneuten Start geht es dort weiter, wo er stehen blieb. Verarbeitet werden nur noch gespeicherte Einträge (siehe „Einträge behalten für“). Der Recap von heute entsteht, wenn du ihn öffnest."
   },
   "f_sending_the_batch_to_ollama_ac2f": {
     "message": "Sende den Stapel an Ollama…"
   },
   "f_not_your_active_summary_mode_78a8": {
-    "message": "nicht dein aktives Zusammenfassungsmodell"
+    "message": "nicht dein aktives Hauptausgabesmodell"
   },
   "f_left_db92": {
     "message": "noch {eta}"
@@ -4047,7 +4047,7 @@
     "message": "Änderungsprotokoll"
   },
   "f_how_should_ai_summary_helper_b4d7": {
-    "message": "Womit soll AI Summary Helper denken?"
+    "message": "Womit soll Arguments denken?"
   },
   "f_local_models_no_account_no_k_a783": {
     "message": "Lokale Modelle. Kein Konto, kein Schlüssel, nichts verlässt deinen Rechner."
@@ -4071,7 +4071,7 @@
     "message": "Sicherheitsrichtlinie"
   },
   "f_sign_in_with_your_email_no_a_5518": {
-    "message": "Melde dich mit deiner E-Mail an, kein API-Schlüssel nötig. Deine Zusammenfassungen folgen dir auf jedes Gerät."
+    "message": "Melde dich mit deiner E-Mail an, kein API-Schlüssel nötig. Deine Ergebnisse folgen dir auf jedes Gerät."
   },
   "f_tip_press_on_any_page_to_sum_8aff": {
     "message": "Tipp: Drücke {key} auf einer beliebigen Seite, um sie zusammenzufassen."
@@ -4107,10 +4107,10 @@
     "message": "Kindle- & LocalSend-Ziele"
   },
   "f_permanently_removes_your_sum_782d": {
-    "message": "Entfernt deine Zusammenfassungen, das Archiv und deine Markierungen endgültig von diesem Gerät. Einstellungen und Feeds bleiben, außer du wählst sie aus. Das lässt sich nicht rückgängig machen."
+    "message": "Entfernt deine Ergebnisse, das Archiv und deine Markierungen endgültig von diesem Gerät. Einstellungen und Feeds bleiben, außer du wählst sie aus. Das lässt sich nicht rückgängig machen."
   },
   "f_permanently_removes_your_sum_2de7": {
-    "message": "Entfernt deine Zusammenfassungen, das Archiv und deine Markierungen endgültig. Einstellungen und Feeds bleiben. Sichere vorher ein Backup."
+    "message": "Entfernt deine Ergebnisse, das Archiv und deine Markierungen endgültig. Einstellungen und Feeds bleiben. Sichere vorher ein Backup."
   },
   "f_preferences_prompts_d7ac": {
     "message": "Einstellungen & Prompts"
@@ -4119,16 +4119,16 @@
     "message": "Entfernt alles, was diese Erweiterung auf diesem Gerät speichert, und startet neu. Das lässt sich nicht rückgängig machen. Dein Konto auf unserem Server bleibt unberührt: Wenn du es löschen lassen willst, kontaktiere uns (siehe Datenschutzerklärung)."
   },
   "f_removes_everything_this_exte_b9a8": {
-    "message": "Entfernt alles, was diese Erweiterung auf diesem Gerät speichert: Zusammenfassungen, Markierungen, Feeds, Schlüssel und Einstellungen. Sichere vorher ein Backup."
+    "message": "Entfernt alles, was diese Erweiterung auf diesem Gerät speichert: Ergebnisse, Markierungen, Feeds, Schlüssel und Einstellungen. Sichere vorher ein Backup."
   },
   "f_resets_preferences_prompts_a_02e0": {
-    "message": "Setzt Einstellungen, Prompts, API-Schlüssel, Anmeldung und Sendeziele auf diesem Gerät zurück. Zusammenfassungen, Markierungen und Feeds bleiben, außer du wählst sie aus. Die Erweiterung wird neu geladen."
+    "message": "Setzt Einstellungen, Prompts, API-Schlüssel, Anmeldung und Sendeziele auf diesem Gerät zurück. Ergebnisse, Markierungen und Feeds bleiben, außer du wählst sie aus. Die Erweiterung wird neu geladen."
   },
   "f_resets_preferences_prompts_a_aab7": {
-    "message": "Setzt Einstellungen, Prompts, API-Schlüssel, Anmeldung und Sendeziele auf diesem Gerät zurück. Zusammenfassungen, Markierungen und Feeds bleiben."
+    "message": "Setzt Einstellungen, Prompts, API-Schlüssel, Anmeldung und Sendeziele auf diesem Gerät zurück. Ergebnisse, Markierungen und Feeds bleiben."
   },
   "f_summaries_archive_b387": {
-    "message": "Zusammenfassungen & Archiv"
+    "message": "Ergebnisse & Archiv"
   },
   "f_website_access_is_off_allow__f6c7": {
     "message": "Der Zugriff auf Websites ist aus. Erlaube ihn unter about:addons → diese Erweiterung → Berechtigungen („Auf Ihre Daten für alle Websites zugreifen“) und aktualisiere dann."
@@ -4344,7 +4344,7 @@
     "message": "Bequem: nur deine E-Mail, kein API-Schlüssel. Unterstützt außerdem mich als unabhängigen Entwickler."
   },
   "f_pick_a_way_to_run_your_summa_5c59": {
-    "message": "Wähle, wie deine Zusammenfassungen laufen sollen. Jederzeit in den Einstellungen änderbar."
+    "message": "Wähle, wie deine Ergebnisse laufen sollen. Jederzeit in den Einstellungen änderbar."
   },
   "f_back_to_top_bd70": {
     "message": "Zurück nach oben"
@@ -4362,7 +4362,7 @@
     "message": "Hervorhebungsanweisung"
   },
   "f_summary_prompt_5157": {
-    "message": "Zusammenfassungsanweisung"
+    "message": "Hauptausgabesanweisung"
   },
   "f_reset_to_default_f7dc": {
     "message": "Auf Standard zurücksetzen"
@@ -4371,10 +4371,10 @@
     "message": "Anweisungen konnten nicht gespeichert werden."
   },
   "f_highlight_and_summary_prompt_ef01": {
-    "message": "Hervorhebungs- und Zusammenfassungsanweisungen"
+    "message": "Hervorhebungs- und Hauptausgabesanweisungen"
   },
   "pagePromptsHint": {
-    "message": "Hervorhebungs- und Zusammenfassungsanweisungen"
+    "message": "Anweisungen für Hervorhebungen und Hauptausgabe"
   },
   "highlightNotFound": {
     "message": "Auf der Seite nicht gefunden"
@@ -4405,5 +4405,257 @@
   },
   "highlightInvalidResponse": {
     "message": "Markierungsantwort konnte nicht gelesen werden"
+  },
+  "f_available_when_ollama_is_set_f9e0": {
+    "message": "Verfügbar nach Einrichtung von Ollama. Erstellt Rückblicke deiner Feed-Bibliothek in kleinen Gruppen auf deinem Rechner."
+  },
+  "f_creates_recaps_of_your_feed__0737": {
+    "message": "Erstellt Rückblicke deiner Feed-Einträge in kleinen Gruppen auf deinem Rechner."
+  },
+  "f_edit_feeds_in_settings_6774": {
+    "message": "Feeds in den Einstellungen bearbeiten"
+  },
+  "f_every_stored_day_has_a_compl_5d0c": {
+    "message": "Für jeden gespeicherten Tag liegt ein vollständiger Rückblick vor."
+  },
+  "f_sources_rename_mute_713c": {
+    "message": "Quellen · umbenennen · stummschalten"
+  },
+  "f_day_recaps_written_71f0": {
+    "message": "{b} Tagesrückblicke erstellt",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_recapped_4012": {
+    "message": "{b} Tage aufbereitet",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_to_recap_ai_requests_f01d": {
+    "message": "{b} Tage aufzubereiten · {n} KI-Anfragen",
+    "description": "Placeholders: {b} {n} (keep as is)"
+  },
+  "f_manage_feeds_in_settings_a66f": {
+    "message": "⚙️  Feeds in den Einstellungen verwalten  ›"
+  },
+  "f_main_output_prompt_c085": {
+    "message": "Anweisungen für die Hauptausgabe"
+  },
+  "f_subscriptions_opml_697e": {
+    "message": "Abonnements · OPML"
+  },
+  "f_backup_delete_5d95": {
+    "message": "Sicherung · löschen"
+  },
+  "f_no_articles_yet_start_analyz_01e3": {
+    "message": "Noch keine Artikel — fasse Seiten zusammen, um deine Analysen zu sehen! 📖"
+  },
+  "f_with_results_f383": {
+    "message": "Mit Ergebnisse"
+  },
+  "f_analyze_a663": {
+    "message": "✨ Analysieren"
+  },
+  "f_analyzing_8bc5": {
+    "message": "⏳ Wird analysiert …"
+  },
+  "f_saved_without_an_ai_main_out_a5cb": {
+    "message": "Ohne KI-Hauptausgabe gespeichert. Öffne die Seite und tippe auf ✨ Analysieren, um eine hinzuzufügen."
+  },
+  "f_no_main_output_available_2d4f": {
+    "message": "Keine Hauptausgabe verfügbar"
+  },
+  "f_main_output_1742": {
+    "message": "🧙 KI-Hauptausgabe"
+  },
+  "f_sign_in_to_arguments_1d5c": {
+    "message": "Bei Arguments anmelden"
+  },
+  "f_free_cloud_models_and_your_r_153c": {
+    "message": "Kostenlose Cloud-Modelle und deine Ergebnisse auf jedem Gerät. Oder überspringen und den eigenen API-Schlüssel nutzen."
+  },
+  "f_writing_a_word_main_output_82b9": {
+    "message": "Schreibe Hauptausgabe ({n} Wörter) …"
+  },
+  "f_analyzed_7135": {
+    "message": "Zusammengefasst"
+  },
+  "f_waiting_for_the_running_main_f4e2": {
+    "message": "Wartet auf die laufende Hauptausgabe – klicken, um sie aus der Warteschlange zu entfernen"
+  },
+  "f_queued_it_will_start_when_th_31fd": {
+    "message": "In der Warteschlange – startet, sobald die aktuelle Hauptausgabe fertig ist"
+  },
+  "f_analyzing_in_the_background__dd2a": {
+    "message": "Wird im Hintergrund analysiert – erscheint unter Analysieren und Verlauf"
+  },
+  "f_new_posts_land_here_skim_ana_6e81": {
+    "message": "Neue Beiträge landen hier. Überfliegen, Wichtiges analysieren, Rest löschen."
+  },
+  "f_analyzed_f2f6": {
+    "message": "✓ Zusammengefasst"
+  },
+  "f_you_have_a_saved_main_output_fc8e": {
+    "message": "Hauptausgabe dieser Seite gespeichert"
+  },
+  "f_view_main_output_090b": {
+    "message": "📄 Hauptausgabe ansehen"
+  },
+  "f_not_your_active_main_output__ce26": {
+    "message": "nicht dein aktives Hauptausgabesmodell"
+  },
+  "f_runs_on_your_own_machine_wit_290a": {
+    "message": "Läuft auf deinem eigenen Rechner mit Ollama und kostet keine Tokens, auch wenn für Ergebnisse ein anderes Modell aktiv ist. Lass dieses Fenster offen: Schließt du es, pausiert der Lauf, und beim erneuten Start geht es dort weiter, wo er stehen blieb. Verarbeitet werden nur noch gespeicherte Einträge (siehe „Einträge behalten für“). Der Recap von heute entsteht, wenn du ihn öffnest."
+  },
+  "f_items_you_open_or_analyze_le_4138": {
+    "message": "Geöffnete oder analysierte Einträge verlassen „Ungelesen“"
+  },
+  "f_auto_analyze_favorites_a662": {
+    "message": "✨ Favoriten auto-analysieren"
+  },
+  "f_analyze_on_a_feed_item_follo_6202": {
+    "message": "„Analysieren“ bei einem Eintrag folgt dem Modus im Bildschirm „Analysieren“ (standardmäßig Erweiterung). Favoriten bleiben immer erhalten."
+  },
+  "f_speaks_the_title_and_site_fi_7a35": {
+    "message": "Liest zuerst Titel und Website vor, dann die Hauptausgabe Satz für Satz, während das Modell schreibt."
+  },
+  "f_voice_it_follows_the_main_ou_7f8f": {
+    "message": "Stimme: {voice} · {lang}. Sie folgt der Sprache der Hauptausgabe; Titel und Website werden in der App-Sprache angesagt."
+  },
+  "f_main_output_length_in_words_bc0f": {
+    "message": "Länge der Hauptausgabe in Wörtern"
+  },
+  "f_attach_a_pdf_to_analyze_388e": {
+    "message": "PDF zum Analysieren anhängen"
+  },
+  "f_no_recent_results_527f": {
+    "message": "Keine aktuellen Ergebnisse"
+  },
+  "f_analyze_a_page_to_see_it_her_a8ca": {
+    "message": "Fasse eine Seite zusammen, um sie hier zu sehen"
+  },
+  "f_analyze_this_page_7fec": {
+    "message": "Diese Seite analysieren"
+  },
+  "f_writing_the_main_output_cff0": {
+    "message": "Schreibe die Hauptausgabe …"
+  },
+  "f_analyze_9f73": {
+    "message": "Analysieren"
+  },
+  "f_starts_when_the_current_main_1a7c": {
+    "message": "startet, sobald die aktuelle Hauptausgabe fertig ist"
+  },
+  "f_pick_a_way_to_run_your_resul_269b": {
+    "message": "Wähle, wie deine Ergebnisse laufen sollen. Jederzeit in den Einstellungen änderbar."
+  },
+  "f_tip_press_on_any_page_to_ana_0f1e": {
+    "message": "Tipp: Drücke {key} auf einer beliebigen Seite, um sie zusammenzufassen."
+  },
+  "f_main_output_c815": {
+    "message": "Hauptausgabe"
+  },
+  "f_the_voice_follows_the_langua_d773": {
+    "message": "Die Stimme folgt der Sprache des Textes: Eine englische Hauptausgabe eines deutschen Artikels wird auf Englisch gelesen, das Original auf Deutsch."
+  },
+  "f_enjoying_arguments_991d": {
+    "message": "Gefällt dir Arguments?"
+  },
+  "f_only_analyzed_articles_can_b_dfaf": {
+    "message": "Nur analysierte Artikel können gesendet werden"
+  },
+  "f_select_results_cac7": {
+    "message": "Ergebnisse auswählen"
+  },
+  "f_send_results_0ecd": {
+    "message": "Ergebnisse senden"
+  },
+  "f_send_main_output_fc91": {
+    "message": "{n} Hauptausgabe senden"
+  },
+  "f_send_results_f1a9": {
+    "message": "{n} Ergebnisse senden"
+  },
+  "f_main_output_only_7011": {
+    "message": "Nur Hauptausgabe"
+  },
+  "f_main_output_full_article_b1cb": {
+    "message": "Hauptausgabe + ganzer Artikel"
+  },
+  "f_main_output_db19": {
+    "message": "{n} Hauptausgabe"
+  },
+  "f_results_eb81": {
+    "message": "{n} Ergebnisse"
+  },
+  "f_mark_main_output_as_bf44": {
+    "message": "{n} Hauptausgabe markieren als…"
+  },
+  "f_mark_results_as_6bf0": {
+    "message": "{n} Ergebnisse markieren als…"
+  },
+  "f_digest_of_results_776c": {
+    "message": "Digest aus {n} Ergebnisse"
+  },
+  "f_select_results_to_send_9cf2": {
+    "message": "Ergebnisse zum Senden auswählen"
+  },
+  "f_analyzing_cdca": {
+    "message": "Wird analysiert …"
+  },
+  "f_no_main_output_returned_3af7": {
+    "message": "Keine Hauptausgabe erhalten."
+  },
+  "f_results_archive_73d9": {
+    "message": "Ergebnisse & Archiv"
+  },
+  "f_resets_preferences_prompts_a_9142": {
+    "message": "Setzt Einstellungen, Prompts, API-Schlüssel, Anmeldung und Sendeziele auf diesem Gerät zurück. Ergebnisse, Markierungen und Feeds bleiben, außer du wählst sie aus. Die Erweiterung wird neu geladen."
+  },
+  "f_permanently_removes_your_res_cd53": {
+    "message": "Entfernt deine Ergebnisse, das Archiv und deine Markierungen endgültig von diesem Gerät. Einstellungen und Feeds bleiben, außer du wählst sie aus. Das lässt sich nicht rückgängig machen."
+  },
+  "f_invalid_backup_file_please_s_0b0d": {
+    "message": "Ungültige Backup-Datei. Bitte wähle einen gültigen AI-Summary-Helper-Export."
+  },
+  "f_auto_analyze_favorites_3012": {
+    "message": "Favoriten automatisch analysieren"
+  },
+  "f_highlight_and_main_output_pr_49e7": {
+    "message": "Anweisungen für Hervorhebungen und Hauptausgabe"
+  },
+  "f_analyze_send_e8ec": {
+    "message": "Analysieren / senden"
+  },
+  "f_new_main_output_5b1f": {
+    "message": "Neue Hauptausgabe"
+  },
+  "f_output_language_7616": {
+    "message": "Ausgabesprache"
+  },
+  "f_output_length_cc00": {
+    "message": "Ausgabelänge"
+  },
+  "f_analysis_display_a211": {
+    "message": "Analysedarstellung"
+  },
+  "f_automatic_light_blue_quote_h_cb6e": {
+    "message": "Automatische hellblaue Zitat-Highlights aus Ergebnisse"
+  },
+  "f_for_unlimited_zero_config_re_80ba": {
+    "message": "für unbegrenzte Ergebnisse ohne Konfiguration."
+  },
+  "f_the_quick_brown_fox_jumps_ov_22b0": {
+    "message": "Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich. Ergebnisse nutzen diese Größe und diesen Abstand."
+  },
+  "f_permanently_removes_your_res_12e9": {
+    "message": "Entfernt deine Ergebnisse, das Archiv und deine Markierungen endgültig. Einstellungen und Feeds bleiben. Sichere vorher ein Backup."
+  },
+  "f_removes_everything_this_exte_6b82": {
+    "message": "Entfernt alles, was diese Erweiterung auf diesem Gerät speichert: Ergebnisse, Markierungen, Feeds, Schlüssel und Einstellungen. Sichere vorher ein Backup."
+  },
+  "f_resets_preferences_prompts_a_cfb1": {
+    "message": "Setzt Einstellungen, Prompts, API-Schlüssel, Anmeldung und Sendeziele auf diesem Gerät zurück. Ergebnisse, Markierungen und Feeds bleiben."
+  },
+  "f_generate_a_bookmarklet_that__658d": {
+    "message": "Erstelle ein Bookmarklet, das jede Seite in jedem Browser analysiert – auch auf iOS/Android, wo die Erweiterung nicht läuft. Es verwendet deine Anmeldung bei byphil Cloud."
   }
 }

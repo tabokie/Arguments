@@ -13,4 +13,3 @@ export * from './textUtils.js';
 export * from './localSearch.js';
 export * from './duplicateDetector.js';
 export * from './textMetrics.js';
-export * from './tagIntelligence.js';

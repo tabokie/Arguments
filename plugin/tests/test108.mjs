@@ -7,26 +7,20 @@ const start = src.indexOf("const FEED_ALARM = 'feedPoll';");
 const end = src.indexOf('// ── One-shot AI completion', start);
 assert(start >= 0 && end > start, 'background feed worker block found');
 const block = src.slice(start, end);
-const [{ parseWorkerFeed, mergeWorkerItems, boundedLibraryPlan, estimateFeedInterval, feedPriority, feedQualityWeight }, { planLibrary, runLibrary, categoryCounts, chunksOf }, { startOfDay }] = await Promise.all([
+const [{ parseWorkerFeed, mergeWorkerItems, boundedLibraryPlan, estimateFeedInterval, feedPriority, feedQualityWeight }, { planLibrary, runLibrary, chunksOf }, { startOfDay }] = await Promise.all([
     imp('modules/feedWorker.js'), imp('modules/libraryBatch.js'), imp('modules/dateUtils.js')
 ]);
-let aiCalls = 0, topicCalls = 0, fetchCalls = 0, notifications = 0;
+let aiCalls = 0, fetchCalls = 0, notifications = 0;
 const fetchHeaders = [];
 const rss = `<rss><channel>${Array.from({ length: 35 }, (_, i) =>
     `<item><guid>guid-${i}</guid><title>Headline ${i}</title><link>https://example.test/${i}</link><pubDate>${new Date().toUTCString()}</pubDate></item>`
 ).join('')}</channel></rss>`;
 const worker = {
     parseWorkerFeed, mergeWorkerItems, boundedLibraryPlan, estimateFeedInterval, feedPriority, feedQualityWeight,
-    planLibrary, runLibrary, categoryCounts, chunksOf, startOfDay,
+    planLibrary, runLibrary, chunksOf, startOfDay,
     itemSig: item => item.id, hash: value => value,
-    scoreItems: async items => {
-        aiCalls++;
-        return { scores: items.map(() => 0.5), labels: items.map(() => 'News') };
-    },
-    generateRecap: async () => ({}), generateRecapUpdate: async () => ({}),
-    uiLanguage: async () => ({ code: 'en', name: 'English' }), loadLexicon: async () => {}, saveLexicon: async () => {},
-    learnTagNames: async () => 0,
-    generateFeedTopics: async () => { topicCalls++; return { tags: ['News', 'World'], lang: 'en' }; }
+    generateRecap: async () => { aiCalls++; return {}; }, generateRecapUpdate: async () => { aiCalls++; return {}; },
+
 };
 const SK = {
     feedSubs: 'feeds:subs', feedItems: 'feeds:items', feedRecaps: 'feeds:recaps', feedBackground: 'feeds:background',
@@ -79,15 +73,15 @@ try {
     await bg.run.pollFeeds();
     assert.equal(aiCalls, 3, 'first alarm makes no more than three AI requests');
     assert.equal(bg.store['feeds:background'].items.length, 35, 'new items stored by the worker');
-    assert.equal(Object.keys(bg.store['feeds:background'].ratings).length, 30, 'only the bounded work is processed this tick');
+    assert.equal(Object.keys(bg.store['feeds:background'].ratings).length, 0, 'only the bounded work is processed this tick');
     assert.equal(bg.store['feeds:subs'][0].etag, '"bg-v1"', 'background poll stores response validators');
     bg.store['feeds:background'].status.at = 0;
     bg.store['feeds:subs'][0].lastFetched = 0;
     await bg.run.pollFeeds();
     assert.equal(fetchHeaders[1]['If-None-Match'], '"bg-v1"', 'background poll sends validators');
     assert.equal(bg.store['feeds:background'].items.length, 35, '304 does not parse or replace background items');
-    assert.equal(aiCalls, 4, 'the next tick resumes from stored ratings');
-    assert.equal(Object.keys(bg.store['feeds:background'].ratings).length, 35);
+    assert.equal(aiCalls, 4, 'the next tick resumes from stored recap coverage');
+    assert.equal(Object.keys(bg.store['feeds:background'].ratings).length, 0);
     assert(Object.keys(bg.store['feeds:background'].recaps).length > 0, 'same-day items receive a background recap');
     assert.equal(notifications, 2, 'finished runs notify with their result');
 
@@ -101,7 +95,7 @@ try {
     const before = aiCalls;
     const merged = makeBackground({ 'feeds:subs': [sub], 'feeds:items': [], 'feeds:settings': { ...settings, rateWithRecap: undefined } });
     await merged.run.pollFeeds();
-    assert.equal(aiCalls, before, 'no separate rating request for items that the day recap rates');
+    assert.equal(aiCalls, before + 3, 'legacy rating preference cannot re-enable metadata jobs');
     assert(Object.keys(merged.store['feeds:background'].recaps).length > 0, 'the recap still runs');
 
     const stopped = makeBackground({ 'feeds:settings': { autoProcess: false, backgroundPoll: false } });

@@ -21,6 +21,12 @@ assert.equal(host.shadowRoot.querySelectorAll('.highlights li').length, 2);
 assert.equal(host.shadowRoot.querySelector('summary .failure').textContent, '2 not matched');
 assert.match(host.shadowRoot.querySelector('[data-match-status="source-ambiguous"]').textContent, /Multiple source sentences/);
 assert.match(host.shadowRoot.querySelector('[data-match-status="source-unmatched"]').textContent, /Prefix not found in source/);
+const highlightsOnly = await finalizeSummary({ raw: '<!-- GHOST_HIGHLIGHTS: ["We should adopt congestion"] -->', contentText: source });
+assert(!highlightsOnly.error && highlightsOnly.cleanHtml === '' && highlightsOnly.highlights[0].status === 'resolved');
+const noInsights = await finalizeSummary({ raw: '<!-- GHOST_HIGHLIGHTS: [] -->', contentText: source });
+assert(!noInsights.error && noInsights.cleanHtml === '' && !noInsights.highlights.length);
+const incomplete = await finalizeSummary({ raw: '', thinking: 'private reasoning', contentText: source });
+assert(incomplete.error, 'an absent response without prepared selections is still a failure');
 const malformed = await finalizeSummary({ raw: '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: [broken -->', contentText: source });
 const bad = showSummaryWindow(malformed.cleanHtml, malformed.highlights);
 assert.match(bad.shadowRoot.querySelector('.highlights').textContent, /Highlight response could not be read/);
@@ -29,6 +35,14 @@ assert.equal(omitted.highlights[0].status, 'invalid-response', 'omitting require
 const empty = await finalizeSummary({ raw: '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: [] -->', contentText: source });
 assert.deepEqual(empty.highlights, [], 'an explicit empty selection remains a valid result');
 
+const { isSendable } = await imp('modules/sendSheet.js');
+const { menuItems } = await imp('modules/cardMenu.js');
+const highlightOnlyCard = { id: 'highlight-only', summary: '', highlights: [{ text: 'An argument.', status: 'unavailable' }] };
+assert(isSendable(highlightOnlyCard));
+const actions = menuItems(highlightOnlyCard).map(action => action.icon);
+for (const icon of ['copy', 'send', 'book-open', 'download']) assert(actions.includes(icon), 'highlight-only cards retain ' + icon);
+assert(!actions.includes('volume-2'), 'empty prose has no read-aloud action');
+assert(!isSendable({ summary: '', savedOnly: true }) && !isSendable({ summary: '', feedStub: true }));
 const sentence = 'A selected argument remains useful after navigation.';
 const result = await finishDetached({ sourceUrl: 'https://example.test/a', contentText: sentence, highlightSourceText: sentence, contentHtml: '<p>'+sentence+'</p>', selectedLanguage: 'en', pageTitle: 'A', fixedTitle: 'A' }, '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: ["A selected argument"] -->', '');
 assert.deepEqual(result.highlights, [{ prefix: 'A selected argument', text: sentence, status: 'unavailable' }]);
@@ -38,7 +52,9 @@ assert.deepEqual(saved.highlights, result.highlights, 'saved highlights survive 
 const failures = await finishDetached({ sourceUrl: 'https://example.test/b', contentText: source, selectedLanguage: 'en' }, raw, '');
 assert.deepEqual((await SM.getArticleFull(failures.article.id)).highlights, f.highlights, 'source recovery failures also survive detached completion and record loading');
 const prepared = [{ prefix: 'A selected', text: sentence, status: 'resolved' }];
-const chunked = await finishDetached({ sourceUrl: 'https://example.test/c', contentText: 'Discovery notes.', highlights: prepared }, '<p>Insight.</p>', '');
+const chunked = await finishDetached({ sourceUrl: 'https://example.test/c', contentText: 'Discovery notes.', highlights: prepared }, '', 'private reasoning');
+assert(!chunked.error, 'empty final prose must retain prepared highlights');
+assert.equal(chunked.cleanHtml, '', 'reasoning must never replace an intentionally empty response');
 assert.equal(chunked.highlights[0].text, sentence, 'detached completion uses recovered chunk selections without asking the final response to repeat them');
 assert(!store['articles:index'].find(a => a.id === result.article.id).highlights, 'large highlight lists belong in the full record, not the history index');
 const am = await imp('modules/articleManager.js');
@@ -55,7 +71,7 @@ chrome.tabs = { query: async () => [{ id: 7, url: 'https://example.test/a', titl
 const { initMainScreen } = await imp('modules/mainScreen.js');
 initMainScreen({ showScreen() {} });
 await tick(60);
-for (const listener of globalThis.__msgL || []) listener({ action: 'summaryComplete', summary: result.cleanHtml, highlights: result.highlights, title: 'A', url: 'https://example.test/a' });
+for (const listener of globalThis.__msgL || []) listener({ action: 'summaryComplete', summary: '', highlights: result.highlights, title: 'A', url: 'https://example.test/a' });
 const panel = document.querySelector('#summaryFeed .summary-bubble .highlights');
 assert(panel && panel.textContent.includes(sentence), 'the extension panel displays the same full highlight result');
 panel.querySelector('summary').click();

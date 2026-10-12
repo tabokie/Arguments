@@ -1,5 +1,5 @@
 import { SK, articleRecKey } from './storageKeys.js';
-import { pageKeyForUrl } from './pageKey.js';
+import { annotationsForArticle } from './annotationExporter.js';
 import { qaMarkdown } from './conversation.js';
 import { T } from './feedI18n.js';
 // markdownArchive.js
@@ -37,13 +37,11 @@ export function safeFileName(title) {
 export function articleToMarkdown(article, { highlights = [], conversation = [], related = [] } = {}) {
     const a = article || {};
     const date = (() => { const d = new Date(a.timestamp); return isNaN(d) ? '' : d.toISOString().split('T')[0]; })();
-    const tags = (a.tags || []).map(t => `  - ${yamlStr(t)}`);
-    const fm = ['---', `title: ${yamlStr(a.title || 'Untitled')}`, `url: ${yamlStr(a.url || '')}`, `date: ${date}`,
-        `mood: ${typeof a.moodScore === 'number' ? a.moodScore : ''}`, tags.length ? 'tags:\n' + tags.join('\n') : 'tags: []', '---'];
+    const fm = ['---', `title: ${yamlStr(a.title || 'Untitled')}`, `url: ${yamlStr(a.url || '')}`, `date: ${date}`, '---'];
     const body = [`# ${a.title || 'Untitled'}`];
     const base = a.summaryBase !== undefined ? a.summaryBase : a.summary;
     const summary = htmlToMarkdown(base);
-    if (summary) body.push(`## ${T('Summary')}\n\n${summary}`);
+    if (summary) body.push(`## ${T("Main output")}\n\n${summary}`);
     const user = highlights.filter(h => h && h.type !== 'ghost'), ghost = highlights.filter(h => h && h.type === 'ghost');
     const quote = (h) => `> ${String(h.text || '').replace(/\s*\n\s*/g, '\n> ')}`;
     if (user.length) body.push(`## ${T('Highlights & Notes')}\n\n${user.map(quote).join('\n\n')}`);
@@ -94,14 +92,11 @@ export async function buildZip(files, { onProgress } = {}) {
     return new Blob([...parts, ...central, end.buffer], { type: 'application/zip' });
 }
 
-/** Reads the whole history and returns the [{name,text}] list (files placed under `ai-summary-helper/`). */
+/** Reads the whole history and returns the [{name,text}] list (files placed under `Arguments/`). */
 export async function buildArchiveFiles({ onProgress } = {}) {
     const get = (k) => new Promise(resolve => chrome.storage.local.get(k, resolve));
     const { [SK.articlesIndex]: index = [], [SK.annotations]: annotations = [] } = await get({ [SK.articlesIndex]: [], [SK.annotations]: [] });
     const list = index.filter(a => a && a.id && !a.feedStub && !a.savedOnly);
-    const hlByUrl = new Map();
-    for (const h of annotations) { if (h && h.url && !h.dismissed) { if (!hlByUrl.has(h.url)) hlByUrl.set(h.url, []); hlByUrl.get(h.url).push(h); } }
-
     const used = new Set();
     const names = new Map();
     for (const a of list) {
@@ -109,9 +104,6 @@ export async function buildArchiveFiles({ onProgress } = {}) {
         while (used.has(base.toLowerCase())) base = `${safeFileName(a.title)} (${n++})`;
         used.add(base.toLowerCase()); names.set(a.id, base);
     }
-    const byTag = new Map();
-    for (const a of list) for (const t of new Set((a.tags || []).map(x => String(x).toLowerCase()))) { if (!byTag.has(t)) byTag.set(t, []); byTag.get(t).push(a.id); }
-
     const files = [];
     for (let i = 0; i < list.length; i += BATCH) {
         const chunk = list.slice(i, i + BATCH);
@@ -119,14 +111,11 @@ export async function buildArchiveFiles({ onProgress } = {}) {
         for (const a of chunk) {
             const rec = recs[articleRecKey(a.id)] || {};
             const full = { ...a, ...rec };
-            const score = new Map();
-            for (const t of new Set((a.tags || []).map(x => String(x).toLowerCase()))) for (const id of byTag.get(t) || []) if (id !== a.id) score.set(id, (score.get(id) || 0) + 1);
-            const related = [...score.entries()].sort((x, y) => y[1] - x[1]).slice(0, 5).map(([id]) => names.get(id));
             const text = articleToMarkdown(full, {
-                highlights: hlByUrl.get(a.url ? pageKeyForUrl(a.url) : '') || [],
-                conversation: Array.isArray(rec.conversation) ? rec.conversation : [], related
+                highlights: annotationsForArticle(full, annotations),
+                conversation: Array.isArray(rec.conversation) ? rec.conversation : []
             });
-            files.push({ name: `ai-summary-helper/${names.get(a.id)}.md`, text });
+            files.push({ name: `Arguments/${names.get(a.id)}.md`, text });
         }
         if (onProgress) onProgress(Math.min(i + BATCH, list.length), list.length);
         await yieldUi();

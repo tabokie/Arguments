@@ -29,8 +29,8 @@ const labels = [...d.querySelectorAll('.action-bar button')].map(b => b.classNam
 assert.deepEqual(labels.filter(c => !/kindle/.test(c)), ['open-button', 'copy-button', 'md-button', 'share-button', 'localsend-button']);
 assert(d.querySelector('.action-bar .open-button').classList.contains('button-secondary'));
 const pd = d.querySelector('details.paper-details');
-assert(pd && !pd.open, 'paper details collapsed by default');
-assert(pd.querySelector('.cite-block') && pd.querySelector('summary'));
+assert(!pd, 'paper details removed');
+assert(!d.querySelector('.cite-block, .detail-tags'));
 console.log('TEST 69 OK');
 // profile switching: no leftovers (high contrast theme / reduce motion) — logic mirrored from settingsManager
 const src = fs.readFileSync(new URL('../src/modules/settingsManager.js', import.meta.url), 'utf8');

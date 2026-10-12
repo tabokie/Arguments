@@ -21,7 +21,7 @@ emit({ action: 'summaryProgress', progress: 70 }, 'https://other.com/'); assert.
 await fm.onFeedsScreenShown(ui); await tick(30); assert.ok(btn().classList.contains('busy'), 'survives re-render');
 store['articles:index'] = [{ url: 'https://x.com/post', title: 'Hello', timestamp: new Date().toISOString() }];
 emit({ action: 'summaryComplete', url: 'https://x.com/post' }); await tick(600);
-assert.ok(!btn().classList.contains('busy') && /View summary/.test(btn().textContent), btn().textContent);
+assert.ok(!btn().classList.contains('busy') && /View main output/.test(btn().textContent), btn().textContent);
 // error path
 store['articles:index'] = [];
 await fm.onFeedsScreenShown(ui); await tick(30);
@@ -30,8 +30,8 @@ assert.ok(!btn().classList.contains('busy') && !btn().disabled, 'error resets');
 // summary finished elsewhere (storage change) -> card flips without any relay message
 store['articles:index'] = [];
 await fm.onFeedsScreenShown(ui); await tick(30);
-assert.ok(/Summarize/.test(btn().textContent) && !/View/.test(btn().textContent));
+assert.ok(/Analyze/.test(btn().textContent) && !/View/.test(btn().textContent));
 store['articles:index'] = [{ url: 'https://x.com/post', title: 'Hello', timestamp: new Date().toISOString() }];
 globalThis.__chL.forEach(f => f({ 'articles:index': {} }, 'local')); await tick(500);
-assert.ok(/View summary/.test(btn().textContent), btn().textContent);
+assert.ok(/View main output/.test(btn().textContent), btn().textContent);
 console.log('TEST 23 OK');

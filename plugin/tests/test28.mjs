@@ -9,5 +9,5 @@ store['feeds:ui'] = { source: 'all', status: 'all', date: 'any', mood: 'any', so
 const fm = await imp('modules/feedManager.js'); const ui = { showToast() {}, showScreen() {} };
 fm.initFeedManager(ui); await tick(50); await fm.onFeedsScreenShown(ui); await tick(100);
 const a1 = store['articles:index'].find(a => a.id === 'art1'), a2 = store['articles:index'].find(a => a.id === 'art2');
-assert.equal(a1.moodScore, -0.7, 'carried over'); assert.equal(a2.moodScore, undefined, 'others untouched');
+assert.equal(a1.moodScore, undefined, 'retired mood metadata is not carried into new saved results'); assert.equal(a2.moodScore, undefined, 'others untouched');
 console.log('TEST 28 OK');

@@ -2,13 +2,12 @@
 // On-device TF-IDF index + tiered ranked search + similarity lookup.
 //
 // Design goals (resource-conscious, per the brief):
-//  1. Cheap fields first. Title/tag substring matching is near-free (tiny
+//  1. Cheap fields first. Title substring matching is near-free (tiny
 //     strings) and runs synchronously on every keystroke, same as today.
 //  2. The index — not raw text scanning — is what makes it affordable to
 //     also search summary/content. It's built ONCE per archive change,
 //     not re-scanned per keystroke.
-//  3. One index, three consumers: ranked search, "similar articles", and
-//     tag-suggestion scoring all read the same structure. No duplicate
+//  3. One index, three consumers: ranked search, "similar articles" all read the same structure. No duplicate
 //     indexing work anywhere in the extension.
 //
 // Complexity: build is O(total tokens in archive) — done at most once per
@@ -21,12 +20,11 @@ import { tokenize, termFrequencies } from './textUtils.js';
 // Field weighting: repeat a field's tokens N times before counting term
 // frequency, so a title hit naturally outweighs a body hit without needing
 // a separate per-field index or multi-vector cosine math.
-const FIELD_WEIGHTS = { title: 4, tags: 3, description: 2, summary: 1, content: 1 };
+const FIELD_WEIGHTS = { title: 4, description: 2, summary: 1, content: 1 };
 
 function articleFields(article) {
     return {
         title: article.title || '',
-        tags: (article.tags || []).join(' '),
         description: article.description || '',
         summary: article.summary || '',
         // Cap content contribution — long articles shouldn't dominate the
@@ -125,7 +123,7 @@ export function cosineSim(vecA, vecB) {
 
 /**
  * Tiered ranked search.
- * Tier 1 (always, cheap): substring match on title/tags — same instant
+ * Tier 1 (always, cheap): substring match on title — same instant
  * behaviour the extension already has.
  * Tier 2 (indexed, still cheap): cosine similarity against the prebuilt
  * TF-IDF index, so summary/content participate without ever being
@@ -140,11 +138,9 @@ export function search(index, articles, query, { limit = 200 } = {}) {
 
     for (const article of articles) {
         const title = (article.title || '').toLowerCase();
-        const tags = (article.tags || []).map(t => t.toLowerCase());
 
         let score = 0;
         if (title.includes(q)) score += 1000 - Math.min(title.indexOf(q), 50);
-        if (tags.some(t => t.includes(q))) score += 500;
 
         // Only pay for the vector lookup if the cheap tier didn't already
         // win decisively AND the index actually has this document.
@@ -184,7 +180,7 @@ export function similarTo(index, articles, targetArticle, { limit = 5, minScore 
     return scored.sort((a, b) => b.score - a.score).slice(0, limit);
 }
 
-/** Top-N highest-weight terms for a document — used by tagIntelligence for tag suggestions. */
+/** Top-N highest-weight terms for a document. */
 export function topTermsFor(index, articleTimestamp, n = 8) {
     const vec = index.vectors.get(articleTimestamp);
     if (!vec) return [];

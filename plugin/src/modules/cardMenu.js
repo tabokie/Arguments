@@ -6,7 +6,7 @@ import { iconEl } from './icons.js';
 import { T } from './feedI18n.js';
 import { getReader, streamText, speakable } from './reader.js';
 import { ttsLang } from './languages.js';
-import { canSelect, startSelectionWith } from './sendSheet.js';
+import { canSelect, startSelectionWith, isSendable } from './sendSheet.js';
 
 let current = null;   // { close }
 const closeMenu = () => { if (current) { const c = current; current = null; c.close(); } };
@@ -34,8 +34,8 @@ export function menuItems(a, { onRemoved } = {}) {
   const st = activeReading(a);
   const items = [];
   if (a.url) items.push({ icon: 'link', label: T('Open original'), run: () => window.open(a.url, '_blank', 'noopener') });
-  if (hasSummary) {
-    items.push({ icon: st === 'paused' ? 'play' : st ? 'pause' : 'volume-2', label: st === 'paused' ? T('Play') : st ? T('Pause') : T('Read aloud'), run: () => readAloud(a), needsSpeech: true });
+  if (hasSummary) items.push({ icon: st === 'paused' ? 'play' : st ? 'pause' : 'volume-2', label: st === 'paused' ? T('Play') : st ? T('Pause') : T('Read aloud'), run: () => readAloud(a), needsSpeech: true });
+  if (isSendable(a)) {
     items.push({ icon: 'copy', label: T('Copy'), run: async () => (await am()).copyArticleToClipboard(a) });
     if (navigator.share) items.push({ icon: 'external-link', label: T('Share'), run: async () => (await am()).shareArticle(a) });
     items.push({ icon: 'send', label: T('Send via LocalSend'), run: async () => (await am()).dispatchToLocalSend(a), sep: true });
@@ -45,7 +45,7 @@ export function menuItems(a, { onRemoved } = {}) {
   if (a.id && canSelect(a)) items.push({ icon: 'square-check-big', label: T('Select'), run: () => startSelectionWith(a), sep: true });
   if (a.id) {
     if (!a.feedStub) items.push({ icon: a.archived ? 'undo-2' : 'archive', label: a.archived ? T('Restore to Inbox') : T('Archive'), run: async () => (await am()).applyStatus([a.id], { archived: !a.archived }), sep: true });
-    items.push({ icon: 'trash-2', label: T('Delete'), danger: true, sep: !hasSummary || a.feedStub, run: async () => { const ok = await (await am()).removeArticle(a); if (ok && onRemoved) onRemoved(a); } });
+    items.push({ icon: 'trash-2', label: T('Delete'), danger: true, sep: !isSendable(a), run: async () => { const ok = await (await am()).removeArticle(a); if (ok && onRemoved) onRemoved(a); } });
   }
   return items;
 }

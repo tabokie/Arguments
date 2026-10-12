@@ -13,8 +13,6 @@ import { generateDigestIntro } from './feedAi.js';
 import { createRecapStatus } from './recapStatus.js';
 import { fetchAnnotationsForArticle } from './annotationExporter.js';
 import { el } from './dom.js';
-import { paperState, paperDoi } from './paperInfo.js';
-import { CITE_STYLES, loadCiteStyle, setCiteStyle, ensureCsl, formatList, citeFileName, copyText, downloadText } from './citation.js';
 
 let deps = null;
 const sel = new Set();                 // selected article ids
@@ -25,8 +23,8 @@ let sheet = null;
 
 const screenEl = () => document.getElementById('historyScreen');
 
-/** Only articles that really have a summary can be sent (feed stubs are placeholders). */
-export const isSendable = (a) => !!(a && !a.feedStub && a.summary && String(a.summary).trim());
+/** Completed analyses can be sent even when the main output is empty. Feed stubs and unanalysed saves are placeholders. */
+export const isSendable = (a) => !!(a && !a.feedStub && !a.savedOnly && (typeof a.summary === 'string' || a.highlights?.length));
 
 export const selectionActive = () => active;
 
@@ -40,7 +38,7 @@ export function registerCard(article, li) {
 }
 
 export function toggleCard(article) {
-    if (!isSendable(article)) { deps.toast(T('Only summarized articles can be sent')); return; }
+    if (!isSendable(article)) { deps.toast(T("Only analyzed articles can be sent")); return; }
     if (sel.has(article.id)) sel.delete(article.id); else sel.add(article.id);
     const r = reg.get(article.id);
     if (r) r.li.classList.toggle('sel-on', sel.has(article.id));
@@ -76,7 +74,7 @@ function buildBar() {
     x.type = 'button'; x.setAttribute('aria-label', T('Cancel'));
     x.addEventListener('click', () => setActive(false));
     const info = el('div', 'sel-info');
-    info.append(el('div', 'sel-count'), el('div', 'sel-sub', T('Only summarized articles can be sent')));
+    info.append(el('div', 'sel-count'), el('div', 'sel-sub', T("Only analyzed articles can be sent")));
     const all = el('button', 'sel-all button-secondary', T('Select all'));
     all.type = 'button';
     all.addEventListener('click', () => {
@@ -98,7 +96,7 @@ function buildBar() {
 function paintBar() {
     if (!bar) return;
     const n = sel.size;
-    bar.querySelector('.sel-count').textContent = n ? T('{n} selected', { n }) : T('Select summaries');
+    bar.querySelector('.sel-count').textContent = n ? T('{n} selected', { n }) : T("Select results");
     const send = bar.querySelector('.sel-send');
     send.textContent = n ? T('📤 Send {n}', { n }) : T('📤 Send');
     send.disabled = n === 0;
@@ -107,7 +105,7 @@ function paintBar() {
 
 // ───────────────────────────── sheet ─────────────────────────────
 
-const state = { format: 'digest', include: 'summary', intro: 'off', introStyle: 'briefing', refStyle: 'apa', refSummaries: false };
+const state = { format: 'digest', include: 'summary', intro: 'off', introStyle: 'briefing' };
 
 let sheetTrap = null;
 function closeSheet() { if (sheetTrap) { sheetTrap.release(); sheetTrap = null; } if (sheet) { sheet.remove(); sheet = null; } }
@@ -169,7 +167,7 @@ function openSheet(view) {
     panel.append(el('div', 'sendsheet-grab'), el('div', 'sendsheet-body'));
     sheet.append(scrim, panel);
     document.body.append(sheet);
-    sheetTrap = trapFocus(panel, { label: T('Send summaries') });
+    sheetTrap = trapFocus(panel, { label: T("Send results") });
     (view || viewChoose)();
 }
 
@@ -177,10 +175,10 @@ async function viewChoose() {
     const list = selected();
     const n = list.length;
     const names = list.slice(0, 2).map(a => a.title || T('Untitled')).join(', ') + (n > 2 ? ' ' + T('and {n} more', { n: n - 2 }) : '');
-    const body = shell(TN(n, 'Send {n} summary', 'Send {n} summaries'), names);
+    const body = shell(TN(n, "Send {n} main output", "Send {n} results"), names);
     const intro = introBlock();
     if (n > 1) segmented(body, 'format', [['digest', T('One digest')], ['files', T('Separate files')]], () => intro.paint()); else state.format = 'files';
-    segmented(body, 'include', [['summary', T('Summary only')], ['full', T('Summary + full article')]]);
+    segmented(body, 'include', [['summary', T("Main output only")], ['full', T("Main output + full article")]]);
     body.append(intro);
     const cfg = await StorageManager.get([SK.devices, SK.activeDevices]);
     if (!sheet) return;
@@ -188,45 +186,8 @@ async function viewChoose() {
     const kd = StorageManager.getActiveDevice(cfg, 'kindle');
     body.append(
         row('📚', T('Send to Kindle'), kd ? (kd.label || kd.addresses?.[0] || '') : T('Not set up yet — add your Kindle in Settings'), () => viewKindle()),
-        ...(list.some(paperState) ? [row('📖', T('Reference list'), TN(list.filter(paperState).length, '{n} paper', '{n} papers'), () => viewReferences())] : []),
         row('📡', T('LocalSend'), l.length ? TN(l.length, '{n} receiver', '{n} receivers') : T('Not set up yet — add a receiver in Settings'), () => viewLocalSend()),
         btn(T('Cancel'), false, closeSheet));
-}
-
-/** Reference list of the selected papers (citations from doi.org, formatted locally); copy or download. */
-async function viewReferences() {
-    state.refStyle = await loadCiteStyle();
-    const papers = selected().filter(paperState);
-    const body = shell(T('Reference list') + ' · ' + TN(papers.length, '{n} paper', '{n} papers'));
-    const status = el('div', 'sendsheet-note', T('Looking up citations at doi.org — only the DOIs are sent…'));
-    body.append(status);
-    const items = []; let missing = 0;
-    for (const a of papers) {
-        const doi = paperDoi(a);
-        if (!doi) { missing++; continue; }
-        try { items.push({ csl: await ensureCsl(a, doi), summary: a.summary }); } catch (_) { missing++; }
-        if (!sheet) return;
-    }
-    if (!sheet) return;
-    body.textContent = '';
-    const h = el('div', 'sendsheet-head'); h.append(el('div', 'sendsheet-title', T('Reference list') + ' · ' + TN(items.length, '{n} paper', '{n} papers'))); body.append(h);
-    if (!items.length) { body.append(el('div', 'sendsheet-note', T('No citations available — the selected papers have no DOI or the lookup failed.')), btn(T('Back'), false, viewChoose)); return; }
-    const preview = el('pre', 'ref-preview');
-    const paint = () => { setCiteStyle(state.refStyle); preview.textContent = formatList(items, state.refStyle, { summaries: state.refSummaries }); };
-    segmented(body, 'refStyle', CITE_STYLES.map(([v, l]) => [v, l]), paint);
-    body.append(preview);
-    const tg = el('button', 'sendsheet-row sendsheet-toggle' + (state.refSummaries ? ' on' : ''));
-    tg.type = 'button'; tg.setAttribute('role', 'switch'); tg.setAttribute('aria-checked', String(state.refSummaries));
-    const tx = el('span', 'sendsheet-row-tx'); tx.append(el('span', 'sendsheet-row-t', T('Include my summaries')), el('span', 'sendsheet-row-s sendsheet-wrap', T('Adds each summary under its reference')));
-    const sw = el('span', 'sendsheet-switch'); sw.append(el('span', 'sendsheet-knob')); tg.append(tx, sw);
-    tg.addEventListener('click', () => { state.refSummaries = !state.refSummaries; tg.classList.toggle('on', state.refSummaries); tg.setAttribute('aria-checked', String(state.refSummaries)); paint(); });
-    body.append(tg);
-    if (missing) body.append(el('div', 'sendsheet-note', TN(missing, '{n} paper skipped (no DOI or lookup failed)', '{n} papers skipped (no DOI or lookup failed)')));
-    paint();
-    body.append(
-        btn(T('Copy list'), true, async () => { if (await copyText(preview.textContent)) deps.toast(T('Copied to clipboard! 📋')); }),
-        btn(state.refStyle === 'bibtex' ? T('Download .bib') : state.refStyle === 'ris' ? T('Download .ris') : T('Download .txt'), false, () => { const [n, m] = citeFileName(state.refStyle); downloadText(n, m, preview.textContent); }),
-        btn(T('Back'), false, viewChoose));
 }
 
 async function viewKindle() {
@@ -235,7 +196,7 @@ async function viewKindle() {
     const devices = (Array.isArray(cfg[SK.devices]) ? cfg[SK.devices] : []).filter(d => d.type === 'kindle');
     const isPro = cfg[SK.user]?.subscription_status === 'active';
     const list = selected();
-    const body = shell(T('📚 Send to Kindle'), TN(list.length, '{n} summary', '{n} summaries'));
+    const body = shell(T('📚 Send to Kindle'), TN(list.length, "{n} main output", "{n} results"));
     if (!devices.length) {
         body.append(el('div', 'sendsheet-note', T('Set your Kindle email in Settings first.')),
             btn(T('Open Settings'), true, () => { closeSheet(); setActive(false); deps.openSettings('send', 'newKindleEmail'); }),
@@ -326,7 +287,7 @@ export function undoToast(msg, onUndo) {
 function viewMark() {
     const list = selected();
     const ids = list.map(a => a.id);
-    const body = shell(TN(list.length, 'Mark {n} summary as…', 'Mark {n} summaries as…'), T('Also automatic: opening marks Read, sending marks Sent'));
+    const body = shell(TN(list.length, "Mark {n} main output as…", "Mark {n} results as…"), T('Also automatic: opening marks Read, sending marks Sent'));
     const inArchive = deps.currentTab() === 'archive';
     const opts = [
         ['👀', T('Read'), { read: true }],
@@ -356,7 +317,7 @@ async function buildJobs(intro = '') {
     const items = [];
     for (const a of list) items.push(await load(a));
     if (state.format === 'digest' && list.length > 1) {
-        return [{ label: T('Digest of {n} summaries', { n: list.length }), ids: list.map(a => a.id), article: buildMagazineArticle(items, { includeContent: full, intro }) }];
+        return [{ label: T("Digest of {n} results", { n: list.length }), ids: list.map(a => a.id), article: buildMagazineArticle(items, { includeContent: full, intro }) }];
     }
     return items.map(a => ({ label: a.title || T('Untitled'), ids: [a.id], article: a }));
 }
@@ -384,7 +345,7 @@ async function run(kind, device) {
         const list0 = selected();
         const st = createRecapStatus({
             title: T('✨ Writing intro…'), preview: true,
-            detail: TN(Math.min(list0.length, 12), 'Sending {n} title and short summary to your AI connection.', 'Sending {n} titles and short summaries to your AI connection.'),
+            detail: TN(Math.min(list0.length, 12), "Sending {n} title and short main output to your AI connection.", "Sending {n} titles and short results to your AI connection."),
             onCancel: () => { introSkipped = true; }
         });
         steps.append(st.node);
@@ -474,7 +435,7 @@ function finish(ok, r) {
 export function initSelection(d) {
     deps = d;
     const b = document.getElementById('selectModeBtn');
-    const label = () => { const lab = b && b.querySelector('.btn-label'); if (lab) lab.textContent = T('Select'); if (b) { b.title = T('Select summaries to send'); b.setAttribute('aria-label', T('Select summaries to send')); } };
+    const label = () => { const lab = b && b.querySelector('.btn-label'); if (lab) lab.textContent = T('Select'); if (b) { b.title = T("Select results to send"); b.setAttribute('aria-label', T("Select results to send")); } };
     if (b) { label(); b.addEventListener('click', () => setActive(!active)); }
     document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;

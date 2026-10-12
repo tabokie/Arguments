@@ -1,4 +1,4 @@
-// Research mode phase 1: paper detection (meta / JSON-LD / hosts / DOI text), index flags, override, badges, markdown frontmatter.
+// PDF source matching retains detection helpers, while page analysis and saved-result views ignore retired scholarly metadata.
 import assert from 'assert';
 import { setup, imp, tick } from './harness.mjs';
 const { w, store } = setup({}); const d = w.document;
@@ -38,29 +38,17 @@ assert.equal(detectPaper(d, loc('https://blog.example/x')), null);
 page('<meta name="citation_title" content="T"><meta name="citation_doi" content="10.1234/abc">');
 const core = await imp('content/core.js');
 const meta = core.collectPageMeta(d, loc('https://pub.example/a'));
-assert.equal(meta.paper.doi, '10.1234/abc');
+assert(!('paper' in meta), 'general page metadata no longer runs scholarly detection');
 const { SK } = await imp('modules/storageKeys.js');
 const saved = await core.saveToLocalStorage('<p>c</p>', '<p>s</p>', 'https://pub.example/a', 'T', '', [], 'm', 200, undefined, paperIndexFields(meta.paper), meta);
-assert(store[SK.articlesIndex][0].paper === 'yes' && store[SK.articlesIndex][0].doi === '10.1234/abc' && !('meta' in store[SK.articlesIndex][0]));
-// popup side: state, override, chips, toggle, links
-const PI = await imp('modules/paperInfo.js');
-const A = { paper: 'yes', doi: '10.1234/abc' };
-assert.equal(PI.paperState(A), 'yes'); assert.equal(PI.paperState({ ...A, paperOverride: 'no' }), null);
-assert.equal(PI.paperState({ paperOverride: 'yes' }), 'yes'); assert.equal(PI.paperState({ paper: 'likely' }), 'likely'); assert.equal(PI.paperState({}), null);
-assert.deepEqual(PI.paperChips(A), [['ok', '🎓 Paper · DOI ✓']]);
-assert.deepEqual(PI.paperChips({ paper: 'yes' }), [['ok', '🎓 Paper']]);
-assert.deepEqual(PI.paperChips({ paper: 'likely' }), [['mut', '🎓 Likely paper']]);
-assert.deepEqual(PI.paperChips({ paper: 'yes', preprint: true }).map(x => x[1]), ['🎓 Preprint', '⚠ Not peer-reviewed']);
-assert.deepEqual(PI.paperChips({ title: 'x' }), []);
-assert.deepEqual(PI.paperToggle({}), { label: '🎓 Mark as paper', value: 'yes' }); assert.equal(PI.paperToggle(A).value, 'no');
-assert.equal(PI.doiUrl('10.1/abc'), ''); assert.equal(PI.doiUrl('10.1038/s41562-026-0000-0'), 'https://doi.org/10.1038/s41562-026-0000-0');
-assert.equal(PI.doiUrl('javascript:alert(1)'), ''); assert.equal(PI.doiUrl('10.1234/x"onmouseover="y'), '');
-assert.equal(PI.paperLine({ meta: { paper: { authors: 'Smith; Lee et al.', journal: 'Nature', year: '2026' } } }), 'Smith; Lee et al. · Nature · 2026');
-// override persists on the index entry via patchArticleStatus
+assert(!store[SK.articlesIndex][0].paper && !store[SK.articlesIndex][0].doi && !('meta' in store[SK.articlesIndex][0]), 'new records do not produce scholarly flags');
+// Old scholarly metadata is preserved by ordinary status updates, without a scholarly API.
 const { default: SM } = await imp('modules/storageManager.js');
 const id = store[SK.articlesIndex][0].id;
-assert(await SM.patchArticleStatus([id], { paperOverride: 'no' })); assert.equal(store[SK.articlesIndex][0].paperOverride, 'no');
-assert(await SM.patchArticleStatus([id], { paperOverride: null })); assert(!('paperOverride' in store[SK.articlesIndex][0]));
+store[SK.articlesIndex][0].paperOverride = 'no';
+assert(await SM.patchArticleStatus([id], { read: true }));
+assert.equal(store[SK.articlesIndex][0].paperOverride, 'no');
+assert(!('savePaperInfo' in SM) && !('setTags' in SM));
 // Summarize bubble shows the badge (live bubble: from meta.paper)
 globalThis.requestAnimationFrame = (f) => setTimeout(f, 0);
 chrome.runtime.getURL = (x) => 'chrome-extension://abc/' + x;
@@ -71,5 +59,5 @@ d.body.innerHTML = popupBody; d.head.innerHTML = '';
 const MS = await imp('modules/mainScreen.js');
 MS.initMainScreen({ showScreen() {} }); await tick(120);
 const bs = [...d.querySelectorAll('#summaryFeed .summary-bubble')];
-assert(/Paper · DOI/.test(bs[0].textContent) && !/Paper/.test(bs[1].querySelector('.bubble-tags')?.textContent || ''), 'bubble badge only on the paper');
+assert(bs.every(bubble => !bubble.querySelector('.paper, .bubble-tags')), 'stored paper metadata no longer adds badges');
 console.log('TEST 62 OK'); process.exit(0);

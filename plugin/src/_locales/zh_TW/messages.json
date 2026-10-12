@@ -1,18 +1,18 @@
 {
   "extensionName": {
-    "message": "AI Summary Helper — Summarize, Ask, Listen & Cite (BYOK, Ollama)"
+    "message": "Arguments"
   },
   "extensionNameFirefox": {
-    "message": "AI Summary Helper – Summarize, Ask, Listen, Cite"
+    "message": "Arguments"
   },
   "extensionShortName": {
-    "message": "AI Summary Helper"
+    "message": "Arguments"
   },
   "extensionDescription": {
-    "message": "用自己的 AI 金鑰或 Ollama 做摘要。內建 RSS 閱讀器、稍後閱讀、標註、傳送到 Kindle。開源，免登入。"
+    "message": "Arguments 使用 AI 標示網頁中的論點，並發現新穎的見解。"
   },
   "fetchSummary": {
-    "message": "取得摘要"
+    "message": "取得主要輸出"
   },
   "settings": {
     "message": "設定"
@@ -24,10 +24,10 @@
     "message": "贊助"
   },
   "noRecentSummaries": {
-    "message": "暫無近期摘要"
+    "message": "暫無近期主要輸出"
   },
   "summarizePageToSee": {
-    "message": "總結頁面後在此處查看"
+    "message": "主要輸出頁面後在此處查看"
   },
   "whatShouldAiFocus": {
     "message": "AI應該關注什麼？"
@@ -36,16 +36,16 @@
     "message": "對這個頁面提出具體問題…"
   },
   "summaryLanguage": {
-    "message": "摘要語言"
+    "message": "主要輸出語言"
   },
   "searchLanguages": {
     "message": "搜尋語言…"
   },
   "summaryLength": {
-    "message": "摘要長度"
+    "message": "主要輸出長度"
   },
   "summaryMode": {
-    "message": "摘要模式"
+    "message": "主要輸出模式"
   },
   "extension": {
     "message": "擴充功能"
@@ -90,13 +90,13 @@
     "message": "相容工具"
   },
   "compatibleToolsDesc": {
-    "message": "與AI Summary Helper無縫整合、提升工作效率的擴充功能。"
+    "message": "與Arguments無縫整合、提升工作效率的擴充功能。"
   },
   "loadingTools": {
     "message": "正在載入工具…"
   },
   "navSummarize": {
-    "message": "摘要"
+    "message": "分析"
   },
   "navHistory": {
     "message": "歷史紀錄"
@@ -117,13 +117,13 @@
     "message": "處理中…"
   },
   "summary": {
-    "message": "摘要"
+    "message": "主要輸出"
   },
   "noTitleAvailable": {
     "message": "無可用標題"
   },
   "noSummaryAvailable": {
-    "message": "無可用摘要"
+    "message": "無可用主要輸出"
   },
   "noContentAvailable": {
     "message": "無可用內容"
@@ -144,7 +144,7 @@
     "message": "🗑️ 刪除"
   },
   "aiSummary": {
-    "message": "🧙 AI摘要"
+    "message": "🧙 AI主要輸出"
   },
   "originalContent": {
     "message": "📄 原始內容"
@@ -159,10 +159,10 @@
     "message": "載入工具失敗。"
   },
   "clickToInsert": {
-    "message": "點擊要插入摘要的元素。"
+    "message": "點擊要插入主要輸出的元素。"
   },
   "fetchingSummary": {
-    "message": "正在取得摘要..."
+    "message": "正在取得主要輸出..."
   },
   "openInSidebar": {
     "message": "在側邊欄開啟"
@@ -303,7 +303,7 @@
     "message": "帳號"
   },
   "settingsCapSummarizing": {
-    "message": "摘要"
+    "message": "主要輸出"
   },
   "settingsCapReading": {
     "message": "閱讀"
@@ -324,7 +324,7 @@
     "message": "檢視分析報告"
   },
   "modelDesc": {
-    "message": "選擇用於產生摘要的大型語言模型。"
+    "message": "選擇用於產生主要輸出的大型語言模型。"
   },
   "promptDesc": {
     "message": "自訂 AI 分析文字的方式。"
@@ -375,7 +375,7 @@
     "message": "AI 分類"
   },
   "f_ai_recap_of_this_day_d199": {
-    "message": "當日 AI 摘要"
+    "message": "當日 AI 主要輸出"
   },
   "f_ai_request_failed_fc5f": {
     "message": "AI 請求失敗"
@@ -384,7 +384,7 @@
     "message": "AI 評分失敗"
   },
   "f_ai_generated_from_headlines__133f": {
-    "message": "AI 根據 {n} 則標題與摘要生成於 {time}，僅供參考。"
+    "message": "AI 根據 {n} 則標題與主要輸出生成於 {time}，僅供參考。"
   },
   "f_ai_rated_heavy_news_8b78": {
     "message": "AI 評級：負面"
@@ -435,7 +435,7 @@
     "message": "背景指令碼已過期，請至 chrome://extensions 重新載入擴充功能"
   },
   "f_batch_summarizing_runs_in_ex_386f": {
-    "message": "批次摘要僅限擴充功能模式，請至「摘要」頁切換。"
+    "message": "批次主要輸出僅限擴充功能模式，請至「主要輸出」頁切換。"
   },
   "f_behavior_a447": {
     "message": "行為"
@@ -486,7 +486,7 @@
     "message": "單集"
   },
   "f_everything_unread_is_already_a054": {
-    "message": "未讀皆已摘要"
+    "message": "未讀皆已主要輸出"
   },
   "f_failed_c3d4": {
     "message": "失敗"
@@ -531,7 +531,7 @@
     "message": "獨立科技報導"
   },
   "f_items_you_open_or_summarize__a71f": {
-    "message": "開啟或摘要的項目會移出未讀"
+    "message": "開啟或主要輸出的項目會移出未讀"
   },
   "f_last_7_days_d98f": {
     "message": "近 7 天"
@@ -561,7 +561,7 @@
     "message": "情緒（AI 已評 {r}/{n}）：😊 {p} · 😐 {m} · 😟 {g}"
   },
   "f_mood_comes_from_ai_scoring_o_411c": {
-    "message": "情緒僅來自 AI 評分；未評分的項目沒有情緒，也不會被情緒篩選隱藏。點擊評分時，標題與簡短摘要會傳送至你的 AI 連線。"
+    "message": "情緒僅來自 AI 評分；未評分的項目沒有情緒，也不會被情緒篩選隱藏。點擊評分時，標題與簡短主要輸出會傳送至你的 AI 連線。"
   },
   "f_mood_d12b": {
     "message": "情緒 ↓"
@@ -582,7 +582,7 @@
     "message": "有新項目，重新整理即可納入。"
   },
   "f_new_posts_land_here_skim_sum_cf70": {
-    "message": "新文章會彙整於此：瀏覽、摘要重點、清空其餘。"
+    "message": "新文章會彙整於此：瀏覽、主要輸出重點、清空其餘。"
   },
   "f_newer_f04a": {
     "message": "較新"
@@ -600,7 +600,7 @@
     "message": "還沒有訂閱。在下方新增，或匯入 OPML 檔案。"
   },
   "f_no_items_to_recap_here_a024": {
-    "message": "這裡沒有可摘要的項目。"
+    "message": "這裡沒有可主要輸出的項目。"
   },
   "f_no_new_feeds_in_that_file_d161": {
     "message": "檔案中沒有新訂閱"
@@ -672,10 +672,10 @@
     "message": "範圍起於 {day}，點選結束日。"
   },
   "f_recap_copied_dc3c": {
-    "message": "已複製摘要"
+    "message": "已複製主要輸出"
   },
   "f_recap_failed_6cfd": {
-    "message": "摘要失敗"
+    "message": "主要輸出失敗"
   },
   "f_refresh_aad4": {
     "message": "重新整理"
@@ -705,7 +705,7 @@
     "message": "跳轉"
   },
   "f_sending_titles_and_short_sni_c7dd": {
-    "message": "正在向 AI 傳送 {n} 則標題與簡短摘要。"
+    "message": "正在向 AI 傳送 {n} 則標題與簡短主要輸出。"
   },
   "f_show_all_items_7eb7": {
     "message": "顯示全部"
@@ -729,7 +729,7 @@
     "message": "來源"
   },
   "f_starring_an_item_summarizes__7621": {
-    "message": "收藏後在背景分頁自動摘要"
+    "message": "收藏後在背景分頁自動主要輸出"
   },
   "f_subscribed_to_c4c3": {
     "message": "已訂閱 {name}"
@@ -744,19 +744,19 @@
     "message": "推薦"
   },
   "f_summarize_on_a_feed_item_fol_de8a": {
-    "message": "訂閱項目上的「摘要」依摘要頁所選模式（預設為擴充功能）。收藏一律保留。"
+    "message": "訂閱項目上的「主要輸出」依主要輸出頁所選模式（預設為擴充功能）。收藏一律保留。"
   },
   "f_summarized_415a": {
-    "message": "已摘要"
+    "message": "已主要輸出"
   },
   "f_summarizing_in_the_backgroun_cfaa": {
-    "message": "背景摘要中，完成後見「摘要」與「歷史」"
+    "message": "背景主要輸出中，完成後見「主要輸出」與「歷史」"
   },
   "f_summarizing_the_open_tab_it__826e": {
-    "message": "正在摘要目前頁面，完成後見「摘要」與「歷史」"
+    "message": "正在主要輸出目前頁面，完成後見「主要輸出」與「歷史」"
   },
   "f_summarizing_in_the_backgroun_6f16": {
-    "message": "背景摘要 {n} 項，見「歷史」"
+    "message": "背景主要輸出 {n} 項，見「歷史」"
   },
   "f_tags_a0c0": {
     "message": "標籤"
@@ -765,7 +765,7 @@
     "message": "無法解析 AI 回覆"
   },
   "f_the_ai_returned_an_empty_rec_894a": {
-    "message": "AI 回傳了空白摘要"
+    "message": "AI 回傳了空白主要輸出"
   },
   "f_these_items_are_already_scor_391c": {
     "message": "這些項目已評分"
@@ -801,7 +801,7 @@
     "message": "昨天"
   },
   "f_you_have_a_saved_summary_of__14f8": {
-    "message": "已儲存此頁摘要"
+    "message": "已儲存此頁主要輸出"
   },
   "f_your_feeds_stay_on_this_devi_3c13": {
     "message": "訂閱僅儲存於本裝置。"
@@ -822,7 +822,7 @@
     "message": "{day}，{n} 項"
   },
   "f_recap_8d18": {
-    "message": "{label}摘要"
+    "message": "{label}主要輸出"
   },
   "f_feed_d469": {
     "message": "{n} 個訂閱"
@@ -894,28 +894,28 @@
     "message": "✓ 開啟即標已讀"
   },
   "f_summarized_68b9": {
-    "message": "✓ 已摘要"
+    "message": "✓ 已主要輸出"
   },
   "f_ai_recap_of_today_72f6": {
-    "message": "✨  今日 AI 摘要"
+    "message": "✨  今日 AI 主要輸出"
   },
   "f_auto_summarize_favorites_32af": {
-    "message": "✨ 自動摘要收藏"
+    "message": "✨ 自動主要輸出收藏"
   },
   "f_recap_b8e8": {
-    "message": "✨ 摘要"
+    "message": "✨ 主要輸出"
   },
   "f_summarize_570a": {
-    "message": "✨ 摘要"
+    "message": "✨ 主要輸出"
   },
   "f_summarize_top_5_unread_d39d": {
-    "message": "✨ 摘要前 5 則未讀"
+    "message": "✨ 主要輸出前 5 則未讀"
   },
   "f_writing_recap_fe02": {
-    "message": "✨ 產生摘要…"
+    "message": "✨ 產生主要輸出…"
   },
   "f_view_summary_3c09": {
-    "message": "📄 檢視摘要"
+    "message": "📄 檢視主要輸出"
   },
   "f_pick_a_day_or_range_dd71": {
     "message": "📅  選擇日期或範圍…"
@@ -972,10 +972,10 @@
     "message": "＋ 新增"
   },
   "f_darker_more_items_recap_done_8cca": {
-    "message": "顏色越深項目越多 · ✨ = 已摘要 · 長按一天再點另一天可選範圍"
+    "message": "顏色越深項目越多 · ✨ = 已主要輸出 · 長按一天再點另一天可選範圍"
   },
   "f_recap_done_b098": {
-    "message": "已摘要"
+    "message": "已主要輸出"
   },
   "f_podcasts_7c90": {
     "message": "Podcast"
@@ -1047,46 +1047,46 @@
     "message": "在同一次 AI 請求中為每則加入情緒與分類"
   },
   "f_rate_items_with_the_recap_6027": {
-    "message": "🤖 摘要時一併評分"
+    "message": "🤖 主要輸出時一併評分"
   },
   "f_nothing_new_since_this_recap_45c5": {
-    "message": "自上次摘要後沒有新內容"
+    "message": "自上次主要輸出後沒有新內容"
   },
   "f_sending_new_or_edited_titles_ba69": {
     "message": "正在向你的 AI 連線傳送 {n} 個新增或修改的標題與簡短摘錄。"
   },
   "f_updating_recap_902a": {
-    "message": "✨ 正在更新摘要…"
+    "message": "✨ 正在更新主要輸出…"
   },
   "f_a_source_recap_changed_since_e89f": {
-    "message": "來源摘要已變更，重新整理即可納入。"
+    "message": "來源主要輸出已變更，重新整理即可納入。"
   },
   "f_ai_recap_of_this_month_built_f4e6": {
-    "message": "本月 AI 摘要（根據週摘要與日摘要）"
+    "message": "本月 AI 主要輸出（根據週主要輸出與日主要輸出）"
   },
   "f_ai_recap_of_this_week_built__86af": {
-    "message": "本週 AI 摘要（根據日摘要）"
+    "message": "本週 AI 主要輸出（根據日主要輸出）"
   },
   "f_built_from_your_day_recaps_i_2520": {
-    "message": "根據你的日摘要產生。已有日摘要的項目不會再次傳送。"
+    "message": "根據你的日主要輸出產生。已有日主要輸出的項目不會再次傳送。"
   },
   "f_built_from_recap_5b76": {
-    "message": "根據 {n} 則摘要"
+    "message": "根據 {n} 則主要輸出"
   },
   "f_built_from_recaps_48df": {
-    "message": "根據 {n} 則摘要"
+    "message": "根據 {n} 則主要輸出"
   },
   "f_cancel_ca3b": {
     "message": "取消"
   },
   "f_create_missing_day_recap_fir_2bd6": {
-    "message": "先建立 {n} 個缺少的日摘要"
+    "message": "先建立 {n} 個缺少的日主要輸出"
   },
   "f_create_missing_day_recaps_fi_1cf7": {
-    "message": "先建立 {n} 個缺少的日摘要"
+    "message": "先建立 {n} 個缺少的日主要輸出"
   },
   "f_creating_day_recaps_141a": {
-    "message": "正在建立日摘要… {a}/{b}"
+    "message": "正在建立日主要輸出… {a}/{b}"
   },
   "f_generated_at_b0a6": {
     "message": "產生於 {time}"
@@ -1101,16 +1101,16 @@
     "message": "尚無可合併的內容。"
   },
   "f_recap_scope_40ec": {
-    "message": "摘要範圍"
+    "message": "主要輸出範圍"
   },
   "f_sends_short_recaps_not_headl_27f5": {
-    "message": "傳送 {n} 則短摘要，而非 {m} 個標題"
+    "message": "傳送 {n} 則短主要輸出，而非 {m} 個標題"
   },
   "f_skip_the_days_without_a_reca_9f80": {
-    "message": "略過沒有摘要的日子"
+    "message": "略過沒有主要輸出的日子"
   },
   "f_week_recap_2446": {
-    "message": "週摘要"
+    "message": "週主要輸出"
   },
   "f_week_c909": {
     "message": "第 {n} 週"
@@ -1119,25 +1119,25 @@
     "message": "缺少"
   },
   "f_no_recap_yet_d2d7": {
-    "message": "尚無摘要"
+    "message": "尚無主要輸出"
   },
   "f_reused_af15": {
     "message": "已重複使用"
   },
   "f_of_days_have_a_recap_6aaa": {
-    "message": "{b} 天中有 {a} 天有摘要"
+    "message": "{b} 天中有 {a} 天有主要輸出"
   },
   "f_day_recap_cb92": {
-    "message": "{n} 個日摘要"
+    "message": "{n} 個日主要輸出"
   },
   "f_day_recaps_f333": {
-    "message": "{n} 個日摘要"
+    "message": "{n} 個日主要輸出"
   },
   "f_without_recap_7d68": {
-    "message": "{n} 個無摘要"
+    "message": "{n} 個無主要輸出"
   },
   "f_create_recap_88d6": {
-    "message": "✨ 建立摘要"
+    "message": "✨ 建立主要輸出"
   },
   "f_feed_b245": {
     "message": "訂閱"
@@ -1197,7 +1197,7 @@
     "message": "跳到今天"
   },
   "f_nothing_rated_yet_write_a_re_c4ee": {
-    "message": "尚無評分 — 產生 ✨ 摘要即可為項目評分。"
+    "message": "尚無評分 — 產生 ✨ 主要輸出即可為項目評分。"
   },
   "f_filter_e5fe": {
     "message": "‹ 篩選"
@@ -1242,16 +1242,16 @@
     "message": "還沒有文章帶有情緒 — 讓 AI 來評分。"
   },
   "f_no_articles_yet_start_summar_b35e": {
-    "message": "還沒有文章 — 摘要網頁即可查看分析！📖"
+    "message": "還沒有文章 — 主要輸出網頁即可查看分析！📖"
   },
   "f_no_tags_found_add_tags_to_yo_6914": {
-    "message": "找不到標籤。請為你的摘要加上標籤！"
+    "message": "找不到標籤。請為你的主要輸出加上標籤！"
   },
   "f_saved_79e4": {
     "message": "節省"
   },
   "f_with_summaries_5619": {
-    "message": "使用摘要"
+    "message": "使用主要輸出"
   },
   "f_words_read_f576": {
     "message": "已讀字數"
@@ -1290,7 +1290,7 @@
     "message": "裝置"
   },
   "f_digest_of_summaries_5cea": {
-    "message": "{n} 篇摘要合集"
+    "message": "{n} 篇主要輸出合集"
   },
   "f_free_tier_3_kindle_sends_inc_00a8": {
     "message": "免費方案：包含 3 次 Kindle 傳送。"
@@ -1317,7 +1317,7 @@
     "message": "合併為一份"
   },
   "f_only_summarized_articles_can_ce5a": {
-    "message": "只能傳送已產生摘要的文章"
+    "message": "只能傳送已產生主要輸出的文章"
   },
   "f_open_settings_88b6": {
     "message": "開啟設定"
@@ -1338,19 +1338,19 @@
     "message": "全選"
   },
   "f_select_summaries_2cad": {
-    "message": "選取摘要"
+    "message": "選取主要輸出"
   },
   "f_select_summaries_to_send_741c": {
-    "message": "選取要傳送的摘要"
+    "message": "選取要傳送的主要輸出"
   },
   "f_send_to_kindle_c8f1": {
     "message": "傳送到 Kindle"
   },
   "f_send_summaries_c9c7": {
-    "message": "傳送 {n} 篇摘要"
+    "message": "傳送 {n} 篇主要輸出"
   },
   "f_send_summary_164f": {
-    "message": "傳送 {n} 篇摘要"
+    "message": "傳送 {n} 篇主要輸出"
   },
   "f_sending_to_kindle_8853": {
     "message": "正在傳送到 Kindle…"
@@ -1398,10 +1398,10 @@
     "message": "已選 {n} 篇"
   },
   "f_summaries_7bdf": {
-    "message": "{n} 篇摘要"
+    "message": "{n} 篇主要輸出"
   },
   "f_summary_0c47": {
-    "message": "{n} 篇摘要"
+    "message": "{n} 篇主要輸出"
   },
   "f_send_to_kindle_dc46": {
     "message": "📚 傳送到 Kindle"
@@ -1422,10 +1422,10 @@
     "message": "完整文章"
   },
   "f_summary_full_article_3f15": {
-    "message": "摘要 + 完整文章"
+    "message": "主要輸出 + 完整文章"
   },
   "f_summary_only_bd43": {
-    "message": "僅摘要"
+    "message": "僅主要輸出"
   },
   "f_also_automatic_opening_marks_1cdb": {
     "message": "也會自動更新：開啟標為已讀，傳送標為已傳送"
@@ -1446,10 +1446,10 @@
     "message": "標記為…"
   },
   "f_mark_summaries_as_8da6": {
-    "message": "將 {n} 篇摘要標記為…"
+    "message": "將 {n} 篇主要輸出標記為…"
   },
   "f_mark_summary_as_4a0a": {
-    "message": "將 {n} 篇摘要標記為…"
+    "message": "將 {n} 篇主要輸出標記為…"
   },
   "f_moves_them_to_archive_find_t_1076": {
     "message": "移到封存，之後隨時可以在那裡找到"
@@ -1659,7 +1659,7 @@
     "message": "UX 設計師梗"
   },
   "f_used_whenever_you_summarize__f213": {
-    "message": "在你摘要網頁或文章時使用。"
+    "message": "在你主要輸出網頁或文章時使用。"
   },
   "f_view_edit_bf74": {
     "message": "檢視並編輯 ›"
@@ -1698,7 +1698,7 @@
     "message": "在 Chrome 線上應用程式商店留下簡短評價，能幫助更多人發現它。"
   },
   "f_enjoying_ai_summary_helper_75e7": {
-    "message": "喜歡 AI Summary Helper 嗎？"
+    "message": "喜歡 Arguments 嗎？"
   },
   "f_later_2b49": {
     "message": "稍後"
@@ -1752,7 +1752,7 @@
     "message": "其他"
   },
   "f_rates_the_tone_of_summaries__01bb": {
-    "message": "評估摘要與訂閱內容的情緒傾向，用於情緒篩選、圖表與來源分析。關閉後將隱藏所有情緒功能。"
+    "message": "評估主要輸出與訂閱內容的情緒傾向，用於情緒篩選、圖表與來源分析。關閉後將隱藏所有情緒功能。"
   },
   "f_reading_339b": {
     "message": "閱讀"
@@ -1869,7 +1869,7 @@
     "message": "匯出時包含所有提問"
   },
   "f_last_summary_3355": {
-    "message": "上次摘要"
+    "message": "上次主要輸出"
   },
   "f_model_is_thinking_3a56": {
     "message": "模型思考中"
@@ -1881,7 +1881,7 @@
     "message": "沒有回答。"
   },
   "f_no_recent_summaries_03a5": {
-    "message": "暫無最近摘要"
+    "message": "暫無最近主要輸出"
   },
   "f_nothing_new_since_this_recap_f9bc": {
     "message": "自上次回顧後沒有新內容——重設會從頭重寫。"
@@ -1920,7 +1920,7 @@
     "message": "傳送"
   },
   "f_send_summaries_96ab": {
-    "message": "傳送摘要"
+    "message": "傳送主要輸出"
   },
   "f_sent_to_your_ai_connection_b919": {
     "message": "已傳送到你的 AI 連線"
@@ -1938,13 +1938,13 @@
     "message": "啟動中…"
   },
   "f_summarize_a_page_to_see_it_h_ceef": {
-    "message": "摘要一個頁面後會顯示在這裡"
+    "message": "主要輸出一個頁面後會顯示在這裡"
   },
   "f_summarize_this_page_b1c9": {
-    "message": "摘要此頁面"
+    "message": "主要輸出此頁面"
   },
   "f_summary_b5b3": {
-    "message": "摘要"
+    "message": "主要輸出"
   },
   "f_that_is_the_maximum_per_reca_170d": {
     "message": "這是每次回顧的上限。想看全貌可用週或月回顧，或依訂閱來源篩選。"
@@ -1965,10 +1965,10 @@
     "message": "處理中…"
   },
   "f_writing_a_word_summary_dd5f": {
-    "message": "正在撰寫 {n} 字的摘要…"
+    "message": "正在撰寫 {n} 字的主要輸出…"
   },
   "f_writing_the_summary_0fa6": {
-    "message": "正在撰寫摘要…"
+    "message": "正在撰寫主要輸出…"
   },
   "f_your_focus_question_4df6": {
     "message": "你的重點問題"
@@ -2136,10 +2136,10 @@
     "message": "自動偵測"
   },
   "f_auto_summarize_favorites_0e1f": {
-    "message": "自動摘要我的最愛"
+    "message": "自動主要輸出我的最愛"
   },
   "f_automatic_light_blue_quote_h_419c": {
-    "message": "依摘要自動產生淺藍色引文標示"
+    "message": "依主要輸出自動產生淺藍色引文標示"
   },
   "f_backup_restored_successfully_8819": {
     "message": "備份已成功還原！\n已匯入 {n} 篇文章。\n\n擴充功能即將重新載入。"
@@ -2391,7 +2391,7 @@
     "message": "免費試用模式"
   },
   "f_generate_a_bookmarklet_that__081e": {
-    "message": "產生一個可在任何瀏覽器中摘要網頁的書籤小工具，包括無法執行擴充功能的 iOS/Android。它會使用你的 byphil Cloud 登入狀態。"
+    "message": "產生可在任何瀏覽器分析網頁的書籤腳本，包括無法執行擴充功能的 iOS/Android。書籤腳本使用你的 byphil Cloud 登入資訊。"
   },
   "f_generate_237e": {
     "message": "產生 🎙️"
@@ -2460,7 +2460,7 @@
     "message": "金鑰無效"
   },
   "f_invalid_backup_file_please_s_54f7": {
-    "message": "備份檔案無效。請選擇有效的 AI Summary Helper 匯出檔。"
+    "message": "備份檔案無效。請選擇有效的 Arguments 匯出檔。"
   },
   "f_invalid_code_4325": {
     "message": "驗證碼無效"
@@ -2613,10 +2613,10 @@
     "message": "沒有符合「{query}」的設定。"
   },
   "f_no_summary_available_1155": {
-    "message": "暫無摘要"
+    "message": "暫無主要輸出"
   },
   "f_no_summary_returned_5f75": {
-    "message": "未傳回摘要。"
+    "message": "未傳回主要輸出。"
   },
   "f_no_title_available_2723": {
     "message": "暫無標題"
@@ -2670,7 +2670,7 @@
     "message": "面板"
   },
   "f_permanently_removes_all_summ_228d": {
-    "message": "永久刪除所有摘要和封存。請先匯出備份。"
+    "message": "永久刪除所有主要輸出和封存。請先匯出備份。"
   },
   "f_persist_optional_29ce": {
     "message": "保留（選填）"
@@ -2883,7 +2883,7 @@
     "message": "透過電子郵件登入 / 註冊"
   },
   "f_sign_in_to_unlock_free_cloud_f976": {
-    "message": "登入即可使用免費雲端模型並同步摘要，也可以使用自己的 API 金鑰。"
+    "message": "登入即可使用免費雲端模型並同步主要輸出，也可以使用自己的 API 金鑰。"
   },
   "f_signed_in_byphil_cloud_f9ba": {
     "message": "已登入 · byPhil Cloud"
@@ -2916,16 +2916,16 @@
     "message": "連線成功！🧙"
   },
   "f_summarizing_4c71": {
-    "message": "摘要中..."
+    "message": "主要輸出中..."
   },
   "f_summary_language_a8df": {
-    "message": "摘要語言"
+    "message": "輸出語言"
   },
   "f_summary_length_2b31": {
-    "message": "摘要長度"
+    "message": "輸出長度"
   },
   "f_summary_mode_5ce6": {
-    "message": "摘要模式"
+    "message": "分析顯示方式"
   },
   "f_switch_graph_search_to_filte_7f9d": {
     "message": "將圖譜搜尋切換為篩選模式"
@@ -2949,7 +2949,7 @@
     "message": "這將從此裝置永久刪除{what}及封存，且無法復原。"
   },
   "f_this_resets_every_preference_d3b3": {
-    "message": "這將重設此裝置上的所有偏好設定、提示詞和 API 金鑰。你的摘要會保留。擴充功能將重新載入。"
+    "message": "這將重設此裝置上的所有偏好設定、提示詞和 API 金鑰。你的主要輸出會保留。擴充功能將重新載入。"
   },
   "f_this_will_invalidate_the_cur_4995": {
     "message": "這會使目前的驗證碼失效。要繼續嗎？"
@@ -3006,7 +3006,7 @@
     "message": "檢視：已標示"
   },
   "f_welcome_to_ai_summary_helper_892e": {
-    "message": "歡迎使用 AI Summary Helper"
+    "message": "歡迎使用 Arguments"
   },
   "f_well_connected_1033": {
     "message": "關聯緊密"
@@ -3024,7 +3024,7 @@
     "message": "贊助"
   },
   "f_all_summaries_c680": {
-    "message": "所有摘要"
+    "message": "所有主要輸出"
   },
   "f_byphil_cloud_17f0": {
     "message": "byPhil Cloud"
@@ -3042,7 +3042,7 @@
     "message": "例如 gpt-5-mini、llama3.2"
   },
   "f_for_unlimited_zero_config_su_82c0": {
-    "message": "，享受無限量、免設定的摘要。"
+    "message": "，享受無限量、免設定的主要輸出。"
   },
   "f_from_8075": {
     "message": "來自"
@@ -3078,7 +3078,7 @@
     "message": "到你的 Kindle 認可寄件者清單 —"
   },
   "f_curated_from_your_ai_summary_4f55": {
-    "message": "{count}，精選自你的 AI Summary Helper 封存。"
+    "message": "{count}，精選自你的 Arguments 封存。"
   },
   "f_tone_f081": {
     "message": "{label}語氣"
@@ -3132,7 +3132,7 @@
     "message": "— 歡迎"
   },
   "f_summarizing_2ba2": {
-    "message": "⏳ 摘要中…"
+    "message": "⏳ 主要輸出中…"
   },
   "f_settings_eb9e": {
     "message": "⚙️ 設定"
@@ -3207,7 +3207,7 @@
     "message": "🤖 AI 建議的標示"
   },
   "f_ai_summary_c72e": {
-    "message": "🧙 AI 摘要"
+    "message": "🧙 AI 主要輸出"
   },
   "f_on_device_tools_d85a": {
     "message": "🧠 裝置端工具"
@@ -3219,7 +3219,7 @@
     "message": "🪄 產生書籤小工具"
   },
   "f_intro_skipped_the_digest_goe_15e9": {
-    "message": "已略過開場白——摘要合集將不含開場白傳送"
+    "message": "已略過開場白——主要輸出合集將不含開場白傳送"
   },
   "f_ask_dafd": {
     "message": "💬 提問"
@@ -3285,7 +3285,7 @@
     "message": "🔎 關鍵資訊"
   },
   "f_adds_each_summary_under_its__b17f": {
-    "message": "在每筆參考文獻下附上對應摘要"
+    "message": "在每筆參考文獻下附上對應主要輸出"
   },
   "f_citation_lookup_failed_try_a_bb2e": {
     "message": "取得引用失敗，請重試"
@@ -3309,7 +3309,7 @@
     "message": "取得引用"
   },
   "f_include_my_summaries_aadf": {
-    "message": "包含我的摘要"
+    "message": "包含我的主要輸出"
   },
   "f_looking_up_citations_at_doi__563a": {
     "message": "正在 doi.org 查詢引用，僅傳送 DOI…"
@@ -3348,7 +3348,7 @@
     "message": "❝ 引用"
   },
   "f_attach_a_pdf_to_summarize_b6ff": {
-    "message": "附加 PDF 進行摘要"
+    "message": "附加 PDF 進行主要輸出"
   },
   "f_could_not_read_this_pdf_f579": {
     "message": "無法讀取此 PDF。"
@@ -3447,7 +3447,7 @@
     "message": "文字大小"
   },
   "f_the_quick_brown_fox_jumps_ov_fd42": {
-    "message": "The quick brown fox jumps over the lazy dog。摘要會使用此大小與行距。"
+    "message": "The quick brown fox jumps over the lazy dog。主要輸出會使用此大小與行距。"
   },
   "f_your_system_already_asks_for_8b6f": {
     "message": "你的系統已要求減少動態，我們會一律遵循。"
@@ -3567,7 +3567,7 @@
     "message": "設為永久"
   },
   "f_new_summary_da1d": {
-    "message": "新增摘要"
+    "message": "新增主要輸出"
   },
   "f_next_previous_card_c144": {
     "message": "下一張 / 上一張卡片"
@@ -3603,10 +3603,10 @@
     "message": "從「開始」功能表重新啟動 Ollama，或在新的命令提示字元視窗中以前景伺服器方式執行："
   },
   "f_summarize_791a": {
-    "message": "摘要"
+    "message": "主要輸出"
   },
   "f_summarize_send_e76b": {
-    "message": "摘要 / 傳送"
+    "message": "主要輸出 / 傳送"
   },
   "f_switch_tab_793a": {
     "message": "切換分頁"
@@ -3714,7 +3714,7 @@
     "message": "回到頂端"
   },
   "f_speaks_the_title_and_site_fi_196b": {
-    "message": "先朗讀標題與網站，再於模型撰寫時逐句朗讀摘要。"
+    "message": "先朗讀標題與網站，再於模型撰寫時逐句朗讀主要輸出。"
   },
   "f_start_097f": {
     "message": "開始"
@@ -3723,13 +3723,13 @@
     "message": "停止朗讀"
   },
   "f_the_voice_follows_the_langua_55b1": {
-    "message": "語音跟隨文字語言：德文文章的英文摘要以英語朗讀，原文以德語朗讀。"
+    "message": "語音跟隨文字語言：德文文章的英文主要輸出以英語朗讀，原文以德語朗讀。"
   },
   "f_voice_auto_8e1b": {
     "message": "語音 · 自動"
   },
   "f_voice_it_follows_the_summary_2f51": {
-    "message": "語音：{voice} · {lang}。跟隨摘要語言；標題與網站以應用程式語言播報。"
+    "message": "語音：{voice} · {lang}。跟隨主要輸出語言；標題與網站以應用程式語言播報。"
   },
   "f_add_model_id_e_g_gemma4_e2b_127a": {
     "message": "新增模型 ID，例如 gemma4:e2b"
@@ -3753,10 +3753,10 @@
     "message": "輸入驗證碼"
   },
   "f_free_cloud_models_and_your_s_71ce": {
-    "message": "免費雲端模型，摘要同步到每台裝置。也可以略過，使用自己的 API 金鑰。"
+    "message": "免費雲端模型，主要輸出同步到每台裝置。也可以略過，使用自己的 API 金鑰。"
   },
   "f_sign_in_to_ai_summary_helper_d8be": {
-    "message": "登入 AI Summary Helper"
+    "message": "登入 Arguments"
   },
   "f_thinking_more_de1c": {
     "message": "繼續思考中…"
@@ -3822,7 +3822,7 @@
     "message": "開啟模型設定"
   },
   "f_queued_it_will_start_when_th_cd8f": {
-    "message": "已排入佇列——目前摘要完成後開始"
+    "message": "已排入佇列——目前主要輸出完成後開始"
   },
   "f_queued_4ebe": {
     "message": "已排入佇列：{title}"
@@ -3843,7 +3843,7 @@
     "message": "儲存選項"
   },
   "f_saved_without_an_ai_summary__ff94": {
-    "message": "已儲存，但沒有 AI 摘要。開啟頁面並點按 ✨ 摘要即可新增。"
+    "message": "已儲存，但沒有 AI 主要輸出。開啟頁面並點按 ✨ 主要輸出即可新增。"
   },
   "f_search_installed_models_959b": {
     "message": "搜尋已安裝的模型…"
@@ -3855,13 +3855,13 @@
     "message": "無法儲存此頁面。"
   },
   "f_waiting_for_the_running_summ_1f1c": {
-    "message": "正在等待目前的摘要——點擊可從佇列中移除"
+    "message": "正在等待目前的主要輸出——點擊可從佇列中移除"
   },
   "f_your_api_key_is_missing_or_w_264b": {
     "message": "你的 API 金鑰遺失或被拒絕。請在設定中檢查。"
   },
   "f_starts_when_the_current_summ_b50e": {
-    "message": "目前摘要完成後開始"
+    "message": "目前主要輸出完成後開始"
   },
   "f_this_page_a108": {
     "message": "此頁面"
@@ -3909,7 +3909,7 @@
     "message": "標準"
   },
   "f_summary_length_in_words_ab69": {
-    "message": "摘要長度（字數）"
+    "message": "主要輸出長度（字數）"
   },
   "f_items_could_not_be_scored_31d6": {
     "message": "{n} 個項目無法評分"
@@ -3996,7 +3996,7 @@
     "message": "尚無背景執行記錄。"
   },
   "f_items_rated_day_recaps_writt_ce24": {
-    "message": "已評分 {a} 個項目 · 已撰寫 {b} 份每日摘要"
+    "message": "已評分 {a} 個項目 · 已撰寫 {b} 份每日主要輸出"
   },
   "f_available_when_ollama_is_set_53ce": {
     "message": "設定好 Ollama 後可用。它會在你自己的電腦上分小批次為整個訂閱庫評分、分類並產生回顧。可能需要數小時，但不消耗任何 token。"
@@ -4020,13 +4020,13 @@
     "message": "請求 {a}/{b}"
   },
   "f_runs_on_your_own_machine_wit_1728": {
-    "message": "使用 Ollama 在你自己的電腦上執行，不消耗 token，即使摘要目前使用的是其他模型。請保持此面板開啟：關閉會暫停執行，重新開始會從中斷處繼續。只處理仍儲存的項目（見「項目保留時間」）。今天的回顧會在你開啟時產生。"
+    "message": "使用 Ollama 在你自己的電腦上執行，不消耗 token，即使主要輸出目前使用的是其他模型。請保持此面板開啟：關閉會暫停執行，重新開始會從中斷處繼續。只處理仍儲存的項目（見「項目保留時間」）。今天的回顧會在你開啟時產生。"
   },
   "f_sending_the_batch_to_ollama_ac2f": {
     "message": "正在將這一批傳送給 Ollama…"
   },
   "f_not_your_active_summary_mode_78a8": {
-    "message": "不是你目前的摘要模型"
+    "message": "不是你目前的主要輸出模型"
   },
   "f_left_db92": {
     "message": "還剩 {eta}"
@@ -4047,7 +4047,7 @@
     "message": "更新日誌"
   },
   "f_how_should_ai_summary_helper_b4d7": {
-    "message": "要讓 AI Summary Helper 用什麼來思考？"
+    "message": "要讓 Arguments 用什麼來思考？"
   },
   "f_local_models_no_account_no_k_a783": {
     "message": "本機模型。不需帳號、不需金鑰，資料不會離開你的電腦。"
@@ -4062,7 +4062,7 @@
     "message": "OpenAI、Gemini、Mistral、DeepSeek 等。不需帳號，金鑰只保存在此裝置上。"
   },
   "f_pick_one_you_can_change_it_a_a7d6": {
-    "message": "選擇一種。你可以隨時在模型設定中變更，在你摘要頁面之前不會傳送任何內容。"
+    "message": "選擇一種。你可以隨時在模型設定中變更，在你主要輸出頁面之前不會傳送任何內容。"
   },
   "f_privacy_policy_16ff": {
     "message": "隱私權政策"
@@ -4071,10 +4071,10 @@
     "message": "安全政策"
   },
   "f_sign_in_with_your_email_no_a_5518": {
-    "message": "使用電子郵件登入，不需 API 金鑰。你的摘要會同步到所有裝置。"
+    "message": "使用電子郵件登入，不需 API 金鑰。你的主要輸出會同步到所有裝置。"
   },
   "f_tip_press_on_any_page_to_sum_8aff": {
-    "message": "提示：在任何頁面按 {key} 即可摘要。"
+    "message": "提示：在任何頁面按 {key} 即可主要輸出。"
   },
   "f_free_cloud_models_3602": {
     "message": "☁️ 免費雲端模型"
@@ -4107,10 +4107,10 @@
     "message": "Kindle 與 LocalSend 目標"
   },
   "f_permanently_removes_your_sum_782d": {
-    "message": "從此裝置永久刪除你的摘要、封存與標示。設定與訂閱會保留，除非你勾選它們。此操作無法復原。"
+    "message": "從此裝置永久刪除你的主要輸出、封存與標示。設定與訂閱會保留，除非你勾選它們。此操作無法復原。"
   },
   "f_permanently_removes_your_sum_2de7": {
-    "message": "永久刪除你的摘要、封存與標示。設定與訂閱會保留。請先匯出備份。"
+    "message": "永久刪除你的主要輸出、封存與標示。設定與訂閱會保留。請先匯出備份。"
   },
   "f_preferences_prompts_d7ac": {
     "message": "偏好設定與提示詞"
@@ -4119,16 +4119,16 @@
     "message": "刪除此擴充功能在此裝置上儲存的所有內容，並重新開始。此操作無法復原。你在我們伺服器上的帳號不受影響：如需刪除，請聯絡我們（見隱私權政策）。"
   },
   "f_removes_everything_this_exte_b9a8": {
-    "message": "刪除此擴充功能在此裝置上儲存的所有內容：摘要、標示、訂閱、金鑰與設定。請先匯出備份。"
+    "message": "刪除此擴充功能在此裝置上儲存的所有內容：主要輸出、標示、訂閱、金鑰與設定。請先匯出備份。"
   },
   "f_resets_preferences_prompts_a_02e0": {
-    "message": "重設此裝置上的偏好設定、提示詞、API 金鑰、登入資訊與傳送目標。摘要、標示與訂閱會保留，除非你勾選它們。擴充功能將重新載入。"
+    "message": "重設此裝置上的偏好設定、提示詞、API 金鑰、登入資訊與傳送目標。主要輸出、標示與訂閱會保留，除非你勾選它們。擴充功能將重新載入。"
   },
   "f_resets_preferences_prompts_a_aab7": {
-    "message": "重設此裝置上的偏好設定、提示詞、API 金鑰、登入資訊與傳送目標。摘要、標示與訂閱會保留。"
+    "message": "重設此裝置上的偏好設定、提示詞、API 金鑰、登入資訊與傳送目標。主要輸出、標示與訂閱會保留。"
   },
   "f_summaries_archive_b387": {
-    "message": "摘要與封存"
+    "message": "主要輸出與封存"
   },
   "f_website_access_is_off_allow__f6c7": {
     "message": "網站存取已關閉。請在 about:addons → 此擴充功能 → 權限中允許「存取所有網站上的資料」，然後重新整理。"
@@ -4335,7 +4335,7 @@
     "message": "不需帳號。金鑰只會保存在此裝置上。"
   },
   "f_pick_one_nothing_is_sent_unt_722b": {
-    "message": "請選擇一種。在你摘要頁面之前不會傳送任何內容。"
+    "message": "請選擇一種。在你主要輸出頁面之前不會傳送任何內容。"
   },
   "f_sign_in_with_your_email_no_a_b96b": {
     "message": "用電子郵件登入，不需 API 金鑰。"
@@ -4344,7 +4344,7 @@
     "message": "省事：只需電子郵件，不需 API 金鑰。同時也是在支持獨立開發者。"
   },
   "f_pick_a_way_to_run_your_summa_5c59": {
-    "message": "選擇執行摘要的方式。之後可隨時在設定中變更。"
+    "message": "選擇執行主要輸出的方式。之後可隨時在設定中變更。"
   },
   "f_back_to_top_bd70": {
     "message": "回到頂端"
@@ -4362,7 +4362,7 @@
     "message": "醒目提示詞"
   },
   "f_summary_prompt_5157": {
-    "message": "摘要提示詞"
+    "message": "主要輸出提示詞"
   },
   "f_reset_to_default_f7dc": {
     "message": "恢復預設"
@@ -4371,10 +4371,10 @@
     "message": "無法儲存提示詞。"
   },
   "f_highlight_and_summary_prompt_ef01": {
-    "message": "醒目與摘要提示詞"
+    "message": "醒目與主要輸出提示詞"
   },
   "pagePromptsHint": {
-    "message": "醒目與摘要提示詞"
+    "message": "高亮和主要輸出提示詞"
   },
   "highlightNotFound": {
     "message": "未在網頁中找到"
@@ -4405,5 +4405,257 @@
   },
   "highlightInvalidResponse": {
     "message": "無法解析醒目提示結果"
+  },
+  "f_available_when_ollama_is_set_f9e0": {
+    "message": "設定 Ollama 後可用。在您的電腦上分小批次產生訂閱庫回顧。"
+  },
+  "f_creates_recaps_of_your_feed__0737": {
+    "message": "在您的電腦上分小批次產生訂閱項目回顧。"
+  },
+  "f_edit_feeds_in_settings_6774": {
+    "message": "在設定中編輯訂閱"
+  },
+  "f_every_stored_day_has_a_compl_5d0c": {
+    "message": "所有已儲存日期都有完整回顧。"
+  },
+  "f_sources_rename_mute_713c": {
+    "message": "來源 · 重新命名 · 靜音"
+  },
+  "f_day_recaps_written_71f0": {
+    "message": "已產生 {b} 篇每日回顧",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_recapped_4012": {
+    "message": "已回顧 {b} 天",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_to_recap_ai_requests_f01d": {
+    "message": "待回顧 {b} 天 · {n} 次 AI 請求",
+    "description": "Placeholders: {b} {n} (keep as is)"
+  },
+  "f_manage_feeds_in_settings_a66f": {
+    "message": "⚙️  在設定中管理訂閱  ›"
+  },
+  "f_main_output_prompt_c085": {
+    "message": "主要輸出提示詞"
+  },
+  "f_subscriptions_opml_697e": {
+    "message": "訂閱 · OPML"
+  },
+  "f_backup_delete_5d95": {
+    "message": "備份 · 刪除"
+  },
+  "f_no_articles_yet_start_analyz_01e3": {
+    "message": "還沒有文章 — 主要輸出網頁即可查看分析！📖"
+  },
+  "f_with_results_f383": {
+    "message": "使用主要輸出"
+  },
+  "f_analyze_a663": {
+    "message": "✨ 分析"
+  },
+  "f_analyzing_8bc5": {
+    "message": "⏳ 主要輸出中…"
+  },
+  "f_saved_without_an_ai_main_out_a5cb": {
+    "message": "已儲存，但沒有 AI 主要輸出。開啟頁面並點按 ✨ 主要輸出即可新增。"
+  },
+  "f_no_main_output_available_2d4f": {
+    "message": "暫無主要輸出"
+  },
+  "f_main_output_1742": {
+    "message": "🧙 AI 主要輸出"
+  },
+  "f_sign_in_to_arguments_1d5c": {
+    "message": "登入 Arguments"
+  },
+  "f_free_cloud_models_and_your_r_153c": {
+    "message": "免費雲端模型，主要輸出同步到每台裝置。也可以略過，使用自己的 API 金鑰。"
+  },
+  "f_writing_a_word_main_output_82b9": {
+    "message": "正在撰寫 {n} 字的主要輸出…"
+  },
+  "f_analyzed_7135": {
+    "message": "已主要輸出"
+  },
+  "f_waiting_for_the_running_main_f4e2": {
+    "message": "正在等待目前的主要輸出——點擊可從佇列中移除"
+  },
+  "f_queued_it_will_start_when_th_31fd": {
+    "message": "已排入佇列——目前主要輸出完成後開始"
+  },
+  "f_analyzing_in_the_background__dd2a": {
+    "message": "背景主要輸出中，完成後見「主要輸出」與「歷史」"
+  },
+  "f_new_posts_land_here_skim_ana_6e81": {
+    "message": "新文章會彙整於此：瀏覽、主要輸出重點、清空其餘。"
+  },
+  "f_analyzed_f2f6": {
+    "message": "✓ 已主要輸出"
+  },
+  "f_you_have_a_saved_main_output_fc8e": {
+    "message": "已儲存此頁主要輸出"
+  },
+  "f_view_main_output_090b": {
+    "message": "📄 檢視主要輸出"
+  },
+  "f_not_your_active_main_output__ce26": {
+    "message": "不是你目前的主要輸出模型"
+  },
+  "f_runs_on_your_own_machine_wit_290a": {
+    "message": "使用 Ollama 在你自己的電腦上執行，不消耗 token，即使主要輸出目前使用的是其他模型。請保持此面板開啟：關閉會暫停執行，重新開始會從中斷處繼續。只處理仍儲存的項目（見「項目保留時間」）。今天的回顧會在你開啟時產生。"
+  },
+  "f_items_you_open_or_analyze_le_4138": {
+    "message": "開啟或主要輸出的項目會移出未讀"
+  },
+  "f_auto_analyze_favorites_a662": {
+    "message": "✨ 自動主要輸出收藏"
+  },
+  "f_analyze_on_a_feed_item_follo_6202": {
+    "message": "訂閱項目上的「主要輸出」依主要輸出頁所選模式（預設為擴充功能）。收藏一律保留。"
+  },
+  "f_speaks_the_title_and_site_fi_7a35": {
+    "message": "先朗讀標題與網站，再於模型撰寫時逐句朗讀主要輸出。"
+  },
+  "f_voice_it_follows_the_main_ou_7f8f": {
+    "message": "語音：{voice} · {lang}。跟隨主要輸出語言；標題與網站以應用程式語言播報。"
+  },
+  "f_main_output_length_in_words_bc0f": {
+    "message": "主要輸出長度（字數）"
+  },
+  "f_attach_a_pdf_to_analyze_388e": {
+    "message": "附加 PDF 進行主要輸出"
+  },
+  "f_no_recent_results_527f": {
+    "message": "暫無最近主要輸出"
+  },
+  "f_analyze_a_page_to_see_it_her_a8ca": {
+    "message": "主要輸出一個頁面後會顯示在這裡"
+  },
+  "f_analyze_this_page_7fec": {
+    "message": "主要輸出此頁面"
+  },
+  "f_writing_the_main_output_cff0": {
+    "message": "正在撰寫主要輸出…"
+  },
+  "f_analyze_9f73": {
+    "message": "分析"
+  },
+  "f_starts_when_the_current_main_1a7c": {
+    "message": "目前主要輸出完成後開始"
+  },
+  "f_pick_a_way_to_run_your_resul_269b": {
+    "message": "選擇執行主要輸出的方式。之後可隨時在設定中變更。"
+  },
+  "f_tip_press_on_any_page_to_ana_0f1e": {
+    "message": "提示：在任何頁面按 {key} 即可主要輸出。"
+  },
+  "f_main_output_c815": {
+    "message": "主要輸出"
+  },
+  "f_the_voice_follows_the_langua_d773": {
+    "message": "語音跟隨文字語言：德文文章的英文主要輸出以英語朗讀，原文以德語朗讀。"
+  },
+  "f_enjoying_arguments_991d": {
+    "message": "喜歡 Arguments 嗎？"
+  },
+  "f_only_analyzed_articles_can_b_dfaf": {
+    "message": "只能傳送已產生主要輸出的文章"
+  },
+  "f_select_results_cac7": {
+    "message": "選取主要輸出"
+  },
+  "f_send_results_0ecd": {
+    "message": "傳送主要輸出"
+  },
+  "f_send_main_output_fc91": {
+    "message": "傳送 {n} 篇主要輸出"
+  },
+  "f_send_results_f1a9": {
+    "message": "傳送 {n} 篇主要輸出"
+  },
+  "f_main_output_only_7011": {
+    "message": "僅主要輸出"
+  },
+  "f_main_output_full_article_b1cb": {
+    "message": "主要輸出 + 完整文章"
+  },
+  "f_main_output_db19": {
+    "message": "{n} 篇主要輸出"
+  },
+  "f_results_eb81": {
+    "message": "{n} 篇主要輸出"
+  },
+  "f_mark_main_output_as_bf44": {
+    "message": "將 {n} 篇主要輸出標記為…"
+  },
+  "f_mark_results_as_6bf0": {
+    "message": "將 {n} 篇主要輸出標記為…"
+  },
+  "f_digest_of_results_776c": {
+    "message": "{n} 篇主要輸出合集"
+  },
+  "f_select_results_to_send_9cf2": {
+    "message": "選取要傳送的主要輸出"
+  },
+  "f_analyzing_cdca": {
+    "message": "主要輸出中..."
+  },
+  "f_no_main_output_returned_3af7": {
+    "message": "未傳回主要輸出。"
+  },
+  "f_results_archive_73d9": {
+    "message": "主要輸出與封存"
+  },
+  "f_resets_preferences_prompts_a_9142": {
+    "message": "重設此裝置上的偏好設定、提示詞、API 金鑰、登入資訊與傳送目標。主要輸出、標示與訂閱會保留，除非你勾選它們。擴充功能將重新載入。"
+  },
+  "f_permanently_removes_your_res_cd53": {
+    "message": "從此裝置永久刪除你的主要輸出、封存與標示。設定與訂閱會保留，除非你勾選它們。此操作無法復原。"
+  },
+  "f_invalid_backup_file_please_s_0b0d": {
+    "message": "備份檔案無效。請選擇有效的 Arguments 匯出檔。"
+  },
+  "f_auto_analyze_favorites_3012": {
+    "message": "自動主要輸出我的最愛"
+  },
+  "f_highlight_and_main_output_pr_49e7": {
+    "message": "高亮和主要輸出提示詞"
+  },
+  "f_analyze_send_e8ec": {
+    "message": "主要輸出 / 傳送"
+  },
+  "f_new_main_output_5b1f": {
+    "message": "新增主要輸出"
+  },
+  "f_output_language_7616": {
+    "message": "輸出語言"
+  },
+  "f_output_length_cc00": {
+    "message": "輸出長度"
+  },
+  "f_analysis_display_a211": {
+    "message": "分析顯示方式"
+  },
+  "f_automatic_light_blue_quote_h_cb6e": {
+    "message": "依主要輸出自動產生淺藍色引文標示"
+  },
+  "f_for_unlimited_zero_config_re_80ba": {
+    "message": "，享受無限量、免設定的主要輸出。"
+  },
+  "f_the_quick_brown_fox_jumps_ov_22b0": {
+    "message": "The quick brown fox jumps over the lazy dog。主要輸出會使用此大小與行距。"
+  },
+  "f_permanently_removes_your_res_12e9": {
+    "message": "永久刪除你的主要輸出、封存與標示。設定與訂閱會保留。請先匯出備份。"
+  },
+  "f_removes_everything_this_exte_6b82": {
+    "message": "刪除此擴充功能在此裝置上儲存的所有內容：主要輸出、標示、訂閱、金鑰與設定。請先匯出備份。"
+  },
+  "f_resets_preferences_prompts_a_cfb1": {
+    "message": "重設此裝置上的偏好設定、提示詞、API 金鑰、登入資訊與傳送目標。主要輸出、標示與訂閱會保留。"
+  },
+  "f_generate_a_bookmarklet_that__658d": {
+    "message": "產生可在任何瀏覽器分析網頁的書籤腳本，包括無法執行擴充功能的 iOS/Android。書籤腳本使用你的 byphil Cloud 登入資訊。"
   }
 }

@@ -16,14 +16,12 @@ const run = async (rateSetting) => {
   click($('.feed-day-ai')); await tick(80);
   return { items: store['feeds:items'], calls };
 };
-let r = await run();   // default: on
-assert.equal(r.calls.length, 1, 'one request only');
-assert.ok(/LABELS/.test(r.calls[0].system) && /SCORES/.test(r.calls[0].system));
-const by = Object.fromEntries(r.items.map(i => [i.id, i]));
-assert.deepEqual([by.a.sent, by.a.cat, by.a.ai], [0.8, 'Tech', true]);
-assert.deepEqual([by.b.sent, by.b.cat], [-0.6, 'Politics']);
-assert.deepEqual([by.c.sent, by.c.cat], [0.9, 'Old'], 'existing rating never overwritten');
-r = await run(false);  // off
-assert.ok(!/LABELS|SCORES/.test(r.calls[0].system), 'prompt without rating when off');
-assert.ok(r.items.every(i => i.id === 'c' || (!i.ai && !i.cat)), 'nothing rated when off');
+for (const savedSetting of [undefined, true, false]) {
+ const result = await run(savedSetting);
+ assert.equal(result.calls.length, 1);
+ assert(!/LABELS|SCORES|MOOD:/.test(result.calls[0].system));
+ const by = Object.fromEntries(result.items.map(item => [item.id, item]));
+ assert(!by.a.ai && !by.a.cat && !by.b.ai && !by.b.cat, 'recaps never rate or categorize items');
+ assert.deepEqual([by.c.sent, by.c.cat], [0.9, 'Old'], 'stored metadata remains intact');
+}
 console.log('TEST 14 OK');

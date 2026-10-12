@@ -1,18 +1,18 @@
 {
   "extensionName": {
-    "message": "AI Summary Helper — Summarize, Ask, Listen & Cite (BYOK, Ollama)"
+    "message": "Arguments"
   },
   "extensionNameFirefox": {
-    "message": "AI Summary Helper – Summarize, Ask, Listen, Cite"
+    "message": "Arguments"
   },
   "extensionShortName": {
-    "message": "AI Summary Helper"
+    "message": "Arguments"
   },
   "extensionDescription": {
-    "message": "Summarize with your own AI key or local Ollama. Save for later w/ reminders, highlight text, Kindle export. Open source, no login."
+    "message": "يستخدم Arguments الذكاء الاصطناعي لإبراز الحجج واكتشاف الأفكار الجديدة في صفحات الويب."
   },
   "fetchSummary": {
-    "message": "الحصول على الملخص"
+    "message": "الحصول على المخرج الرئيسي"
   },
   "settings": {
     "message": "الإعدادات"
@@ -24,7 +24,7 @@
     "message": "تبرع"
   },
   "noRecentSummaries": {
-    "message": "لا توجد ملخصات حديثة"
+    "message": "لا توجد نتائج حديثة"
   },
   "summarizePageToSee": {
     "message": "قم بتلخيص صفحة لرؤيتها هنا"
@@ -36,16 +36,16 @@
     "message": "اطرح أسئلة محددة حول هذه الصفحة…"
   },
   "summaryLanguage": {
-    "message": "لغة الملخص"
+    "message": "لغة المخرج الرئيسي"
   },
   "searchLanguages": {
     "message": "ابحث عن اللغات…"
   },
   "summaryLength": {
-    "message": "طول الملخص"
+    "message": "طول المخرج الرئيسي"
   },
   "summaryMode": {
-    "message": "وضع الملخص"
+    "message": "وضع المخرج الرئيسي"
   },
   "extension": {
     "message": "إضافة (Extension)"
@@ -96,7 +96,7 @@
     "message": "جاري تحميل الأدوات…"
   },
   "navSummarize": {
-    "message": "تلخيص"
+    "message": "تحليل"
   },
   "navHistory": {
     "message": "السجل"
@@ -117,13 +117,13 @@
     "message": "جاري العمل عليه…"
   },
   "summary": {
-    "message": "الملخص"
+    "message": "المخرج الرئيسي"
   },
   "noTitleAvailable": {
     "message": "لا يوجد عنوان متاح"
   },
   "noSummaryAvailable": {
-    "message": "لا يوجد ملخص متاح"
+    "message": "لا يوجد مخرج رئيسي متاح"
   },
   "noContentAvailable": {
     "message": "لا يوجد محتوى متاح"
@@ -144,7 +144,7 @@
     "message": "🗑️ حذف"
   },
   "aiSummary": {
-    "message": "🧙 ملخص الذكاء الاصطناعي"
+    "message": "🧙 مخرج رئيسي الذكاء الاصطناعي"
   },
   "originalContent": {
     "message": "📄 المحتوى الأصلي"
@@ -159,10 +159,10 @@
     "message": "فشل تحميل الأدوات."
   },
   "clickToInsert": {
-    "message": "انقر على العنصر الذي تريد إدراج الملخص فيه."
+    "message": "انقر على العنصر الذي تريد إدراج المخرج الرئيسي فيه."
   },
   "fetchingSummary": {
-    "message": "جاري جلب الملخص..."
+    "message": "جاري جلب المخرج الرئيسي..."
   },
   "openInSidebar": {
     "message": "فتح في الشريط الجانبي"
@@ -291,7 +291,7 @@
     "message": "فئة الذكاء الاصطناعي"
   },
   "f_ai_recap_of_this_day_d199": {
-    "message": "ملخص اليوم بالذكاء الاصطناعي"
+    "message": "مخرج رئيسي اليوم بالذكاء الاصطناعي"
   },
   "f_ai_request_failed_fc5f": {
     "message": "فشل طلب الذكاء الاصطناعي"
@@ -495,7 +495,7 @@
     "message": "كتم (استبعاد من كل المصادر)"
   },
   "f_new_items_arrived_since_this_bb0f": {
-    "message": "وصلت عناصر جديدة بعد هذا الملخص — حدّث لتضمينها."
+    "message": "وصلت عناصر جديدة بعد هذا المخرج الرئيسي — حدّث لتضمينها."
   },
   "f_new_posts_land_here_skim_sum_cf70": {
     "message": "تصل المنشورات الجديدة هنا. تصفّح، لخّص المهم، وامسح الباقي."
@@ -588,10 +588,10 @@
     "message": "يبدأ النطاق {day} — اضغط اليوم الأخير."
   },
   "f_recap_copied_dc3c": {
-    "message": "تم نسخ الملخص"
+    "message": "تم نسخ المخرج الرئيسي"
   },
   "f_recap_failed_6cfd": {
-    "message": "فشل الملخص"
+    "message": "فشل المخرج الرئيسي"
   },
   "f_refresh_aad4": {
     "message": "تحديث"
@@ -681,7 +681,7 @@
     "message": "تعذّرت قراءة رد الذكاء الاصطناعي"
   },
   "f_the_ai_returned_an_empty_rec_894a": {
-    "message": "أعاد الذكاء الاصطناعي ملخصًا فارغًا"
+    "message": "أعاد الذكاء الاصطناعي مخرج رئيسيًا فارغًا"
   },
   "f_these_items_are_already_scor_391c": {
     "message": "هذه العناصر مقيَّمة بالفعل"
@@ -717,7 +717,7 @@
     "message": "أمس"
   },
   "f_you_have_a_saved_summary_of__14f8": {
-    "message": "لديك ملخص محفوظ لهذه الصفحة"
+    "message": "لديك مخرج رئيسي محفوظ لهذه الصفحة"
   },
   "f_your_feeds_stay_on_this_devi_3c13": {
     "message": "خلاصاتك تبقى على هذا الجهاز."
@@ -738,7 +738,7 @@
     "message": "{day}، العناصر: {n}"
   },
   "f_recap_8d18": {
-    "message": "ملخص {label}"
+    "message": "مخرج رئيسي {label}"
   },
   "f_feed_d469": {
     "message": "الخلاصات: {n}"
@@ -813,13 +813,13 @@
     "message": "✓ ملخّص"
   },
   "f_ai_recap_of_today_72f6": {
-    "message": "✨  ملخص اليوم بالذكاء الاصطناعي"
+    "message": "✨  مخرج رئيسي اليوم بالذكاء الاصطناعي"
   },
   "f_auto_summarize_favorites_32af": {
     "message": "✨ تلخيص المفضلة تلقائيًا"
   },
   "f_recap_b8e8": {
-    "message": "✨ ملخص"
+    "message": "✨ مخرج رئيسي"
   },
   "f_summarize_570a": {
     "message": "✨ تلخيص"
@@ -828,10 +828,10 @@
     "message": "✨ تلخيص أهم 5 غير مقروءة"
   },
   "f_writing_recap_fe02": {
-    "message": "✨ جارٍ كتابة الملخص…"
+    "message": "✨ جارٍ كتابة المخرج الرئيسي…"
   },
   "f_view_summary_3c09": {
-    "message": "📄 عرض الملخص"
+    "message": "📄 عرض المخرج الرئيسي"
   },
   "f_pick_a_day_or_range_dd71": {
     "message": "📅  اختر يومًا أو نطاقًا…"
@@ -888,10 +888,10 @@
     "message": "＋ إضافة"
   },
   "f_darker_more_items_recap_done_8cca": {
-    "message": "أغمق = عناصر أكثر · ✨ = تم الملخص · اضغط مطولًا على يوم ثم آخر لتحديد نطاق"
+    "message": "أغمق = عناصر أكثر · ✨ = تم المخرج الرئيسي · اضغط مطولًا على يوم ثم آخر لتحديد نطاق"
   },
   "f_recap_done_b098": {
-    "message": "تم الملخص"
+    "message": "تم المخرج الرئيسي"
   },
   "f_podcasts_7c90": {
     "message": "بودكاست"
@@ -963,46 +963,46 @@
     "message": "يضيف المزاج والفئة لكل عنصر في نفس طلب الذكاء الاصطناعي"
   },
   "f_rate_items_with_the_recap_6027": {
-    "message": "🤖 تقييم العناصر مع الملخص"
+    "message": "🤖 تقييم العناصر مع المخرج الرئيسي"
   },
   "f_nothing_new_since_this_recap_45c5": {
-    "message": "لا جديد منذ هذا الملخص"
+    "message": "لا جديد منذ هذا المخرج الرئيسي"
   },
   "f_sending_new_or_edited_titles_ba69": {
     "message": "إرسال {n} عنوانًا جديدًا أو معدّلًا ومقتطفات قصيرة إلى اتصال الذكاء الاصطناعي."
   },
   "f_updating_recap_902a": {
-    "message": "✨ جارٍ تحديث الملخص…"
+    "message": "✨ جارٍ تحديث المخرج الرئيسي…"
   },
   "f_a_source_recap_changed_since_e89f": {
-    "message": "تغيّر ملخص مصدر — حدّث لتضمينه."
+    "message": "تغيّر مخرج رئيسي مصدر — حدّث لتضمينه."
   },
   "f_ai_recap_of_this_month_built_f4e6": {
-    "message": "ملخص الذكاء الاصطناعي لهذا الشهر من الملخصات الأسبوعية واليومية"
+    "message": "مخرج رئيسي الذكاء الاصطناعي لهذا الشهر من النتائج الأسبوعية واليومية"
   },
   "f_ai_recap_of_this_week_built__86af": {
-    "message": "ملخص الذكاء الاصطناعي لهذا الأسبوع من الملخصات اليومية"
+    "message": "مخرج رئيسي الذكاء الاصطناعي لهذا الأسبوع من النتائج اليومية"
   },
   "f_built_from_your_day_recaps_i_2520": {
-    "message": "من ملخصاتك اليومية. العناصر التي لها ملخص يومي لا تُرسل مجددًا."
+    "message": "من نتائجك اليومية. العناصر التي لها مخرج رئيسي يومي لا تُرسل مجددًا."
   },
   "f_built_from_recap_5b76": {
-    "message": "من {n} ملخص"
+    "message": "من {n} مخرج رئيسي"
   },
   "f_built_from_recaps_48df": {
-    "message": "من {n} ملخصات"
+    "message": "من {n} نتائج"
   },
   "f_cancel_ca3b": {
     "message": "إلغاء"
   },
   "f_create_missing_day_recap_fir_2bd6": {
-    "message": "أنشئ أولًا {n} ملخصًا يوميًا ناقصًا"
+    "message": "أنشئ أولًا {n} مخرج رئيسيًا يوميًا ناقصًا"
   },
   "f_create_missing_day_recaps_fi_1cf7": {
-    "message": "أنشئ أولًا {n} ملخصات يومية ناقصة"
+    "message": "أنشئ أولًا {n} نتائج يومية ناقصة"
   },
   "f_creating_day_recaps_141a": {
-    "message": "جارٍ إنشاء الملخصات اليومية… {a}/{b}"
+    "message": "جارٍ إنشاء النتائج اليومية… {a}/{b}"
   },
   "f_generated_at_b0a6": {
     "message": "أُنشئ في {time}"
@@ -1017,16 +1017,16 @@
     "message": "لا شيء لدمجه بعد."
   },
   "f_recap_scope_40ec": {
-    "message": "نطاق الملخص"
+    "message": "نطاق المخرج الرئيسي"
   },
   "f_sends_short_recaps_not_headl_27f5": {
-    "message": "يرسل {n} ملخصات قصيرة بدل {m} عنوانًا"
+    "message": "يرسل {n} نتائج قصيرة بدل {m} عنوانًا"
   },
   "f_skip_the_days_without_a_reca_9f80": {
-    "message": "تخطَّ الأيام بلا ملخص"
+    "message": "تخطَّ الأيام بلا مخرج رئيسي"
   },
   "f_week_recap_2446": {
-    "message": "ملخص الأسبوع"
+    "message": "مخرج رئيسي الأسبوع"
   },
   "f_week_c909": {
     "message": "الأسبوع {n}"
@@ -1035,25 +1035,25 @@
     "message": "ناقص"
   },
   "f_no_recap_yet_d2d7": {
-    "message": "لا ملخص بعد"
+    "message": "لا مخرج رئيسي بعد"
   },
   "f_reused_af15": {
     "message": "مُعاد استخدامه"
   },
   "f_of_days_have_a_recap_6aaa": {
-    "message": "{a} من {b} أيام لها ملخص"
+    "message": "{a} من {b} أيام لها مخرج رئيسي"
   },
   "f_day_recap_cb92": {
-    "message": "{n} ملخص يومي"
+    "message": "{n} مخرج رئيسي يومي"
   },
   "f_day_recaps_f333": {
-    "message": "{n} ملخصات يومية"
+    "message": "{n} نتائج يومية"
   },
   "f_without_recap_7d68": {
-    "message": "{n} بلا ملخص"
+    "message": "{n} بلا مخرج رئيسي"
   },
   "f_create_recap_88d6": {
-    "message": "✨ أنشئ الملخص"
+    "message": "✨ أنشئ المخرج الرئيسي"
   },
   "f_feed_b245": {
     "message": "الخلاصة"
@@ -1113,7 +1113,7 @@
     "message": "الانتقال إلى اليوم"
   },
   "f_nothing_rated_yet_write_a_re_c4ee": {
-    "message": "لم يتم تقييم أي شيء بعد — أنشئ ✨ ملخصًا لتقييم العناصر."
+    "message": "لم يتم تقييم أي شيء بعد — أنشئ ✨ مخرج رئيسيًا لتقييم العناصر."
   },
   "f_filter_e5fe": {
     "message": "‹ تصفية"
@@ -1161,13 +1161,13 @@
     "message": "لا توجد مقالات بعد — لخّص صفحات لعرض تحليلاتك! 📖"
   },
   "f_no_tags_found_add_tags_to_yo_6914": {
-    "message": "لم يتم العثور على وسوم. أضف وسومًا إلى ملخصاتك!"
+    "message": "لم يتم العثور على وسوم. أضف وسومًا إلى نتائجك!"
   },
   "f_saved_79e4": {
     "message": "تم توفيره"
   },
   "f_with_summaries_5619": {
-    "message": "مع الملخصات"
+    "message": "مع النتائج"
   },
   "f_words_read_f576": {
     "message": "الكلمات المقروءة"
@@ -1206,7 +1206,7 @@
     "message": "الجهاز"
   },
   "f_digest_of_summaries_5cea": {
-    "message": "ملخص يضم {n} ملخصات"
+    "message": "مخرج رئيسي يضم {n} نتائج"
   },
   "f_free_tier_3_kindle_sends_inc_00a8": {
     "message": "الخطة المجانية: تتضمن 3 عمليات إرسال إلى Kindle."
@@ -1230,7 +1230,7 @@
     "message": "لم يُعدّ بعد — أضف جهاز Kindle من الإعدادات"
   },
   "f_one_digest_a1c5": {
-    "message": "ملخص واحد مجمّع"
+    "message": "مخرج رئيسي واحد مجمّع"
   },
   "f_only_summarized_articles_can_ce5a": {
     "message": "يمكن إرسال المقالات الملخّصة فقط"
@@ -1254,19 +1254,19 @@
     "message": "تحديد الكل"
   },
   "f_select_summaries_2cad": {
-    "message": "تحديد الملخصات"
+    "message": "تحديد النتائج"
   },
   "f_select_summaries_to_send_741c": {
-    "message": "حدد الملخصات للإرسال"
+    "message": "حدد النتائج للإرسال"
   },
   "f_send_to_kindle_c8f1": {
     "message": "إرسال إلى Kindle"
   },
   "f_send_summaries_c9c7": {
-    "message": "إرسال {n} ملخصات"
+    "message": "إرسال {n} نتائج"
   },
   "f_send_summary_164f": {
-    "message": "إرسال {n} ملخص"
+    "message": "إرسال {n} مخرج رئيسي"
   },
   "f_sending_to_kindle_8853": {
     "message": "جارٍ الإرسال إلى Kindle…"
@@ -1314,10 +1314,10 @@
     "message": "تم تحديد {n}"
   },
   "f_summaries_7bdf": {
-    "message": "{n} ملخصات"
+    "message": "{n} نتائج"
   },
   "f_summary_0c47": {
-    "message": "{n} ملخص"
+    "message": "{n} مخرج رئيسي"
   },
   "f_send_to_kindle_dc46": {
     "message": "📚 إرسال إلى Kindle"
@@ -1338,10 +1338,10 @@
     "message": "المقال كاملًا"
   },
   "f_summary_full_article_3f15": {
-    "message": "الملخص + المقال كاملًا"
+    "message": "المخرج الرئيسي + المقال كاملًا"
   },
   "f_summary_only_bd43": {
-    "message": "الملخص فقط"
+    "message": "المخرج الرئيسي فقط"
   },
   "f_also_automatic_opening_marks_1cdb": {
     "message": "تلقائيًا أيضًا: الفتح يعلّم «مقروء» والإرسال يعلّم «تم الإرسال»"
@@ -1362,10 +1362,10 @@
     "message": "وضع علامة…"
   },
   "f_mark_summaries_as_8da6": {
-    "message": "وضع علامة على {n} ملخصات…"
+    "message": "وضع علامة على {n} نتائج…"
   },
   "f_mark_summary_as_4a0a": {
-    "message": "وضع علامة على {n} ملخص…"
+    "message": "وضع علامة على {n} مخرج رئيسي…"
   },
   "f_moves_them_to_archive_find_t_1076": {
     "message": "ينقلها إلى الأرشيف — ستجدها هناك في أي وقت"
@@ -1425,7 +1425,7 @@
     "message": "ملاحظة ودّية لنفسك"
   },
   "f_ai_adds_2_3_sentences_on_top_f7ed": {
-    "message": "يضيف الذكاء الاصطناعي 2–3 جمل في بداية الملخص المجمّع"
+    "message": "يضيف الذكاء الاصطناعي 2–3 جمل في بداية المخرج الرئيسي المجمّع"
   },
   "f_briefing_d739": {
     "message": "موجز"
@@ -1443,7 +1443,7 @@
     "message": "يستخدم نموذج الذكاء الاصطناعي لديك · استدعاء إضافي واحد · بلغة التطبيق"
   },
   "f_intro_skipped_the_digest_goe_a3a8": {
-    "message": "⚠️ تم تخطي المقدمة — سيُرسل الملخص بدونها"
+    "message": "⚠️ تم تخطي المقدمة — سيُرسل المخرج الرئيسي بدونها"
   },
   "f_intro_written_181e": {
     "message": "✨ تمت كتابة المقدمة"
@@ -1470,7 +1470,7 @@
     "message": "كتب ووسائط مقترحة"
   },
   "f_briefings_and_recaps_keep_th_4156": {
-    "message": "تحتفظ الموجزات والملخصات بتخطيطها الثابت (نظرة عامة، مواضيع، مزاج)؛ هذه الإعدادات تغيّر النبرة والصياغة فقط."
+    "message": "تحتفظ الموجزات والنتائج بتخطيطها الثابت (نظرة عامة، مواضيع، مزاج)؛ هذه الإعدادات تغيّر النبرة والصياغة فقط."
   },
   "f_casual_faa4": {
     "message": "ودّي"
@@ -1560,7 +1560,7 @@
     "message": "فكاهة ستاند أب"
   },
   "f_style_for_ai_briefings_and_w_071d": {
-    "message": "أسلوب موجزات الذكاء الاصطناعي والملخصات الأسبوعية والشهرية."
+    "message": "أسلوب موجزات الذكاء الاصطناعي والنتائج الأسبوعية والشهرية."
   },
   "f_test_on_sample_853c": {
     "message": "جرّب على مثال"
@@ -1581,7 +1581,7 @@
     "message": "عرض وتعديل ›"
   },
   "f_week_month_recaps_9013": {
-    "message": "الملخصات الأسبوعية والشهرية"
+    "message": "النتائج الأسبوعية والشهرية"
   },
   "f_why_it_matters_3f98": {
     "message": "لماذا يهم"
@@ -1614,7 +1614,7 @@
     "message": "تقييم سريع في متجر Chrome الإلكتروني يساعد الآخرين على اكتشافه."
   },
   "f_enjoying_ai_summary_helper_75e7": {
-    "message": "هل يعجبك AI Summary Helper؟"
+    "message": "هل يعجبك Arguments؟"
   },
   "f_later_2b49": {
     "message": "لاحقًا"
@@ -1668,7 +1668,7 @@
     "message": "أخرى"
   },
   "f_rates_the_tone_of_summaries__01bb": {
-    "message": "يقيّم نبرة الملخصات وعناصر الخلاصة، ويدعم مرشحات المزاج والرسوم البيانية وحصيلة المصادر. أوقفه لإخفاء كل ميزات المزاج."
+    "message": "يقيّم نبرة النتائج وعناصر الخلاصة، ويدعم مرشحات المزاج والرسوم البيانية وحصيلة المصادر. أوقفه لإخفاء كل ميزات المزاج."
   },
   "f_reading_339b": {
     "message": "القراءة"
@@ -1785,7 +1785,7 @@
     "message": "تضمين كل الأسئلة في التصدير"
   },
   "f_last_summary_3355": {
-    "message": "آخر ملخص"
+    "message": "آخر مخرج رئيسي"
   },
   "f_model_is_thinking_3a56": {
     "message": "النموذج يفكّر"
@@ -1797,10 +1797,10 @@
     "message": "لا توجد إجابة."
   },
   "f_no_recent_summaries_03a5": {
-    "message": "لا توجد ملخصات حديثة"
+    "message": "لا توجد نتائج حديثة"
   },
   "f_nothing_new_since_this_recap_f9bc": {
-    "message": "لا جديد منذ هذا الملخص — إعادة الضبط تعيد كتابته من الصفر."
+    "message": "لا جديد منذ هذا المخرج الرئيسي — إعادة الضبط تعيد كتابته من الصفر."
   },
   "f_nothing_received_for_s_there_17e7": {
     "message": "لم يصل شيء منذ {s} ث. لا يوجد حد زمني — ألغِ إذا بدا متوقفًا."
@@ -1836,7 +1836,7 @@
     "message": "إرسال"
   },
   "f_send_summaries_96ab": {
-    "message": "إرسال الملخصات"
+    "message": "إرسال النتائج"
   },
   "f_sent_to_your_ai_connection_b919": {
     "message": "أُرسل إلى اتصال الذكاء الاصطناعي"
@@ -1860,10 +1860,10 @@
     "message": "لخّص هذه الصفحة"
   },
   "f_summary_b5b3": {
-    "message": "ملخص"
+    "message": "مخرج رئيسي"
   },
   "f_that_is_the_maximum_per_reca_170d": {
-    "message": "هذا هو الحد الأقصى لكل ملخص. استخدم الملخص الأسبوعي أو الشهري لرؤية أشمل، أو صفِّ حسب الخلاصة."
+    "message": "هذا هو الحد الأقصى لكل مخرج رئيسي. استخدم المخرج الرئيسي الأسبوعي أو الشهري لرؤية أشمل، أو صفِّ حسب الخلاصة."
   },
   "f_thinking_d121": {
     "message": "جارٍ التفكير…"
@@ -1881,10 +1881,10 @@
     "message": "جارٍ العمل…"
   },
   "f_writing_a_word_summary_dd5f": {
-    "message": "كتابة ملخص من {n} كلمة…"
+    "message": "كتابة مخرج رئيسي من {n} كلمة…"
   },
   "f_writing_the_summary_0fa6": {
-    "message": "كتابة الملخص…"
+    "message": "كتابة المخرج الرئيسي…"
   },
   "f_your_focus_question_4df6": {
     "message": "سؤال التركيز الخاص بك"
@@ -1923,16 +1923,16 @@
     "message": "{n} أسئلة أخرى"
   },
   "f_older_item_is_not_in_this_re_1d7b": {
-    "message": "عنصر أقدم ({n}) غير موجود في هذا الملخص (الحد: {max} لكل ملخص)."
+    "message": "عنصر أقدم ({n}) غير موجود في هذا المخرج الرئيسي (الحد: {max} لكل مخرج رئيسي)."
   },
   "f_older_item_is_not_in_this_re_321f": {
-    "message": "عنصر أقدم ({n}) غير موجود في هذا الملخص."
+    "message": "عنصر أقدم ({n}) غير موجود في هذا المخرج الرئيسي."
   },
   "f_older_items_are_not_in_this__7458": {
-    "message": "{n} عناصر أقدم غير موجودة في هذا الملخص (الحد: {max} لكل ملخص)."
+    "message": "{n} عناصر أقدم غير موجودة في هذا المخرج الرئيسي (الحد: {max} لكل مخرج رئيسي)."
   },
   "f_older_items_are_not_in_this__8bca": {
-    "message": "{n} عناصر أقدم غير موجودة في هذا الملخص."
+    "message": "{n} عناصر أقدم غير موجودة في هذا المخرج الرئيسي."
   },
   "f_word_c9d9": {
     "message": "{n} كلمة"
@@ -1950,7 +1950,7 @@
     "message": "📍 أضف إلى المقال"
   },
   "f_items_per_recap_fac3": {
-    "message": "📝 عناصر لكل ملخص"
+    "message": "📝 عناصر لكل مخرج رئيسي"
   },
   "f_on_ios_hold_to_drag_for_2_se_7fba": {
     "message": "(على iOS، اضغط مطولًا للسحب لمدة ثانيتين)"
@@ -2055,7 +2055,7 @@
     "message": "تلخيص المفضلة تلقائيًا"
   },
   "f_automatic_light_blue_quote_h_419c": {
-    "message": "تمييزات اقتباس زرقاء فاتحة تلقائية من الملخصات"
+    "message": "تمييزات اقتباس زرقاء فاتحة تلقائية من النتائج"
   },
   "f_backup_restored_successfully_8819": {
     "message": "تمت استعادة النسخة الاحتياطية بنجاح!\nتم استيراد {n} مقالة.\n\nسيُعاد تحميل الإضافة الآن."
@@ -2268,7 +2268,7 @@
     "message": "احتياطي"
   },
   "f_feed_briefing_recap_style_9883": {
-    "message": "أسلوب موجز الخلاصات والملخص"
+    "message": "أسلوب موجز الخلاصات والمخرج الرئيسي"
   },
   "f_feed_refresh_interval_c173": {
     "message": "فاصل تحديث الخلاصات"
@@ -2307,7 +2307,7 @@
     "message": "وضع التجربة المجانية"
   },
   "f_generate_a_bookmarklet_that__081e": {
-    "message": "أنشئ Bookmarklet يلخّص أي صفحة في أي متصفح — بما في ذلك iOS/Android حيث لا تعمل الإضافة. يستخدم تسجيل دخولك إلى byphil Cloud."
+    "message": "أنشئ إشارة مرجعية برمجية لتحليل أي صفحة في أي متصفح، بما في ذلك iOS وAndroid حيث لا تعمل الإضافة. تستخدم تسجيل دخولك إلى byphil Cloud."
   },
   "f_generate_237e": {
     "message": "إنشاء 🎙️"
@@ -2376,7 +2376,7 @@
     "message": "مفتاح غير صالح"
   },
   "f_invalid_backup_file_please_s_54f7": {
-    "message": "ملف النسخة الاحتياطية غير صالح. يرجى اختيار ملف تصدير صالح من AI Summary Helper."
+    "message": "ملف النسخة الاحتياطية غير صالح. يرجى اختيار ملف تصدير صالح من Arguments."
   },
   "f_invalid_code_4325": {
     "message": "رمز غير صالح"
@@ -2529,10 +2529,10 @@
     "message": "لا إعدادات مطابقة لـ «{query}»."
   },
   "f_no_summary_available_1155": {
-    "message": "لا يتوفر ملخص"
+    "message": "لا يتوفر مخرج رئيسي"
   },
   "f_no_summary_returned_5f75": {
-    "message": "لم يُرجَع أي ملخص."
+    "message": "لم يُرجَع أي مخرج رئيسي."
   },
   "f_no_title_available_2723": {
     "message": "لا يتوفر عنوان"
@@ -2586,7 +2586,7 @@
     "message": "لوحة"
   },
   "f_permanently_removes_all_summ_228d": {
-    "message": "يحذف نهائيًا كل الملخصات والأرشيف. صدّر نسخة احتياطية أولًا."
+    "message": "يحذف نهائيًا كل النتائج والأرشيف. صدّر نسخة احتياطية أولًا."
   },
   "f_persist_optional_29ce": {
     "message": "حفظ دائم (اختياري)"
@@ -2667,7 +2667,7 @@
     "message": "إنهاء Ollama"
   },
   "f_rate_items_with_the_recap_131d": {
-    "message": "تقييم العناصر مع الملخص"
+    "message": "تقييم العناصر مع المخرج الرئيسي"
   },
   "f_reader_4efa": {
     "message": "القارئ 👓"
@@ -2799,7 +2799,7 @@
     "message": "تسجيل الدخول / إنشاء حساب بالبريد الإلكتروني"
   },
   "f_sign_in_to_unlock_free_cloud_f976": {
-    "message": "سجّل الدخول لفتح النماذج السحابية المجانية ومزامنة ملخصاتك، أو استخدم مفاتيح API الخاصة بك."
+    "message": "سجّل الدخول لفتح النماذج السحابية المجانية ومزامنة نتائجك، أو استخدم مفاتيح API الخاصة بك."
   },
   "f_signed_in_byphil_cloud_f9ba": {
     "message": "تم تسجيل الدخول · byPhil Cloud"
@@ -2835,13 +2835,13 @@
     "message": "جارٍ التلخيص..."
   },
   "f_summary_language_a8df": {
-    "message": "لغة الملخص"
+    "message": "لغة المخرج"
   },
   "f_summary_length_2b31": {
-    "message": "طول الملخص"
+    "message": "طول المخرج"
   },
   "f_summary_mode_5ce6": {
-    "message": "وضع الملخص"
+    "message": "عرض التحليل"
   },
   "f_switch_graph_search_to_filte_7f9d": {
     "message": "تبديل بحث الرسم البياني إلى وضع التصفية"
@@ -2865,7 +2865,7 @@
     "message": "يحذف هذا نهائيًا {what} والأرشيف من هذا الجهاز. لا يمكن التراجع عن ذلك."
   },
   "f_this_resets_every_preference_d3b3": {
-    "message": "يعيد هذا ضبط كل التفضيلات والمطالبات ومفاتيح API على هذا الجهاز. تبقى ملخصاتك. سيُعاد تحميل الإضافة."
+    "message": "يعيد هذا ضبط كل التفضيلات والمطالبات ومفاتيح API على هذا الجهاز. تبقى نتائجك. سيُعاد تحميل الإضافة."
   },
   "f_this_will_invalidate_the_cur_4995": {
     "message": "سيُبطل هذا الرمز الحالي. هل تريد المتابعة؟"
@@ -2922,7 +2922,7 @@
     "message": "العرض: مميَّز"
   },
   "f_welcome_to_ai_summary_helper_892e": {
-    "message": "مرحبًا بك في AI Summary Helper"
+    "message": "مرحبًا بك في Arguments"
   },
   "f_well_connected_1033": {
     "message": "مترابط جيدًا"
@@ -2940,7 +2940,7 @@
     "message": "تبرعًا"
   },
   "f_all_summaries_c680": {
-    "message": "كل الملخصات"
+    "message": "كل النتائج"
   },
   "f_byphil_cloud_17f0": {
     "message": "byPhil Cloud"
@@ -2958,7 +2958,7 @@
     "message": "مثل gpt-5-mini، llama3.2"
   },
   "f_for_unlimited_zero_config_su_82c0": {
-    "message": "لملخصات غير محدودة دون أي إعداد."
+    "message": "لنتائج غير محدودة دون أي إعداد."
   },
   "f_from_8075": {
     "message": "من"
@@ -2994,7 +2994,7 @@
     "message": "إلى المرسلين المعتمدين في Kindle أولًا —"
   },
   "f_curated_from_your_ai_summary_4f55": {
-    "message": "{count}، منتقاة من أرشيف AI Summary Helper."
+    "message": "{count}، منتقاة من أرشيف Arguments."
   },
   "f_tone_f081": {
     "message": "نبرة {label}"
@@ -3123,7 +3123,7 @@
     "message": "🤖 تمييزات مقترحة بالذكاء الاصطناعي"
   },
   "f_ai_summary_c72e": {
-    "message": "🧙 ملخص الذكاء الاصطناعي"
+    "message": "🧙 مخرج رئيسي الذكاء الاصطناعي"
   },
   "f_on_device_tools_d85a": {
     "message": "🧠 أدوات على الجهاز"
@@ -3135,7 +3135,7 @@
     "message": "🪄 إنشاء Bookmarklet"
   },
   "f_intro_skipped_the_digest_goe_15e9": {
-    "message": "تم تخطي المقدمة — سيُرسل الملخص بدونها"
+    "message": "تم تخطي المقدمة — سيُرسل المخرج الرئيسي بدونها"
   },
   "f_ask_dafd": {
     "message": "💬 اسأل"
@@ -3201,7 +3201,7 @@
     "message": "🔎 أهم النقاط"
   },
   "f_adds_each_summary_under_its__b17f": {
-    "message": "يضيف كل ملخص أسفل مرجعه"
+    "message": "يضيف كل مخرج رئيسي أسفل مرجعه"
   },
   "f_citation_lookup_failed_try_a_bb2e": {
     "message": "فشل جلب الاقتباس — حاول مجددًا"
@@ -3225,7 +3225,7 @@
     "message": "جلب الاقتباس"
   },
   "f_include_my_summaries_aadf": {
-    "message": "تضمين ملخصاتي"
+    "message": "تضمين نتائجي"
   },
   "f_looking_up_citations_at_doi__563a": {
     "message": "جارٍ البحث عن الاقتباسات في doi.org — يُرسل DOI فقط…"
@@ -3363,7 +3363,7 @@
     "message": "حجم النص"
   },
   "f_the_quick_brown_fox_jumps_ov_fd42": {
-    "message": "The quick brown fox jumps over the lazy dog. تستخدم الملخصات هذا الحجم والتباعد."
+    "message": "The quick brown fox jumps over the lazy dog. تستخدم النتائج هذا الحجم والتباعد."
   },
   "f_your_system_already_asks_for_8b6f": {
     "message": "يطلب نظامك بالفعل تقليل الحركة، ويُحترم ذلك دائمًا."
@@ -3483,7 +3483,7 @@
     "message": "🤖 إعداد النموذج"
   },
   "modelDesc": {
-    "message": "اختر نموذج LLM الذي ينشئ ملخصاتك."
+    "message": "اختر نموذج LLM الذي ينشئ نتائجك."
   },
   "promptCustomization": {
     "message": "💬 تخصيص الموجّه"
@@ -3567,7 +3567,7 @@
     "message": "اجعله دائمًا"
   },
   "f_new_summary_da1d": {
-    "message": "ملخص جديد"
+    "message": "مخرج رئيسي جديد"
   },
   "f_next_previous_card_c144": {
     "message": "البطاقة التالية / السابقة"
@@ -3714,7 +3714,7 @@
     "message": "إلى الأعلى"
   },
   "f_speaks_the_title_and_site_fi_196b": {
-    "message": "يقرأ العنوان والموقع أولًا، ثم الملخص جملةً جملةً أثناء كتابة النموذج."
+    "message": "يقرأ العنوان والموقع أولًا، ثم المخرج الرئيسي جملةً جملةً أثناء كتابة النموذج."
   },
   "f_start_097f": {
     "message": "ابدأ"
@@ -3723,13 +3723,13 @@
     "message": "إيقاف القراءة"
   },
   "f_the_voice_follows_the_langua_55b1": {
-    "message": "يتبع الصوت لغة النص: يُقرأ الملخص الإنجليزي لمقال ألماني بالإنجليزية والأصل بالألمانية."
+    "message": "يتبع الصوت لغة النص: يُقرأ المخرج الرئيسي الإنجليزي لمقال ألماني بالإنجليزية والأصل بالألمانية."
   },
   "f_voice_auto_8e1b": {
     "message": "الصوت · تلقائي"
   },
   "f_voice_it_follows_the_summary_2f51": {
-    "message": "الصوت: {voice} · {lang}. يتبع لغة الملخص؛ ويُعلن العنوان والموقع بلغة التطبيق."
+    "message": "الصوت: {voice} · {lang}. يتبع لغة المخرج الرئيسي؛ ويُعلن العنوان والموقع بلغة التطبيق."
   },
   "f_add_model_id_e_g_gemma4_e2b_127a": {
     "message": "أضف معرّف النموذج، مثل gemma4:e2b"
@@ -3753,10 +3753,10 @@
     "message": "أدخل رمزك"
   },
   "f_free_cloud_models_and_your_s_71ce": {
-    "message": "نماذج سحابية مجانية وملخصاتك على كل أجهزتك. أو تخطَّ هذه الخطوة واستخدم مفتاح API الخاص بك."
+    "message": "نماذج سحابية مجانية ونتائجك على كل أجهزتك. أو تخطَّ هذه الخطوة واستخدم مفتاح API الخاص بك."
   },
   "f_sign_in_to_ai_summary_helper_d8be": {
-    "message": "سجّل الدخول إلى AI Summary Helper"
+    "message": "سجّل الدخول إلى Arguments"
   },
   "f_thinking_more_de1c": {
     "message": "أفكّر أكثر…"
@@ -3984,7 +3984,7 @@
     "message": "🔁 معالجة العناصر الجديدة تلقائيًا"
   },
   "f_recap_is_ready_6da7": {
-    "message": "✨ ملخص {label} جاهز"
+    "message": "✨ مخرج رئيسي {label} جاهز"
   },
   "f_fetches_and_processes_new_it_f38a": {
     "message": "يجلب العناصر الجديدة ويعالجها في الخلفية باستخدام Ollama أثناء تشغيل المتصفح. تظل النماذج السحابية وBYOK يدوية."
@@ -3996,7 +3996,7 @@
     "message": "لم يحدث تشغيل في الخلفية بعد."
   },
   "f_items_rated_day_recaps_writt_ce24": {
-    "message": "تم تقييم {a} عنصرًا · كُتبت ملخصات {b} يومًا"
+    "message": "تم تقييم {a} عنصرًا · كُتبت نتائج {b} يومًا"
   },
   "f_available_when_ollama_is_set_53ce": {
     "message": "متاح عند إعداد Ollama. يقيّم مكتبة الخلاصات كلها ويصنّفها ويلخّصها على دفعات صغيرة على جهازك. قد يستغرق ساعات لكنه لا يستهلك أي رموز."
@@ -4047,7 +4047,7 @@
     "message": "سجل التغييرات"
   },
   "f_how_should_ai_summary_helper_b4d7": {
-    "message": "بماذا يجب أن يفكّر AI Summary Helper؟"
+    "message": "بماذا يجب أن يفكّر Arguments؟"
   },
   "f_local_models_no_account_no_k_a783": {
     "message": "نماذج محلية. بلا حساب وبلا مفتاح، ولا شيء يغادر جهازك."
@@ -4344,7 +4344,7 @@
     "message": "مريح: بريدك الإلكتروني فقط ودون مفتاح API. وهو دعم لمطوّر مستقل أيضًا."
   },
   "f_pick_a_way_to_run_your_summa_5c59": {
-    "message": "اختر طريقة تشغيل ملخصاتك. يمكنك تغييرها في أي وقت من الإعدادات."
+    "message": "اختر طريقة تشغيل نتائجك. يمكنك تغييرها في أي وقت من الإعدادات."
   },
   "f_back_to_top_bd70": {
     "message": "العودة إلى الأعلى"
@@ -4362,7 +4362,7 @@
     "message": "تعليمات التمييز"
   },
   "f_summary_prompt_5157": {
-    "message": "تعليمات الملخص"
+    "message": "تعليمات المخرج الرئيسي"
   },
   "f_reset_to_default_f7dc": {
     "message": "استعادة الإعداد الافتراضي"
@@ -4371,10 +4371,10 @@
     "message": "تعذر حفظ التعليمات."
   },
   "f_highlight_and_summary_prompt_ef01": {
-    "message": "تعليمات التمييز والملخص"
+    "message": "تعليمات التمييز والمخرج الرئيسي"
   },
   "pagePromptsHint": {
-    "message": "تعليمات التمييز والملخص"
+    "message": "تعليمات التمييز والمخرج الرئيسي"
   },
   "highlightNotFound": {
     "message": "لم يُعثر عليها في الصفحة"
@@ -4405,5 +4405,257 @@
   },
   "highlightInvalidResponse": {
     "message": "تعذّرت قراءة استجابة التمييز"
+  },
+  "f_available_when_ollama_is_set_f9e0": {
+    "message": "متاح بعد إعداد Ollama. ينشئ موجزات لمكتبة الخلاصات على دفعات صغيرة على جهازك."
+  },
+  "f_creates_recaps_of_your_feed__0737": {
+    "message": "ينشئ موجزات لعناصر الخلاصات على دفعات صغيرة على جهازك."
+  },
+  "f_edit_feeds_in_settings_6774": {
+    "message": "تعديل الخلاصات في الإعدادات"
+  },
+  "f_every_stored_day_has_a_compl_5d0c": {
+    "message": "لكل يوم محفوظ موجز كامل."
+  },
+  "f_sources_rename_mute_713c": {
+    "message": "المصادر · إعادة التسمية · الكتم"
+  },
+  "f_day_recaps_written_71f0": {
+    "message": "تم إنشاء {b} موجزات يومية",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_recapped_4012": {
+    "message": "تم إعداد موجزات لـ {b} أيام",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_to_recap_ai_requests_f01d": {
+    "message": "{b} أيام لإعداد موجزات · {n} طلبات ذكاء اصطناعي",
+    "description": "Placeholders: {b} {n} (keep as is)"
+  },
+  "f_manage_feeds_in_settings_a66f": {
+    "message": "⚙️  إدارة الخلاصات في الإعدادات  ›"
+  },
+  "f_main_output_prompt_c085": {
+    "message": "تعليمات المخرجات الرئيسية"
+  },
+  "f_subscriptions_opml_697e": {
+    "message": "الاشتراكات · OPML"
+  },
+  "f_backup_delete_5d95": {
+    "message": "النسخ الاحتياطي · الحذف"
+  },
+  "f_no_articles_yet_start_analyz_01e3": {
+    "message": "لا توجد مقالات بعد — لخّص صفحات لعرض تحليلاتك! 📖"
+  },
+  "f_with_results_f383": {
+    "message": "مع النتائج"
+  },
+  "f_analyze_a663": {
+    "message": "✨ تحليل"
+  },
+  "f_analyzing_8bc5": {
+    "message": "⏳ جارٍ التلخيص…"
+  },
+  "f_saved_without_an_ai_main_out_a5cb": {
+    "message": "تم الحفظ بدون ملخّص ذكاء اصطناعي. افتح الصفحة واضغط ✨ لخّص لإضافة واحد."
+  },
+  "f_no_main_output_available_2d4f": {
+    "message": "لا يتوفر مخرج رئيسي"
+  },
+  "f_main_output_1742": {
+    "message": "🧙 مخرج رئيسي الذكاء الاصطناعي"
+  },
+  "f_sign_in_to_arguments_1d5c": {
+    "message": "تسجيل الدخول إلى Arguments"
+  },
+  "f_free_cloud_models_and_your_r_153c": {
+    "message": "نماذج سحابية مجانية ونتائجك على كل أجهزتك. أو تخطَّ هذه الخطوة واستخدم مفتاح API الخاص بك."
+  },
+  "f_writing_a_word_main_output_82b9": {
+    "message": "كتابة مخرج رئيسي من {n} كلمة…"
+  },
+  "f_analyzed_7135": {
+    "message": "ملخّص"
+  },
+  "f_waiting_for_the_running_main_f4e2": {
+    "message": "بانتظار الملخّص الجاري — انقر للإزالة من قائمة الانتظار"
+  },
+  "f_queued_it_will_start_when_th_31fd": {
+    "message": "في قائمة الانتظار — سيبدأ عند انتهاء الملخّص الحالي"
+  },
+  "f_analyzing_in_the_background__dd2a": {
+    "message": "يجري التلخيص في الخلفية — سيظهر ضمن «تلخيص» و«السجل»"
+  },
+  "f_new_posts_land_here_skim_ana_6e81": {
+    "message": "تصل المنشورات الجديدة هنا. تصفّح، لخّص المهم، وامسح الباقي."
+  },
+  "f_analyzed_f2f6": {
+    "message": "✓ ملخّص"
+  },
+  "f_you_have_a_saved_main_output_fc8e": {
+    "message": "لديك مخرج رئيسي محفوظ لهذه الصفحة"
+  },
+  "f_view_main_output_090b": {
+    "message": "📄 عرض المخرج الرئيسي"
+  },
+  "f_not_your_active_main_output__ce26": {
+    "message": "ليس نموذج الملخّصات النشط لديك"
+  },
+  "f_runs_on_your_own_machine_wit_290a": {
+    "message": "يعمل على جهازك مع Ollama ولا يستهلك رموزًا، حتى لو كان نموذج آخر نشطًا للملخّصات. أبقِ هذه اللوحة مفتوحة: إغلاقها يوقف التشغيل مؤقتًا، والبدء من جديد يكمل من حيث توقف. تُعالَج فقط العناصر المخزّنة حاليًا (انظر «الاحتفاظ بالعناصر لمدة»). يُكتب ملخّص اليوم عند فتحه."
+  },
+  "f_items_you_open_or_analyze_le_4138": {
+    "message": "العناصر التي تفتحها أو تلخصها تغادر قائمة غير المقروء"
+  },
+  "f_auto_analyze_favorites_a662": {
+    "message": "✨ تلخيص المفضلة تلقائيًا"
+  },
+  "f_analyze_on_a_feed_item_follo_6202": {
+    "message": "يتبع «تلخيص» على عنصر الخلاصة الوضع المختار في شاشة «تلخيص» (الإضافة افتراضيًا). المفضلة تبقى دائمًا."
+  },
+  "f_speaks_the_title_and_site_fi_7a35": {
+    "message": "يقرأ العنوان والموقع أولًا، ثم المخرج الرئيسي جملةً جملةً أثناء كتابة النموذج."
+  },
+  "f_voice_it_follows_the_main_ou_7f8f": {
+    "message": "الصوت: {voice} · {lang}. يتبع لغة المخرج الرئيسي؛ ويُعلن العنوان والموقع بلغة التطبيق."
+  },
+  "f_main_output_length_in_words_bc0f": {
+    "message": "طول الملخّص بالكلمات"
+  },
+  "f_attach_a_pdf_to_analyze_388e": {
+    "message": "إرفاق ملف PDF للتلخيص"
+  },
+  "f_no_recent_results_527f": {
+    "message": "لا توجد نتائج حديثة"
+  },
+  "f_analyze_a_page_to_see_it_her_a8ca": {
+    "message": "لخّص صفحة لتظهر هنا"
+  },
+  "f_analyze_this_page_7fec": {
+    "message": "لخّص هذه الصفحة"
+  },
+  "f_writing_the_main_output_cff0": {
+    "message": "كتابة المخرج الرئيسي…"
+  },
+  "f_analyze_9f73": {
+    "message": "تحليل"
+  },
+  "f_starts_when_the_current_main_1a7c": {
+    "message": "يبدأ عند انتهاء الملخّص الحالي"
+  },
+  "f_pick_a_way_to_run_your_resul_269b": {
+    "message": "اختر طريقة تشغيل نتائجك. يمكنك تغييرها في أي وقت من الإعدادات."
+  },
+  "f_tip_press_on_any_page_to_ana_0f1e": {
+    "message": "نصيحة: اضغط {key} في أي صفحة لتلخيصها."
+  },
+  "f_main_output_c815": {
+    "message": "المخرج الرئيسي"
+  },
+  "f_the_voice_follows_the_langua_d773": {
+    "message": "يتبع الصوت لغة النص: يُقرأ المخرج الرئيسي الإنجليزي لمقال ألماني بالإنجليزية والأصل بالألمانية."
+  },
+  "f_enjoying_arguments_991d": {
+    "message": "هل يعجبك Arguments؟"
+  },
+  "f_only_analyzed_articles_can_b_dfaf": {
+    "message": "يمكن إرسال المقالات الملخّصة فقط"
+  },
+  "f_select_results_cac7": {
+    "message": "تحديد النتائج"
+  },
+  "f_send_results_0ecd": {
+    "message": "إرسال النتائج"
+  },
+  "f_send_main_output_fc91": {
+    "message": "إرسال {n} مخرج رئيسي"
+  },
+  "f_send_results_f1a9": {
+    "message": "إرسال {n} نتائج"
+  },
+  "f_main_output_only_7011": {
+    "message": "المخرج الرئيسي فقط"
+  },
+  "f_main_output_full_article_b1cb": {
+    "message": "المخرج الرئيسي + المقال كاملًا"
+  },
+  "f_main_output_db19": {
+    "message": "{n} مخرج رئيسي"
+  },
+  "f_results_eb81": {
+    "message": "{n} نتائج"
+  },
+  "f_mark_main_output_as_bf44": {
+    "message": "وضع علامة على {n} مخرج رئيسي…"
+  },
+  "f_mark_results_as_6bf0": {
+    "message": "وضع علامة على {n} نتائج…"
+  },
+  "f_digest_of_results_776c": {
+    "message": "مخرج رئيسي يضم {n} نتائج"
+  },
+  "f_select_results_to_send_9cf2": {
+    "message": "حدد النتائج للإرسال"
+  },
+  "f_analyzing_cdca": {
+    "message": "جارٍ التلخيص..."
+  },
+  "f_no_main_output_returned_3af7": {
+    "message": "لم يُرجَع أي مخرج رئيسي."
+  },
+  "f_results_archive_73d9": {
+    "message": "الملخّصات والأرشيف"
+  },
+  "f_resets_preferences_prompts_a_9142": {
+    "message": "يعيد ضبط التفضيلات والموجّهات ومفاتيح API وتسجيل الدخول ووجهات الإرسال على هذا الجهاز. تبقى الملخّصات والتظليلات والخلاصات ما لم تحدّدها. ستُعاد تحميل الإضافة."
+  },
+  "f_permanently_removes_your_res_cd53": {
+    "message": "يزيل ملخّصاتك والأرشيف وتظليلاتك نهائيًا من هذا الجهاز. تبقى الإعدادات والخلاصات ما لم تحدّدها. لا يمكن التراجع عن ذلك."
+  },
+  "f_invalid_backup_file_please_s_0b0d": {
+    "message": "ملف النسخة الاحتياطية غير صالح. يرجى اختيار ملف تصدير صالح من Arguments."
+  },
+  "f_auto_analyze_favorites_3012": {
+    "message": "تلخيص المفضلة تلقائيًا"
+  },
+  "f_highlight_and_main_output_pr_49e7": {
+    "message": "تعليمات التمييز والمخرج الرئيسي"
+  },
+  "f_analyze_send_e8ec": {
+    "message": "لخّص / أرسل"
+  },
+  "f_new_main_output_5b1f": {
+    "message": "مخرج رئيسي جديد"
+  },
+  "f_output_language_7616": {
+    "message": "لغة المخرج"
+  },
+  "f_output_length_cc00": {
+    "message": "طول المخرج"
+  },
+  "f_analysis_display_a211": {
+    "message": "عرض التحليل"
+  },
+  "f_automatic_light_blue_quote_h_cb6e": {
+    "message": "تمييزات اقتباس زرقاء فاتحة تلقائية من النتائج"
+  },
+  "f_for_unlimited_zero_config_re_80ba": {
+    "message": "لنتائج غير محدودة دون أي إعداد."
+  },
+  "f_the_quick_brown_fox_jumps_ov_22b0": {
+    "message": "The quick brown fox jumps over the lazy dog. تستخدم النتائج هذا الحجم والتباعد."
+  },
+  "f_permanently_removes_your_res_12e9": {
+    "message": "يزيل ملخّصاتك والأرشيف وتظليلاتك نهائيًا. تبقى الإعدادات والخلاصات. أنشئ نسخة احتياطية أولًا."
+  },
+  "f_removes_everything_this_exte_6b82": {
+    "message": "يزيل كل ما تخزّنه هذه الإضافة على هذا الجهاز: الملخّصات والتظليلات والخلاصات والمفاتيح والإعدادات. أنشئ نسخة احتياطية أولًا."
+  },
+  "f_resets_preferences_prompts_a_cfb1": {
+    "message": "يعيد ضبط التفضيلات والموجّهات ومفاتيح API وتسجيل الدخول ووجهات الإرسال على هذا الجهاز. تبقى الملخّصات والتظليلات والخلاصات."
+  },
+  "f_generate_a_bookmarklet_that__658d": {
+    "message": "أنشئ إشارة مرجعية برمجية لتحليل أي صفحة في أي متصفح، بما في ذلك iOS وAndroid حيث لا تعمل الإضافة. تستخدم تسجيل دخولك إلى byphil Cloud."
   }
 }

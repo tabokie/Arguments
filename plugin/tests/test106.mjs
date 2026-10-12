@@ -52,9 +52,6 @@ const retained = mergeWorkerItems([], [
 ], 1, now, 1);
 assert.deepEqual(retained.map(item => item.id).sort(), ['current', 'favorite'], 'retention and total cap preserve favorites');
 
-const plan = boundedLibraryPlan({ rate: Array.from({ length: 100 }, (_, id) => ({ id })), days: [] }, 10, 3);
-assert.equal(plan.rate.length, 30);
-assert.ok(Math.ceil(plan.rate.length / 10) <= 3, 'bounded plan has at most three AI requests');
 const withRecaps = boundedLibraryPlan({ rate: [], days: Array.from({ length: 4 }, (_, day) => ({ day, todo: Array.from({ length: 25 }, (_, id) => ({ id })) })) }, 10, 3);
 assert.ok(withRecaps.days.reduce((n, day) => n + Math.ceil(day.todo.length / 10), 0) <= 3);
 assert.deepEqual(withRecaps.days.map(d => d.day), [3, 2, 1, 0].slice(0, withRecaps.days.length), 'background recaps start with the newest day');
@@ -62,10 +59,11 @@ const feedAi = await imp('modules/feedAi.js');
 let transportService = '';
 feedAi.setAiTransport(async request => {
     transportService = request.service;
-    return '{"scores":[0.5],"labels":["Tech"]}';
+    return 'Local story overview.\n- A source finding.';
 });
-const scored = await feedAi.scoreItems([{ title: 'Local story', snippet: '' }], () => 'Source', { service: 'ollama' });
-assert.deepEqual(scored, { scores: [0.5], labels: ['Tech'] });
+const recap = await feedAi.generateRecap([{ title: 'Local story', snippet: '' }], () => 'Source', { service: 'ollama' });
+assert.equal(recap.overview, 'Local story overview.');
+assert(!('mood' in recap) && !('scores' in recap) && !('labels' in recap));
 assert.equal(transportService, 'ollama', 'worker can route shared feed AI logic directly without messaging itself');
 feedAi.setAiTransport(null);
 // Backup exports omit secrets by default, opt-in backups are marked, and imports preserve or confirm secrets.
@@ -162,8 +160,11 @@ w.confirm = () => { importConfirms++; return true; };
 const importFile = async (data) => {
     const input = w.document.getElementById('importSettingsFile');
     Object.defineProperty(input, 'files', { configurable: true, value: [new w.File([JSON.stringify(data)], 'backup.json', { type: 'application/json' })] });
+    const beforeReload = reloads;
     input.dispatchEvent(new w.Event('change'));
-    await tick(50);
+    // FileReader completion is asynchronous I/O; a scaled sleep can finish before it under suite load.
+    for (let attempt = 0; reloads === beforeReload && attempt < 100; attempt++) await tick(40);
+    assert.equal(reloads, beforeReload + 1, 'wait for the import to complete before starting another');
 };
 await importFile(defaultBackup);
 assert.equal(importConfirms, 0, 'secret-free import does not prompt');

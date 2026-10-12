@@ -1,7 +1,7 @@
 import { SK } from './modules/storageKeys.js';
 import { lengthSpec, readLengthSetting, resolveSummaryLength } from './modules/summaryLength.js';
-import { loadPagePrompts, buildPagePrompt, buildPageInstructions } from './modules/pagePrompts.js';
-import { paperIndexFields, detectPaperInText, matchPagePaper } from './content/paper.js';
+import { loadPagePrompts, buildPagePrompt, buildPageInstructions, buildReadingPartPrompt } from './modules/pagePrompts.js';
+import { matchPagePaper } from './content/paper.js';
 import { finalizeSummary } from './content/finalize.js';
 import { showSummaryWindow } from './content/summaryWindow.js';
 import { resolveHighlightSelections, mergeHighlightSelections } from './content/highlightSentences.js';
@@ -328,10 +328,10 @@ import {
                 }
               });
             } else {
-              updateStreamingOverlay(streamOverlay, 'No summary generated', true);
+              updateStreamingOverlay(streamOverlay, 'No response received', true);
             }
           } catch (e) {
-            updateStreamingOverlay(streamOverlay, `❌ Summary failed: ${e.message || 'Unknown error'}`, true);
+            updateStreamingOverlay(streamOverlay, `❌ Analysis failed: ${e.message || 'Unknown error'}`, true);
           }
         });
       });
@@ -352,7 +352,7 @@ import {
           const title = (meta.title || document.title || window.location.hostname || 'Untitled').toString().slice(0, 200);
           const feedUrl = request.feedUrl && request.feedUrl !== window.location.href ? { feedUrl: request.feedUrl } : {};
           const saved = await saveToLocalStorage(html, '', window.location.href, title, '', [], '', 0, undefined,
-            { savedOnly: true, ...feedUrl, ...paperIndexFields(meta.paper) }, meta);
+            { savedOnly: true, ...feedUrl }, meta);
           sendResponse({ success: true, id: saved && saved.id, title });
         } catch (err) {
           sendResponse({ success: false, error: String(err && err.message || err) });
@@ -376,7 +376,7 @@ import {
       const { additionalQuestions: popupQuestions, selectedLanguage, prompt: popupPrompt, summaryMode, summaryLength: msgSummaryLength, attachment, highlightPrompt } = request;
       // Original feed link when started from the Feed (page URL may differ after redirects).
       pendingFeedUrl = request.feedUrl || '';
-      sendResponse({ success: true, message: summaryMode === 'extension' ? 'Fetching summary...' : 'Selection started' });
+      sendResponse({ success: true, message: summaryMode === 'extension' ? 'Analyzing page...' : 'Selection started' });
 
       (async () => {
         if (summaryMode === 'extension') {
@@ -450,7 +450,7 @@ import {
 
   /**
    * The page does not fit the model's context window: read it in parts, ask for compact notes on each part
-   * using the configured instructions, retaining selected sentence prefixes for the final page analysis.
+   * preserving material for final synthesis and retaining selected sentence prefixes for the final page analysis.
    */
   async function condenseForOllama({ apiUrl, headers, model, text, sourceTruncated, windowTokens, overheadTokens, outputWords, pagePrompts, tick }) {
     const instructions = buildPageInstructions(pagePrompts);
@@ -463,7 +463,7 @@ import {
     const noteChars = Math.max(0, Math.floor(budgetTokens * 3 / parts.length) - 40);
     for (let i = 0; i < parts.length; i++) {
       tick(i, parts.length);
-      const partPrompt = `Read ONE PART (${i + 1} of ${parts.length}) of a longer page.\n\n${instructions}\n\nFor each selected sentence, copy an exact prefix starting at the first character, long enough to distinguish the sentence from other sentences in this part. Retain every selected prefix. Do not paraphrase prefixes, append ellipses, or limit the number of highlights. Write concise observations for the summary in the source language, at most ${perPartWords} words. Return only JSON: {"highlights":["exact prefix",...],"notes":"summary observations"}. Output no preamble or reasoning.`;
+      const partPrompt = buildReadingPartPrompt({ highlightPrompt: pagePrompts.highlightPrompt, part: i + 1, parts: parts.length, words: perPartWords });
       const body = {
         model, stream: false,
         options: { num_ctx: Math.min(windowTokens, ollamaNumCtx(estimateTokens(partPrompt + parts[i]), perPartWords)) },
@@ -617,11 +617,10 @@ import {
       // Sensitive keys (servicesConfig, licenseKey) now live in LOCAL storage;
       // harmless prefs stay in sync.
       Promise.all([
-        chrome.storage.sync.get(['activeService', 'connectionMode', 'preferredCloudModel', 'moodEnabled']),
+        chrome.storage.sync.get(['activeService', 'connectionMode', 'preferredCloudModel']),
         chrome.storage.local.get([SK.servicesConfig, SK.licenseKey])
       ]).then(async ([syncData, localData]) => {
         const data = { ...syncData, ...localData };
-        const moodOn = data.moodEnabled !== false;
         const localAuth = await chrome.storage.local.get([SK.token]).catch(() => ({}));
         const sessionToken = localAuth?.[SK.token] || '';
         const connectionMode = data.connectionMode || 'cloud';
@@ -699,7 +698,7 @@ import {
           let finalApiUrl = apiUrl;
 
           let selectedHighlights;
-          let systemPrompt = buildPagePrompt({ ...pagePrompts, selectedLanguage, summaryLength, moodOn, additionalQuestions });
+          let systemPrompt = buildPagePrompt({ ...pagePrompts, selectedLanguage, summaryLength, additionalQuestions });
           // Repeat the same contract after the source for models that drift on long pages.
           let finalReminder = '=== FINAL INSTRUCTIONS ===\n' + systemPrompt;
 
@@ -740,7 +739,7 @@ import {
                     if (r.parts > 1) {
                       pageText = r.text;
                       selectedHighlights = r.highlights;
-                      systemPrompt = buildPagePrompt({ ...pagePrompts, selectedLanguage, summaryLength, moodOn, additionalQuestions, sourceIsNotes: true });
+                      systemPrompt = buildPagePrompt({ ...pagePrompts, selectedLanguage, summaryLength, additionalQuestions, sourceIsNotes: true });
                       finalReminder = '=== FINAL INSTRUCTIONS ===\n' + systemPrompt;
                       if (ctxMsg) relay('summaryContext', ctxMsg = { ...ctxMsg, parts: r.parts, window: ctxWindow });
                     }
@@ -857,7 +856,6 @@ import {
               streamContainer.remove();
               let pageMeta = {};
               if (!attached || pageMatch) { try { pageMeta = collectPageMeta(); } catch (_) { /* metadata is optional */ } }   // an attached PDF has nothing to do with the open tab
-              try { if (pageMeta && !pageMeta.paper && pdfMode) { const pp = detectPaperInText(contentText); if (pp) pageMeta.paper = pp; } } catch (_) { /* optional */ }
               const fin = await finalizeSummary({
                 raw: summary, thinking: thinkingText, contentText, pageTitle: attached && !pageMatch ? String(attached.name || '') : document.title,
                 highlightSourceText: truncatedContent, highlightSourceTruncated: truncatedContent.length < contentText.length,
@@ -873,7 +871,7 @@ import {
                 streamHandlers.delete(requestId);
                 return;
               }
-              const { cleanHtml, tags, ghostQuotes, moodScore, questions: suggestedQuestions, quick: quickAnswers, title: articleTitle } = fin;
+              const { cleanHtml, ghostQuotes, title: articleTitle } = fin;
               pageMeta = fin.pageMeta;
 
               // Apply ghost highlights to the page now that it's safe to do so.
@@ -892,14 +890,14 @@ import {
               try {
                 finalContentHtml = await imageCompressionPromise;
               } catch (compressionError) {
-                console.warn('[AI Summary Helper] Background image compression failed. Falling back to original HTML.', compressionError);
+                console.warn('[Arguments] Background image compression failed. Falling back to original HTML.', compressionError);
               }
 
               if (summaryMode === 'inline') {
                 const summaryContainer = document.createElement('blockquote');
                 summaryContainer.setAttribute('data-aish-ui', '1');
                 summaryContainer.style.cssText = "border-left: 4px solid #007bff; padding: 15px; margin: 20px 0; background: rgba(0,123,255,0.05);";
-                summaryContainer.innerHTML = `<div><h2 style="margin-top:0">AI Summary 🧙</h2>${cleanHtml}</div>`;
+                summaryContainer.innerHTML = `<div><h2 style="margin-top:0">Main output 🧙</h2>${cleanHtml}</div>`;
                 insertSummary(targetElement, summaryContainer);
               } else {
                 targetElement.remove();
@@ -908,11 +906,7 @@ import {
                   title: articleTitle,
                   url: sourceUrl,
                   timestamp: new Date().toISOString(),
-                  tags: tags,
                   modelId: modelIdentifier,
-                  moodScore,
-                  questions: suggestedQuestions,
-                  quick: quickAnswers,
                   meta: pageMeta,
                   content: finalContentHtml,
                   highlights: highlightResults
@@ -921,7 +915,7 @@ import {
 
               showSummaryWindow(cleanHtml, highlightResults);
 
-              saveToLocalStorage(finalContentHtml, cleanHtml, sourceUrl, articleTitle, '', tags, modelIdentifier, summaryLength, moodScore, { ...(pendingFeedUrl && pendingFeedUrl !== sourceUrl ? { feedUrl: pendingFeedUrl } : {}), ...paperIndexFields(pageMeta && pageMeta.paper) }, pageMeta, highlightResults)
+              saveToLocalStorage(finalContentHtml, cleanHtml, sourceUrl, articleTitle, '', [], modelIdentifier, summaryLength, undefined, { ...(pendingFeedUrl && pendingFeedUrl !== sourceUrl ? { feedUrl: pendingFeedUrl } : {}) }, pageMeta, highlightResults)
                 .then(savedArticle => {
                   try { chrome.runtime.sendMessage({ action: 'runSaved', requestId }).catch(() => {}); } catch (_) { /* optional */ }
                   if (savedArticle && savedArticle.id) relay('summarySaved', { id: savedArticle.id, url: sourceUrl });
@@ -1041,7 +1035,6 @@ import {
               try {
                 let baseMeta = {};
                 if (!attached || pageMatch) { try { baseMeta = collectPageMeta(); } catch (_) { /* optional */ } }
-                try { if (baseMeta && !baseMeta.paper && pdfMode) { const pp = detectPaperInText(contentText); if (pp) baseMeta.paper = pp; } } catch (_) { /* optional */ }
                 detach = {
                   sourceUrl, summaryMode, service: activeService, modelIdentifier, summaryLength, selectedLanguage,
                   contentText: String(contentText || '').slice(0, 30000), contentHtml: contentHtml || '',

@@ -1,18 +1,18 @@
 {
   "extensionName": {
-    "message": "AI Summary Helper — Summarize, Ask, Listen & Cite (BYOK, Ollama)"
+    "message": "Arguments"
   },
   "extensionNameFirefox": {
-    "message": "AI Summary Helper – Summarize, Ask, Listen, Cite"
+    "message": "Arguments"
   },
   "extensionShortName": {
-    "message": "AI Summary Helper"
+    "message": "Arguments"
   },
   "extensionDescription": {
-    "message": "自分のAIキーやOllamaで要約。RSSリーダー内蔵、後で読む、ハイライト、Kindle送信。オープンソース、ログイン不要。"
+    "message": "ArgumentsはAIを使い、ウェブページの主張をハイライトして斬新なアイデアを見つけます。"
   },
   "fetchSummary": {
-    "message": "要約を取得"
+    "message": "主な出力を取得"
   },
   "settings": {
     "message": "設定"
@@ -24,10 +24,10 @@
     "message": "寄付する"
   },
   "noRecentSummaries": {
-    "message": "最近の要約はありません"
+    "message": "最近の主な出力はありません"
   },
   "summarizePageToSee": {
-    "message": "ページを要約するとここに表示されます"
+    "message": "ページを主な出力するとここに表示されます"
   },
   "whatShouldAiFocus": {
     "message": "AIに何に注目させますか？"
@@ -36,16 +36,16 @@
     "message": "このページに関する具体的な質問を入力…"
   },
   "summaryLanguage": {
-    "message": "要約の言語"
+    "message": "主な出力の言語"
   },
   "searchLanguages": {
     "message": "言語を検索…"
   },
   "summaryLength": {
-    "message": "要約の長さ"
+    "message": "主な出力の長さ"
   },
   "summaryMode": {
-    "message": "要約モード"
+    "message": "主な出力モード"
   },
   "extension": {
     "message": "拡張機能"
@@ -90,13 +90,13 @@
     "message": "互換性のあるツール"
   },
   "compatibleToolsDesc": {
-    "message": "AI Summary Helperとシームレスに連携し、ワークフローを強化する拡張機能。"
+    "message": "Argumentsとシームレスに連携し、ワークフローを強化する拡張機能。"
   },
   "loadingTools": {
     "message": "ツールを読み込み中…"
   },
   "navSummarize": {
-    "message": "要約"
+    "message": "分析"
   },
   "navHistory": {
     "message": "履歴"
@@ -117,13 +117,13 @@
     "message": "処理中…"
   },
   "summary": {
-    "message": "要約"
+    "message": "主な出力"
   },
   "noTitleAvailable": {
     "message": "タイトルなし"
   },
   "noSummaryAvailable": {
-    "message": "要約なし"
+    "message": "主な出力なし"
   },
   "noContentAvailable": {
     "message": "コンテンツなし"
@@ -144,7 +144,7 @@
     "message": "🗑️ 削除"
   },
   "aiSummary": {
-    "message": "🧙 AI要約"
+    "message": "🧙 AI主な出力"
   },
   "originalContent": {
     "message": "📄 元のコンテンツ"
@@ -159,10 +159,10 @@
     "message": "ツールの読み込みに失敗しました。"
   },
   "clickToInsert": {
-    "message": "要約を挿入する要素をクリックしてください。"
+    "message": "主な出力を挿入する要素をクリックしてください。"
   },
   "fetchingSummary": {
-    "message": "要約を取得中..."
+    "message": "主な出力を取得中..."
   },
   "openInSidebar": {
     "message": "サイドバーで開く"
@@ -222,7 +222,7 @@
     "message": "🤖 モデル構成"
   },
   "modelDesc": {
-    "message": "要約を生成するLLMモデルを選択してください。"
+    "message": "主な出力を生成するLLMモデルを選択してください。"
   },
   "promptCustomization": {
     "message": "💬 プロンプトのカスタマイズ"
@@ -315,7 +315,7 @@
     "message": "アカウント"
   },
   "settingsCapSummarizing": {
-    "message": "要約"
+    "message": "主な出力"
   },
   "settingsCapReading": {
     "message": "閲覧"
@@ -381,7 +381,7 @@
     "message": "AI分類"
   },
   "f_ai_recap_of_this_day_d199": {
-    "message": "この日のAI要約"
+    "message": "この日のAI主な出力"
   },
   "f_ai_request_failed_fc5f": {
     "message": "AIリクエスト失敗"
@@ -441,7 +441,7 @@
     "message": "バックグラウンドが古いです。chrome://extensions で拡張機能を再読み込み"
   },
   "f_batch_summarizing_runs_in_ex_386f": {
-    "message": "一括要約は拡張機能モードで動作。要約画面で切替"
+    "message": "一括主な出力は拡張機能モードで動作。主な出力画面で切替"
   },
   "f_behavior_a447": {
     "message": "動作"
@@ -492,7 +492,7 @@
     "message": "エピソード"
   },
   "f_everything_unread_is_already_a054": {
-    "message": "未読はすべて要約済み"
+    "message": "未読はすべて主な出力済み"
   },
   "f_failed_c3d4": {
     "message": "失敗"
@@ -537,7 +537,7 @@
     "message": "独立系のテック報道"
   },
   "f_items_you_open_or_summarize__a71f": {
-    "message": "開く・要約した記事は未読から消えます"
+    "message": "開く・主な出力した記事は未読から消えます"
   },
   "f_last_7_days_d98f": {
     "message": "直近7日"
@@ -585,10 +585,10 @@
     "message": "ミュート（全ソースから除外）"
   },
   "f_new_items_arrived_since_this_bb0f": {
-    "message": "要約後に新着あり。更新で反映"
+    "message": "主な出力後に新着あり。更新で反映"
   },
   "f_new_posts_land_here_skim_sum_cf70": {
-    "message": "新着はここに。流し読みして要約、残りは消化"
+    "message": "新着はここに。流し読みして主な出力、残りは消化"
   },
   "f_newer_f04a": {
     "message": "新しい"
@@ -606,7 +606,7 @@
     "message": "フィードなし。下から追加かOPML取り込み"
   },
   "f_no_items_to_recap_here_a024": {
-    "message": "要約する記事なし"
+    "message": "主な出力する記事なし"
   },
   "f_no_new_feeds_in_that_file_d161": {
     "message": "新しいフィードなし"
@@ -681,7 +681,7 @@
     "message": "コピーしました"
   },
   "f_recap_failed_6cfd": {
-    "message": "要約失敗"
+    "message": "主な出力失敗"
   },
   "f_refresh_aad4": {
     "message": "更新"
@@ -735,7 +735,7 @@
     "message": "ソース"
   },
   "f_starring_an_item_summarizes__7621": {
-    "message": "★を付けるとバックグラウンドで要約"
+    "message": "★を付けるとバックグラウンドで主な出力"
   },
   "f_subscribed_to_c4c3": {
     "message": "{name}を登録しました"
@@ -750,19 +750,19 @@
     "message": "おすすめ"
   },
   "f_summarize_on_a_feed_item_fol_de8a": {
-    "message": "フィード記事の要約は要約画面で選んだモード（初期値は拡張機能）に従います。お気に入りは常に保持されます。"
+    "message": "フィード記事の主な出力は主な出力画面で選んだモード（初期値は拡張機能）に従います。お気に入りは常に保持されます。"
   },
   "f_summarized_415a": {
-    "message": "要約済み"
+    "message": "主な出力済み"
   },
   "f_summarizing_in_the_backgroun_cfaa": {
-    "message": "バックグラウンドで要約中。要約と履歴に表示されます"
+    "message": "バックグラウンドで主な出力中。主な出力と履歴に表示されます"
   },
   "f_summarizing_the_open_tab_it__826e": {
-    "message": "開いているタブを要約中。要約と履歴に表示されます"
+    "message": "開いているタブを主な出力中。主な出力と履歴に表示されます"
   },
   "f_summarizing_in_the_backgroun_6f16": {
-    "message": "{n}件をバックグラウンドで要約中。履歴を確認"
+    "message": "{n}件をバックグラウンドで主な出力中。履歴を確認"
   },
   "f_tags_a0c0": {
     "message": "タグ"
@@ -771,7 +771,7 @@
     "message": "AIの応答を読めません"
   },
   "f_the_ai_returned_an_empty_rec_894a": {
-    "message": "AIの要約が空です"
+    "message": "AIの主な出力が空です"
   },
   "f_these_items_are_already_scor_391c": {
     "message": "採点済みです"
@@ -807,7 +807,7 @@
     "message": "昨日"
   },
   "f_you_have_a_saved_summary_of__14f8": {
-    "message": "このページの保存済み要約あり"
+    "message": "このページの保存済み主な出力あり"
   },
   "f_your_feeds_stay_on_this_devi_3c13": {
     "message": "フィードはこの端末内のみ"
@@ -828,7 +828,7 @@
     "message": "{day}、{n}件"
   },
   "f_recap_8d18": {
-    "message": "{label}の要約"
+    "message": "{label}の主な出力"
   },
   "f_feed_d469": {
     "message": "{n}フィード"
@@ -900,28 +900,28 @@
     "message": "✓ 開いたら既読"
   },
   "f_summarized_68b9": {
-    "message": "✓ 要約済み"
+    "message": "✓ 主な出力済み"
   },
   "f_ai_recap_of_today_72f6": {
-    "message": "✨  今日のAI要約"
+    "message": "✨  今日のAI主な出力"
   },
   "f_auto_summarize_favorites_32af": {
-    "message": "✨ お気に入りを自動要約"
+    "message": "✨ お気に入りを自動主な出力"
   },
   "f_recap_b8e8": {
-    "message": "✨ 要約"
+    "message": "✨ 主な出力"
   },
   "f_summarize_570a": {
-    "message": "✨ 要約"
+    "message": "✨ 主な出力"
   },
   "f_summarize_top_5_unread_d39d": {
-    "message": "✨ 未読上位5件を要約"
+    "message": "✨ 未読上位5件を主な出力"
   },
   "f_writing_recap_fe02": {
     "message": "✨ 作成中…"
   },
   "f_view_summary_3c09": {
-    "message": "📄 要約を見る"
+    "message": "📄 主な出力を見る"
   },
   "f_pick_a_day_or_range_dd71": {
     "message": "📅  日付・期間を選択…"
@@ -978,10 +978,10 @@
     "message": "＋ 追加"
   },
   "f_darker_more_items_recap_done_8cca": {
-    "message": "濃い＝件数が多い · ✨＝要約済み · 日を長押しして別の日を選ぶと範囲指定"
+    "message": "濃い＝件数が多い · ✨＝主な出力済み · 日を長押しして別の日を選ぶと範囲指定"
   },
   "f_recap_done_b098": {
-    "message": "要約済み"
+    "message": "主な出力済み"
   },
   "f_podcasts_7c90": {
     "message": "ポッドキャスト"
@@ -1053,46 +1053,46 @@
     "message": "同じAIリクエストで各記事のムードとカテゴリを追加"
   },
   "f_rate_items_with_the_recap_6027": {
-    "message": "🤖 要約と同時に評価"
+    "message": "🤖 主な出力と同時に評価"
   },
   "f_nothing_new_since_this_recap_45c5": {
-    "message": "前回の要約以降の新着なし"
+    "message": "前回の主な出力以降の新着なし"
   },
   "f_sending_new_or_edited_titles_ba69": {
     "message": "新規・更新された{n}件のタイトルと短い抜粋をAI接続に送信中。"
   },
   "f_updating_recap_902a": {
-    "message": "✨ 要約を更新中…"
+    "message": "✨ 主な出力を更新中…"
   },
   "f_a_source_recap_changed_since_e89f": {
-    "message": "元の要約が変わりました。更新して反映できます。"
+    "message": "元の主な出力が変わりました。更新して反映できます。"
   },
   "f_ai_recap_of_this_month_built_f4e6": {
-    "message": "今月のAI要約（週・日の要約から）"
+    "message": "今月のAI主な出力（週・日の主な出力から）"
   },
   "f_ai_recap_of_this_week_built__86af": {
-    "message": "今週のAI要約（日の要約から）"
+    "message": "今週のAI主な出力（日の主な出力から）"
   },
   "f_built_from_your_day_recaps_i_2520": {
-    "message": "日ごとの要約から作成します。日次要約のある記事は再送されません。"
+    "message": "日ごとの主な出力から作成します。日次主な出力のある記事は再送されません。"
   },
   "f_built_from_recap_5b76": {
-    "message": "{n}件の要約から"
+    "message": "{n}件の主な出力から"
   },
   "f_built_from_recaps_48df": {
-    "message": "{n}件の要約から"
+    "message": "{n}件の主な出力から"
   },
   "f_cancel_ca3b": {
     "message": "キャンセル"
   },
   "f_create_missing_day_recap_fir_2bd6": {
-    "message": "不足する日次要約{n}件を先に作成"
+    "message": "不足する日次主な出力{n}件を先に作成"
   },
   "f_create_missing_day_recaps_fi_1cf7": {
-    "message": "不足する日次要約{n}件を先に作成"
+    "message": "不足する日次主な出力{n}件を先に作成"
   },
   "f_creating_day_recaps_141a": {
-    "message": "日次要約を作成中… {a}/{b}"
+    "message": "日次主な出力を作成中… {a}/{b}"
   },
   "f_generated_at_b0a6": {
     "message": "{time}に生成"
@@ -1107,16 +1107,16 @@
     "message": "まとめるものがまだありません。"
   },
   "f_recap_scope_40ec": {
-    "message": "要約の範囲"
+    "message": "主な出力の範囲"
   },
   "f_sends_short_recaps_not_headl_27f5": {
-    "message": "見出し{m}件ではなく短い要約{n}件を送信"
+    "message": "見出し{m}件ではなく短い主な出力{n}件を送信"
   },
   "f_skip_the_days_without_a_reca_9f80": {
-    "message": "要約のない日を除く"
+    "message": "主な出力のない日を除く"
   },
   "f_week_recap_2446": {
-    "message": "週の要約"
+    "message": "週の主な出力"
   },
   "f_week_c909": {
     "message": "第{n}週"
@@ -1125,25 +1125,25 @@
     "message": "不足"
   },
   "f_no_recap_yet_d2d7": {
-    "message": "要約なし"
+    "message": "主な出力なし"
   },
   "f_reused_af15": {
     "message": "再利用"
   },
   "f_of_days_have_a_recap_6aaa": {
-    "message": "{b}日中{a}日に要約あり"
+    "message": "{b}日中{a}日に主な出力あり"
   },
   "f_day_recap_cb92": {
-    "message": "日次要約{n}件"
+    "message": "日次主な出力{n}件"
   },
   "f_day_recaps_f333": {
-    "message": "日次要約{n}件"
+    "message": "日次主な出力{n}件"
   },
   "f_without_recap_7d68": {
-    "message": "要約なし{n}件"
+    "message": "主な出力なし{n}件"
   },
   "f_create_recap_88d6": {
-    "message": "✨ 要約を作成"
+    "message": "✨ 主な出力を作成"
   },
   "f_feed_b245": {
     "message": "フィード"
@@ -1248,16 +1248,16 @@
     "message": "ムードのある記事はまだありません — AIに評価させましょう。"
   },
   "f_no_articles_yet_start_summar_b35e": {
-    "message": "まだ記事がありません — ページを要約すると分析が表示されます！📖"
+    "message": "まだ記事がありません — ページを主な出力すると分析が表示されます！📖"
   },
   "f_no_tags_found_add_tags_to_yo_6914": {
-    "message": "タグが見つかりません。要約にタグを追加しましょう！"
+    "message": "タグが見つかりません。主な出力にタグを追加しましょう！"
   },
   "f_saved_79e4": {
     "message": "節約"
   },
   "f_with_summaries_5619": {
-    "message": "要約あり"
+    "message": "主な出力あり"
   },
   "f_words_read_f576": {
     "message": "読んだ語数"
@@ -1296,7 +1296,7 @@
     "message": "デバイス"
   },
   "f_digest_of_summaries_5cea": {
-    "message": "{n}件の要約のダイジェスト"
+    "message": "{n}件の主な出力のダイジェスト"
   },
   "f_free_tier_3_kindle_sends_inc_00a8": {
     "message": "無料プラン：Kindle送信は3回まで含まれます。"
@@ -1323,7 +1323,7 @@
     "message": "ダイジェスト1つ"
   },
   "f_only_summarized_articles_can_ce5a": {
-    "message": "要約済みの記事のみ送信できます"
+    "message": "主な出力済みの記事のみ送信できます"
   },
   "f_open_settings_88b6": {
     "message": "設定を開く"
@@ -1344,19 +1344,19 @@
     "message": "すべて選択"
   },
   "f_select_summaries_2cad": {
-    "message": "要約を選択"
+    "message": "主な出力を選択"
   },
   "f_select_summaries_to_send_741c": {
-    "message": "送信する要約を選択"
+    "message": "送信する主な出力を選択"
   },
   "f_send_to_kindle_c8f1": {
     "message": "Kindleに送信"
   },
   "f_send_summaries_c9c7": {
-    "message": "{n}件の要約を送信"
+    "message": "{n}件の主な出力を送信"
   },
   "f_send_summary_164f": {
-    "message": "{n}件の要約を送信"
+    "message": "{n}件の主な出力を送信"
   },
   "f_sending_to_kindle_8853": {
     "message": "Kindleに送信中…"
@@ -1404,10 +1404,10 @@
     "message": "{n}件選択中"
   },
   "f_summaries_7bdf": {
-    "message": "{n}件の要約"
+    "message": "{n}件の主な出力"
   },
   "f_summary_0c47": {
-    "message": "{n}件の要約"
+    "message": "{n}件の主な出力"
   },
   "f_send_to_kindle_dc46": {
     "message": "📚 Kindleに送信"
@@ -1428,10 +1428,10 @@
     "message": "記事全文"
   },
   "f_summary_full_article_3f15": {
-    "message": "要約＋記事全文"
+    "message": "主な出力＋記事全文"
   },
   "f_summary_only_bd43": {
-    "message": "要約のみ"
+    "message": "主な出力のみ"
   },
   "f_also_automatic_opening_marks_1cdb": {
     "message": "自動でも更新：開くと既読、送信すると送信済みになります"
@@ -1452,10 +1452,10 @@
     "message": "マーク："
   },
   "f_mark_summaries_as_8da6": {
-    "message": "{n}件の要約をマーク："
+    "message": "{n}件の主な出力をマーク："
   },
   "f_mark_summary_as_4a0a": {
-    "message": "{n}件の要約をマーク："
+    "message": "{n}件の主な出力をマーク："
   },
   "f_moves_them_to_archive_find_t_1076": {
     "message": "アーカイブに移動します — いつでもそこで見つかります"
@@ -1665,7 +1665,7 @@
     "message": "UXデザイナーならではの小ネタ"
   },
   "f_used_whenever_you_summarize__f213": {
-    "message": "ページや記事を要約するときに使います。"
+    "message": "ページや記事を主な出力するときに使います。"
   },
   "f_view_edit_bf74": {
     "message": "表示・編集 ›"
@@ -1704,7 +1704,7 @@
     "message": "Chrome ウェブストアでのレビューは、ほかの人が見つける助けになります。"
   },
   "f_enjoying_ai_summary_helper_75e7": {
-    "message": "AI Summary Helper を気に入っていただけましたか？"
+    "message": "Arguments を気に入っていただけましたか？"
   },
   "f_later_2b49": {
     "message": "あとで"
@@ -1758,7 +1758,7 @@
     "message": "その他"
   },
   "f_rates_the_tone_of_summaries__01bb": {
-    "message": "要約とフィード記事のトーンを評価します。ムードフィルター、グラフ、ソース傾向に使われます。オフにするとムード関連の機能がすべて非表示になります。"
+    "message": "主な出力とフィード記事のトーンを評価します。ムードフィルター、グラフ、ソース傾向に使われます。オフにするとムード関連の機能がすべて非表示になります。"
   },
   "f_reading_339b": {
     "message": "読む"
@@ -1875,7 +1875,7 @@
     "message": "エクスポートにすべての質問を含める"
   },
   "f_last_summary_3355": {
-    "message": "前回の要約"
+    "message": "前回の主な出力"
   },
   "f_model_is_thinking_3a56": {
     "message": "モデルが思考中"
@@ -1887,10 +1887,10 @@
     "message": "回答がありません。"
   },
   "f_no_recent_summaries_03a5": {
-    "message": "最近の要約はありません"
+    "message": "最近の主な出力はありません"
   },
   "f_nothing_new_since_this_recap_f9bc": {
-    "message": "この要約以降に新着はありません。リセットで最初から書き直せます。"
+    "message": "この主な出力以降に新着はありません。リセットで最初から書き直せます。"
   },
   "f_nothing_received_for_s_there_17e7": {
     "message": "{s} 秒間応答がありません。時間制限はありません。止まって見えたらキャンセルしてください。"
@@ -1926,7 +1926,7 @@
     "message": "送信"
   },
   "f_send_summaries_96ab": {
-    "message": "要約を送信"
+    "message": "主な出力を送信"
   },
   "f_sent_to_your_ai_connection_b919": {
     "message": "AI 接続に送信しました"
@@ -1944,16 +1944,16 @@
     "message": "開始中…"
   },
   "f_summarize_a_page_to_see_it_h_ceef": {
-    "message": "ページを要約するとここに表示されます"
+    "message": "ページを主な出力するとここに表示されます"
   },
   "f_summarize_this_page_b1c9": {
-    "message": "このページを要約"
+    "message": "このページを主な出力"
   },
   "f_summary_b5b3": {
-    "message": "要約"
+    "message": "主な出力"
   },
   "f_that_is_the_maximum_per_reca_170d": {
-    "message": "1 回の要約の上限です。全体像は週間・月間の要約を使うか、フィードで絞り込んでください。"
+    "message": "1 回の主な出力の上限です。全体像は週間・月間の主な出力を使うか、フィードで絞り込んでください。"
   },
   "f_thinking_d121": {
     "message": "考え中…"
@@ -1971,10 +1971,10 @@
     "message": "処理中…"
   },
   "f_writing_a_word_summary_dd5f": {
-    "message": "{n} 語の要約を作成中…"
+    "message": "{n} 語の主な出力を作成中…"
   },
   "f_writing_the_summary_0fa6": {
-    "message": "要約を作成中…"
+    "message": "主な出力を作成中…"
   },
   "f_your_focus_question_4df6": {
     "message": "注目する質問"
@@ -2013,16 +2013,16 @@
     "message": "他 {n} 件の質問"
   },
   "f_older_item_is_not_in_this_re_1d7b": {
-    "message": "古い項目 {n} 件はこの要約に含まれていません (上限: 1 回 {max} 件)。"
+    "message": "古い項目 {n} 件はこの主な出力に含まれていません (上限: 1 回 {max} 件)。"
   },
   "f_older_item_is_not_in_this_re_321f": {
-    "message": "古い項目 {n} 件はこの要約に含まれていません。"
+    "message": "古い項目 {n} 件はこの主な出力に含まれていません。"
   },
   "f_older_items_are_not_in_this__7458": {
-    "message": "古い項目 {n} 件はこの要約に含まれていません (上限: 1 回 {max} 件)。"
+    "message": "古い項目 {n} 件はこの主な出力に含まれていません (上限: 1 回 {max} 件)。"
   },
   "f_older_items_are_not_in_this__8bca": {
-    "message": "古い項目 {n} 件はこの要約に含まれていません。"
+    "message": "古い項目 {n} 件はこの主な出力に含まれていません。"
   },
   "f_word_c9d9": {
     "message": "{n} 語"
@@ -2040,7 +2040,7 @@
     "message": "📍 記事に追加"
   },
   "f_items_per_recap_fac3": {
-    "message": "📝 要約あたりの項目数"
+    "message": "📝 主な出力あたりの項目数"
   },
   "f_on_ios_hold_to_drag_for_2_se_7fba": {
     "message": "（iOSでは2秒間長押ししてドラッグ）"
@@ -2142,10 +2142,10 @@
     "message": "自動検出"
   },
   "f_auto_summarize_favorites_0e1f": {
-    "message": "お気に入りを自動要約"
+    "message": "お気に入りを自動主な出力"
   },
   "f_automatic_light_blue_quote_h_419c": {
-    "message": "要約から引用を水色で自動ハイライト"
+    "message": "主な出力から引用を水色で自動ハイライト"
   },
   "f_backup_restored_successfully_8819": {
     "message": "バックアップを復元しました！\n{n}件の記事を取り込みました。\n\n拡張機能を再読み込みします。"
@@ -2358,7 +2358,7 @@
     "message": "フォールバック"
   },
   "f_feed_briefing_recap_style_9883": {
-    "message": "フィードの概要と要約スタイル"
+    "message": "フィードの概要と主な出力スタイル"
   },
   "f_feed_refresh_interval_c173": {
     "message": "フィードの更新間隔"
@@ -2397,7 +2397,7 @@
     "message": "無料トライアルモード"
   },
   "f_generate_a_bookmarklet_that__081e": {
-    "message": "拡張機能が動かないiOS/Androidを含め、どのブラウザでもページを要約できるブックマークレットを作成します。byphil Cloudのログインを使用します。"
+    "message": "どのブラウザでもページを分析できるブックマークレットを生成します。拡張機能が動作しないiOS/Androidでも利用できます。byphil Cloudのログインを使用します。"
   },
   "f_generate_237e": {
     "message": "生成 🎙️"
@@ -2466,7 +2466,7 @@
     "message": "無効なキー"
   },
   "f_invalid_backup_file_please_s_54f7": {
-    "message": "無効なバックアップファイルです。AI Summary Helperのエクスポートファイルを選択してください。"
+    "message": "無効なバックアップファイルです。Argumentsのエクスポートファイルを選択してください。"
   },
   "f_invalid_code_4325": {
     "message": "無効なコード"
@@ -2619,10 +2619,10 @@
     "message": "「{query}」に一致する設定はありません。"
   },
   "f_no_summary_available_1155": {
-    "message": "利用できる要約がありません"
+    "message": "利用できる主な出力がありません"
   },
   "f_no_summary_returned_5f75": {
-    "message": "要約が返されませんでした。"
+    "message": "主な出力が返されませんでした。"
   },
   "f_no_title_available_2723": {
     "message": "利用できるタイトルがありません"
@@ -2676,7 +2676,7 @@
     "message": "パネル"
   },
   "f_permanently_removes_all_summ_228d": {
-    "message": "すべての要約とアーカイブを完全に削除します。先にバックアップを書き出してください。"
+    "message": "すべての主な出力とアーカイブを完全に削除します。先にバックアップを書き出してください。"
   },
   "f_persist_optional_29ce": {
     "message": "保持（任意）"
@@ -2757,7 +2757,7 @@
     "message": "Ollamaを終了"
   },
   "f_rate_items_with_the_recap_131d": {
-    "message": "要約に項目の評価を付ける"
+    "message": "主な出力に項目の評価を付ける"
   },
   "f_reader_4efa": {
     "message": "リーダー 👓"
@@ -2889,7 +2889,7 @@
     "message": "メールでログイン / 新規登録"
   },
   "f_sign_in_to_unlock_free_cloud_f976": {
-    "message": "ログインすると無料のクラウドモデルが使え、要約も同期できます。自分のAPIキーを使うこともできます。"
+    "message": "ログインすると無料のクラウドモデルが使え、主な出力も同期できます。自分のAPIキーを使うこともできます。"
   },
   "f_signed_in_byphil_cloud_f9ba": {
     "message": "ログイン中 · byPhil Cloud"
@@ -2922,16 +2922,16 @@
     "message": "接続しました 🧙"
   },
   "f_summarizing_4c71": {
-    "message": "要約中..."
+    "message": "主な出力中..."
   },
   "f_summary_language_a8df": {
-    "message": "要約の言語"
+    "message": "出力言語"
   },
   "f_summary_length_2b31": {
-    "message": "要約の長さ"
+    "message": "出力の長さ"
   },
   "f_summary_mode_5ce6": {
-    "message": "要約モード"
+    "message": "分析の表示"
   },
   "f_switch_graph_search_to_filte_7f9d": {
     "message": "グラフ検索を絞り込みモードに切り替え"
@@ -2955,7 +2955,7 @@
     "message": "{what}とアーカイブをこのデバイスから完全に削除します。元に戻せません。"
   },
   "f_this_resets_every_preference_d3b3": {
-    "message": "このデバイスのすべての設定、プロンプト、APIキーをリセットします。要約は残ります。拡張機能を再読み込みします。"
+    "message": "このデバイスのすべての設定、プロンプト、APIキーをリセットします。主な出力は残ります。拡張機能を再読み込みします。"
   },
   "f_this_will_invalidate_the_cur_4995": {
     "message": "現在のコードは無効になります。続行しますか？"
@@ -3012,7 +3012,7 @@
     "message": "表示: ハイライト"
   },
   "f_welcome_to_ai_summary_helper_892e": {
-    "message": "AI Summary Helperへようこそ"
+    "message": "Argumentsへようこそ"
   },
   "f_well_connected_1033": {
     "message": "つながりが多い"
@@ -3030,7 +3030,7 @@
     "message": "寄付"
   },
   "f_all_summaries_c680": {
-    "message": "すべての要約"
+    "message": "すべての主な出力"
   },
   "f_byphil_cloud_17f0": {
     "message": "byPhil Cloud"
@@ -3048,7 +3048,7 @@
     "message": "例: gpt-5-mini, llama3.2"
   },
   "f_for_unlimited_zero_config_su_82c0": {
-    "message": "無制限で設定不要の要約が使えます。"
+    "message": "無制限で設定不要の主な出力が使えます。"
   },
   "f_from_8075": {
     "message": "提供:"
@@ -3084,7 +3084,7 @@
     "message": "をKindleの承認済み送信者に先に追加してください —"
   },
   "f_curated_from_your_ai_summary_4f55": {
-    "message": "{count}、AI Summary Helperのアーカイブから厳選。"
+    "message": "{count}、Argumentsのアーカイブから厳選。"
   },
   "f_tone_f081": {
     "message": "{label}のトーン"
@@ -3138,7 +3138,7 @@
     "message": "— お気軽に"
   },
   "f_summarizing_2ba2": {
-    "message": "⏳ 要約中…"
+    "message": "⏳ 主な出力中…"
   },
   "f_settings_eb9e": {
     "message": "⚙️ 設定"
@@ -3213,7 +3213,7 @@
     "message": "🤖 AIのおすすめハイライト"
   },
   "f_ai_summary_c72e": {
-    "message": "🧙 AI要約"
+    "message": "🧙 AI主な出力"
   },
   "f_on_device_tools_d85a": {
     "message": "🧠 オンデバイスツール"
@@ -3291,7 +3291,7 @@
     "message": "🔎 要点"
   },
   "f_adds_each_summary_under_its__b17f": {
-    "message": "各要約を参考文献の下に追加します"
+    "message": "各主な出力を参考文献の下に追加します"
   },
   "f_citation_lookup_failed_try_a_bb2e": {
     "message": "引用の取得に失敗しました。もう一度お試しください"
@@ -3315,7 +3315,7 @@
     "message": "引用を取得"
   },
   "f_include_my_summaries_aadf": {
-    "message": "自分の要約を含める"
+    "message": "自分の主な出力を含める"
   },
   "f_looking_up_citations_at_doi__563a": {
     "message": "doi.orgで引用を検索中（送信されるのはDOIのみ）…"
@@ -3354,7 +3354,7 @@
     "message": "❝ 引用"
   },
   "f_attach_a_pdf_to_summarize_b6ff": {
-    "message": "要約するPDFを添付"
+    "message": "主な出力するPDFを添付"
   },
   "f_could_not_read_this_pdf_f579": {
     "message": "このPDFを読み取れませんでした。"
@@ -3453,7 +3453,7 @@
     "message": "文字サイズ"
   },
   "f_the_quick_brown_fox_jumps_ov_fd42": {
-    "message": "The quick brown fox jumps over the lazy dog。要約にはこのサイズと行間が使われます。"
+    "message": "The quick brown fox jumps over the lazy dog。主な出力にはこのサイズと行間が使われます。"
   },
   "f_your_system_already_asks_for_8b6f": {
     "message": "システムがすでに動きの軽減を求めています。常に尊重されます。"
@@ -3567,7 +3567,7 @@
     "message": "恒久化する"
   },
   "f_new_summary_da1d": {
-    "message": "新しい要約"
+    "message": "新しい主な出力"
   },
   "f_next_previous_card_c144": {
     "message": "次 / 前のカード"
@@ -3603,10 +3603,10 @@
     "message": "スタートメニューから Ollama を再起動するか、新しいコマンドプロンプトでフォアグラウンドサーバーとして実行します:"
   },
   "f_summarize_791a": {
-    "message": "要約"
+    "message": "主な出力"
   },
   "f_summarize_send_e76b": {
-    "message": "要約 / 送信"
+    "message": "主な出力 / 送信"
   },
   "f_switch_tab_793a": {
     "message": "タブを切り替え"
@@ -3714,7 +3714,7 @@
     "message": "先頭へ"
   },
   "f_speaks_the_title_and_site_fi_196b": {
-    "message": "まずタイトルとサイトを読み上げ、モデルの生成中に要約を1文ずつ読み上げます。"
+    "message": "まずタイトルとサイトを読み上げ、モデルの生成中に主な出力を1文ずつ読み上げます。"
   },
   "f_start_097f": {
     "message": "開始"
@@ -3723,13 +3723,13 @@
     "message": "読み上げを停止"
   },
   "f_the_voice_follows_the_langua_55b1": {
-    "message": "音声はテキストの言語に従います。ドイツ語記事の英語要約は英語で、原文はドイツ語で読み上げられます。"
+    "message": "音声はテキストの言語に従います。ドイツ語記事の英語主な出力は英語で、原文はドイツ語で読み上げられます。"
   },
   "f_voice_auto_8e1b": {
     "message": "音声 · 自動"
   },
   "f_voice_it_follows_the_summary_2f51": {
-    "message": "音声: {voice} · {lang}。要約の言語に従い、タイトルとサイトはアプリの言語で読み上げます。"
+    "message": "音声: {voice} · {lang}。主な出力の言語に従い、タイトルとサイトはアプリの言語で読み上げます。"
   },
   "f_add_model_id_e_g_gemma4_e2b_127a": {
     "message": "モデルIDを追加（例: gemma4:e2b）"
@@ -3753,10 +3753,10 @@
     "message": "コードを入力"
   },
   "f_free_cloud_models_and_your_s_71ce": {
-    "message": "無料のクラウドモデルと要約をすべてのデバイスで。スキップして自分のAPIキーを使うこともできます。"
+    "message": "無料のクラウドモデルと主な出力をすべてのデバイスで。スキップして自分のAPIキーを使うこともできます。"
   },
   "f_sign_in_to_ai_summary_helper_d8be": {
-    "message": "AI Summary Helper にサインイン"
+    "message": "Arguments にサインイン"
   },
   "f_thinking_more_de1c": {
     "message": "さらに考えています…"
@@ -3822,7 +3822,7 @@
     "message": "モデル設定を開く"
   },
   "f_queued_it_will_start_when_th_cd8f": {
-    "message": "待機中。現在の要約が終わると開始します"
+    "message": "待機中。現在の主な出力が終わると開始します"
   },
   "f_queued_4ebe": {
     "message": "待機中: {title}"
@@ -3843,7 +3843,7 @@
     "message": "保存オプション"
   },
   "f_saved_without_an_ai_summary__ff94": {
-    "message": "AI 要約なしで保存しました。ページを開いて ✨ 要約 をタップすると追加できます。"
+    "message": "AI 主な出力なしで保存しました。ページを開いて ✨ 主な出力 をタップすると追加できます。"
   },
   "f_search_installed_models_959b": {
     "message": "インストール済みモデルを検索…"
@@ -3855,13 +3855,13 @@
     "message": "このページは保存できません。"
   },
   "f_waiting_for_the_running_summ_1f1c": {
-    "message": "実行中の要約を待っています。クリックで待機から削除"
+    "message": "実行中の主な出力を待っています。クリックで待機から削除"
   },
   "f_your_api_key_is_missing_or_w_264b": {
     "message": "API キーがないか、拒否されました。設定で確認してください。"
   },
   "f_starts_when_the_current_summ_b50e": {
-    "message": "現在の要約が終わると開始"
+    "message": "現在の主な出力が終わると開始"
   },
   "f_this_page_a108": {
     "message": "このページ"
@@ -3909,7 +3909,7 @@
     "message": "標準"
   },
   "f_summary_length_in_words_ab69": {
-    "message": "要約の長さ（語数）"
+    "message": "主な出力の長さ（語数）"
   },
   "f_items_could_not_be_scored_31d6": {
     "message": "{n} 件をスコアリングできませんでした"
@@ -3921,13 +3921,13 @@
     "message": "上限を外して更新"
   },
   "f_available_when_ollama_is_you_c49d": {
-    "message": "Ollama が有効なモデルのときに使えます。フィードライブラリ全体を、あなた自身のマシン上で小さなバッチに分けて評価・分類・要約します。数時間かかることもありますが、トークンは消費しません。"
+    "message": "Ollama が有効なモデルのときに使えます。フィードライブラリ全体を、あなた自身のマシン上で小さなバッチに分けて評価・分類・主な出力します。数時間かかることもありますが、トークンは消費しません。"
   },
   "f_done_61ad": {
     "message": "完了しました。"
   },
   "f_everything_in_your_library_i_47fb": {
-    "message": "ライブラリ内のすべてが評価・分類・要約済みです。"
+    "message": "ライブラリ内のすべてが評価・分類・主な出力済みです。"
   },
   "f_process_the_whole_library_e3a9": {
     "message": "ライブラリ全体を処理"
@@ -3936,7 +3936,7 @@
     "message": "評価と分類中…"
   },
   "f_runs_on_your_own_machine_wit_7a25": {
-    "message": "Ollama を使ってあなた自身のマシンで動作し、トークンを消費しません。このパネルは開いたままにしてください。閉じると処理が一時停止し、再開すると中断したところから続きます。処理されるのは保存されているアイテムのみです（「アイテムの保存期間」を参照）。今日の要約は開いたときに作成されます。"
+    "message": "Ollama を使ってあなた自身のマシンで動作し、トークンを消費しません。このパネルは開いたままにしてください。閉じると処理が一時停止し、再開すると中断したところから続きます。処理されるのは保存されているアイテムのみです（「アイテムの保存期間」を参照）。今日の主な出力は開いたときに作成されます。"
   },
   "f_stop_7705": {
     "message": "停止"
@@ -3948,7 +3948,7 @@
     "message": "ライブラリ全体 · Ollama"
   },
   "f_writing_day_recaps_9c43": {
-    "message": "日別の要約を作成中…"
+    "message": "日別の主な出力を作成中…"
   },
   "f_about_h_min_64c7": {
     "message": "約 {h} 時間 {m} 分"
@@ -3957,10 +3957,10 @@
     "message": "約 {m} 分"
   },
   "f_items_rated_days_recapped_fc36": {
-    "message": "{a} 件を評価 · {b} 日分を要約"
+    "message": "{a} 件を評価 · {b} 日分を主な出力"
   },
   "f_items_to_rate_days_to_recap__44f6": {
-    "message": "評価 {a} 件 · 要約 {b} 日分 · AI リクエスト {n} 件"
+    "message": "評価 {a} 件 · 主な出力 {b} 日分 · AI リクエスト {n} 件"
   },
   "f_recommended_44c5": {
     "message": "{n}（推奨）"
@@ -3996,13 +3996,13 @@
     "message": "バックグラウンド実行はまだありません。"
   },
   "f_items_rated_day_recaps_writt_ce24": {
-    "message": "{a} 件を評価 · {b} 日分の要約を作成"
+    "message": "{a} 件を評価 · {b} 日分の主な出力を作成"
   },
   "f_available_when_ollama_is_set_53ce": {
-    "message": "Ollama が設定済みのときに使えます。フィードライブラリ全体を、あなた自身のマシン上で小さなバッチに分けて評価・分類・要約します。数時間かかることもありますが、トークンは消費しません。"
+    "message": "Ollama が設定済みのときに使えます。フィードライブラリ全体を、あなた自身のマシン上で小さなバッチに分けて評価・分類・主な出力します。数時間かかることもありますが、トークンは消費しません。"
   },
   "f_day_recap_of_batch_of_items_67b5": {
-    "message": "日別の要約 {d}/{t}（{date}）：バッチ {a}/{b} · {n} 件"
+    "message": "日別の主な出力 {d}/{t}（{date}）：バッチ {a}/{b} · {n} 件"
   },
   "f_model_is_writing_46fc": {
     "message": "モデルが書き込み中…"
@@ -4020,13 +4020,13 @@
     "message": "リクエスト {a}/{b}"
   },
   "f_runs_on_your_own_machine_wit_1728": {
-    "message": "要約用に別のモデルが有効でも、Ollama を使ってあなた自身のマシンで動作し、トークンを消費しません。このパネルは開いたままにしてください。閉じると処理が一時停止し、再開すると中断したところから続きます。処理されるのは保存されているアイテムのみです（「アイテムの保存期間」を参照）。今日の要約は開いたときに作成されます。"
+    "message": "主な出力用に別のモデルが有効でも、Ollama を使ってあなた自身のマシンで動作し、トークンを消費しません。このパネルは開いたままにしてください。閉じると処理が一時停止し、再開すると中断したところから続きます。処理されるのは保存されているアイテムのみです（「アイテムの保存期間」を参照）。今日の主な出力は開いたときに作成されます。"
   },
   "f_sending_the_batch_to_ollama_ac2f": {
     "message": "バッチを Ollama に送信中…"
   },
   "f_not_your_active_summary_mode_78a8": {
-    "message": "有効な要約モデルではありません"
+    "message": "有効な主な出力モデルではありません"
   },
   "f_left_db92": {
     "message": "残り {eta}"
@@ -4041,13 +4041,13 @@
     "message": "フィードライブラリ全体を処理（Ollama）"
   },
   "f_rates_categorizes_and_recaps_889d": {
-    "message": "すべてのフィードアイテムを、あなた自身のマシン上で小さなバッチに分けて評価・分類・要約します。トークンは消費しません。"
+    "message": "すべてのフィードアイテムを、あなた自身のマシン上で小さなバッチに分けて評価・分類・主な出力します。トークンは消費しません。"
   },
   "f_changelog_8779": {
     "message": "変更履歴"
   },
   "f_how_should_ai_summary_helper_b4d7": {
-    "message": "AI Summary Helper に何で考えさせますか？"
+    "message": "Arguments に何で考えさせますか？"
   },
   "f_local_models_no_account_no_k_a783": {
     "message": "ローカルモデル。アカウントもキーも不要で、データはマシンの外に出ません。"
@@ -4062,7 +4062,7 @@
     "message": "OpenAI、Gemini、Mistral、DeepSeek など。アカウント不要で、キーはこのデバイスに残ります。"
   },
   "f_pick_one_you_can_change_it_a_a7d6": {
-    "message": "1 つ選んでください。モデル設定でいつでも変更でき、ページを要約するまで何も送信されません。"
+    "message": "1 つ選んでください。モデル設定でいつでも変更でき、ページを主な出力するまで何も送信されません。"
   },
   "f_privacy_policy_16ff": {
     "message": "プライバシーポリシー"
@@ -4071,10 +4071,10 @@
     "message": "セキュリティポリシー"
   },
   "f_sign_in_with_your_email_no_a_5518": {
-    "message": "メールアドレスでサインイン。API キーは不要で、要約はすべてのデバイスで使えます。"
+    "message": "メールアドレスでサインイン。API キーは不要で、主な出力はすべてのデバイスで使えます。"
   },
   "f_tip_press_on_any_page_to_sum_8aff": {
-    "message": "ヒント：どのページでも {key} を押すと要約できます。"
+    "message": "ヒント：どのページでも {key} を押すと主な出力できます。"
   },
   "f_free_cloud_models_3602": {
     "message": "☁️ 無料のクラウドモデル"
@@ -4107,10 +4107,10 @@
     "message": "Kindle・LocalSend の送信先"
   },
   "f_permanently_removes_your_sum_782d": {
-    "message": "このデバイスから要約、アーカイブ、ハイライトを完全に削除します。設定とフィードは、選択しない限り残ります。元に戻せません。"
+    "message": "このデバイスから主な出力、アーカイブ、ハイライトを完全に削除します。設定とフィードは、選択しない限り残ります。元に戻せません。"
   },
   "f_permanently_removes_your_sum_2de7": {
-    "message": "要約、アーカイブ、ハイライトを完全に削除します。設定とフィードは残ります。先にバックアップを書き出してください。"
+    "message": "主な出力、アーカイブ、ハイライトを完全に削除します。設定とフィードは残ります。先にバックアップを書き出してください。"
   },
   "f_preferences_prompts_d7ac": {
     "message": "設定とプロンプト"
@@ -4119,16 +4119,16 @@
     "message": "この拡張機能がこのデバイスに保存しているものをすべて削除し、初期状態から始めます。元に戻せません。当社サーバー上のアカウントは影響を受けません。削除を希望する場合はお問い合わせください（プライバシーポリシー参照）。"
   },
   "f_removes_everything_this_exte_b9a8": {
-    "message": "この拡張機能がこのデバイスに保存しているものをすべて削除します（要約、ハイライト、フィード、キー、設定）。先にバックアップを書き出してください。"
+    "message": "この拡張機能がこのデバイスに保存しているものをすべて削除します（主な出力、ハイライト、フィード、キー、設定）。先にバックアップを書き出してください。"
   },
   "f_resets_preferences_prompts_a_02e0": {
-    "message": "このデバイスの設定、プロンプト、API キー、サインイン、送信先をリセットします。要約、ハイライト、フィードは、選択しない限り残ります。拡張機能が再読み込みされます。"
+    "message": "このデバイスの設定、プロンプト、API キー、サインイン、送信先をリセットします。主な出力、ハイライト、フィードは、選択しない限り残ります。拡張機能が再読み込みされます。"
   },
   "f_resets_preferences_prompts_a_aab7": {
-    "message": "このデバイスの設定、プロンプト、API キー、サインイン、送信先をリセットします。要約、ハイライト、フィードは残ります。"
+    "message": "このデバイスの設定、プロンプト、API キー、サインイン、送信先をリセットします。主な出力、ハイライト、フィードは残ります。"
   },
   "f_summaries_archive_b387": {
-    "message": "要約とアーカイブ"
+    "message": "主な出力とアーカイブ"
   },
   "f_website_access_is_off_allow__f6c7": {
     "message": "ウェブサイトへのアクセスがオフです。about:addons → この拡張機能 → 権限（「すべてのウェブサイトのデータにアクセス」）で許可してから、更新してください。"
@@ -4335,7 +4335,7 @@
     "message": "アカウント不要。キーはこの端末に残ります。"
   },
   "f_pick_one_nothing_is_sent_unt_722b": {
-    "message": "1つ選んでください。ページを要約するまで何も送信されません。"
+    "message": "1つ選んでください。ページを主な出力するまで何も送信されません。"
   },
   "f_sign_in_with_your_email_no_a_b96b": {
     "message": "メールでサインイン。APIキーは不要です。"
@@ -4344,7 +4344,7 @@
     "message": "手軽：メールだけでAPIキーは不要。個人開発者の支援にもなります。"
   },
   "f_pick_a_way_to_run_your_summa_5c59": {
-    "message": "要約の実行方法を選んでください。設定でいつでも変更できます。"
+    "message": "主な出力の実行方法を選んでください。設定でいつでも変更できます。"
   },
   "f_back_to_top_bd70": {
     "message": "先頭へ戻る"
@@ -4362,7 +4362,7 @@
     "message": "ハイライトの指示"
   },
   "f_summary_prompt_5157": {
-    "message": "要約の指示"
+    "message": "主な出力の指示"
   },
   "f_reset_to_default_f7dc": {
     "message": "既定値に戻す"
@@ -4371,10 +4371,10 @@
     "message": "指示を保存できませんでした。"
   },
   "f_highlight_and_summary_prompt_ef01": {
-    "message": "ハイライトと要約の指示"
+    "message": "ハイライトと主な出力の指示"
   },
   "pagePromptsHint": {
-    "message": "ハイライトと要約の指示"
+    "message": "ハイライトと主な出力のプロンプト"
   },
   "highlightNotFound": {
     "message": "ページ内に見つかりません"
@@ -4405,5 +4405,257 @@
   },
   "highlightInvalidResponse": {
     "message": "ハイライトの応答を読み取れませんでした"
+  },
+  "f_available_when_ollama_is_set_f9e0": {
+    "message": "Ollamaを設定すると利用できます。お使いのコンピューターでフィードライブラリを少量ずつ振り返ります。"
+  },
+  "f_creates_recaps_of_your_feed__0737": {
+    "message": "お使いのコンピューターでフィードの記事を少量ずつ振り返ります。"
+  },
+  "f_edit_feeds_in_settings_6774": {
+    "message": "設定でフィードを編集"
+  },
+  "f_every_stored_day_has_a_compl_5d0c": {
+    "message": "保存されているすべての日の振り返りが完成しています。"
+  },
+  "f_sources_rename_mute_713c": {
+    "message": "配信元 · 名前変更 · ミュート"
+  },
+  "f_day_recaps_written_71f0": {
+    "message": "{b}日分の振り返りを作成",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_recapped_4012": {
+    "message": "{b}日分の振り返りが完了",
+    "description": "Placeholders: {b} (keep as is)"
+  },
+  "f_days_to_recap_ai_requests_f01d": {
+    "message": "残り{b}日 · AIリクエスト{n}件",
+    "description": "Placeholders: {b} {n} (keep as is)"
+  },
+  "f_manage_feeds_in_settings_a66f": {
+    "message": "⚙️  設定でフィードを管理  ›"
+  },
+  "f_main_output_prompt_c085": {
+    "message": "メイン出力の指示"
+  },
+  "f_subscriptions_opml_697e": {
+    "message": "購読 · OPML"
+  },
+  "f_backup_delete_5d95": {
+    "message": "バックアップ · 削除"
+  },
+  "f_no_articles_yet_start_analyz_01e3": {
+    "message": "まだ記事がありません — ページを主な出力すると分析が表示されます！📖"
+  },
+  "f_with_results_f383": {
+    "message": "主な出力あり"
+  },
+  "f_analyze_a663": {
+    "message": "✨ 分析"
+  },
+  "f_analyzing_8bc5": {
+    "message": "⏳ 主な出力中…"
+  },
+  "f_saved_without_an_ai_main_out_a5cb": {
+    "message": "AI 主な出力なしで保存しました。ページを開いて ✨ 主な出力 をタップすると追加できます。"
+  },
+  "f_no_main_output_available_2d4f": {
+    "message": "利用できる主な出力がありません"
+  },
+  "f_main_output_1742": {
+    "message": "🧙 AI主な出力"
+  },
+  "f_sign_in_to_arguments_1d5c": {
+    "message": "Arguments にサインイン"
+  },
+  "f_free_cloud_models_and_your_r_153c": {
+    "message": "無料のクラウドモデルと主な出力をすべてのデバイスで。スキップして自分のAPIキーを使うこともできます。"
+  },
+  "f_writing_a_word_main_output_82b9": {
+    "message": "{n} 語の主な出力を作成中…"
+  },
+  "f_analyzed_7135": {
+    "message": "主な出力済み"
+  },
+  "f_waiting_for_the_running_main_f4e2": {
+    "message": "実行中の主な出力を待っています。クリックで待機から削除"
+  },
+  "f_queued_it_will_start_when_th_31fd": {
+    "message": "待機中。現在の主な出力が終わると開始します"
+  },
+  "f_analyzing_in_the_background__dd2a": {
+    "message": "バックグラウンドで主な出力中。主な出力と履歴に表示されます"
+  },
+  "f_new_posts_land_here_skim_ana_6e81": {
+    "message": "新着はここに。流し読みして主な出力、残りは消化"
+  },
+  "f_analyzed_f2f6": {
+    "message": "✓ 主な出力済み"
+  },
+  "f_you_have_a_saved_main_output_fc8e": {
+    "message": "このページの保存済み主な出力あり"
+  },
+  "f_view_main_output_090b": {
+    "message": "📄 主な出力を見る"
+  },
+  "f_not_your_active_main_output__ce26": {
+    "message": "有効な主な出力モデルではありません"
+  },
+  "f_runs_on_your_own_machine_wit_290a": {
+    "message": "主な出力用に別のモデルが有効でも、Ollama を使ってあなた自身のマシンで動作し、トークンを消費しません。このパネルは開いたままにしてください。閉じると処理が一時停止し、再開すると中断したところから続きます。処理されるのは保存されているアイテムのみです（「アイテムの保存期間」を参照）。今日の主な出力は開いたときに作成されます。"
+  },
+  "f_items_you_open_or_analyze_le_4138": {
+    "message": "開く・主な出力した記事は未読から消えます"
+  },
+  "f_auto_analyze_favorites_a662": {
+    "message": "✨ お気に入りを自動主な出力"
+  },
+  "f_analyze_on_a_feed_item_follo_6202": {
+    "message": "フィード記事の主な出力は主な出力画面で選んだモード（初期値は拡張機能）に従います。お気に入りは常に保持されます。"
+  },
+  "f_speaks_the_title_and_site_fi_7a35": {
+    "message": "まずタイトルとサイトを読み上げ、モデルの生成中に主な出力を1文ずつ読み上げます。"
+  },
+  "f_voice_it_follows_the_main_ou_7f8f": {
+    "message": "音声: {voice} · {lang}。主な出力の言語に従い、タイトルとサイトはアプリの言語で読み上げます。"
+  },
+  "f_main_output_length_in_words_bc0f": {
+    "message": "主な出力の長さ（語数）"
+  },
+  "f_attach_a_pdf_to_analyze_388e": {
+    "message": "主な出力するPDFを添付"
+  },
+  "f_no_recent_results_527f": {
+    "message": "最近の主な出力はありません"
+  },
+  "f_analyze_a_page_to_see_it_her_a8ca": {
+    "message": "ページを主な出力するとここに表示されます"
+  },
+  "f_analyze_this_page_7fec": {
+    "message": "このページを主な出力"
+  },
+  "f_writing_the_main_output_cff0": {
+    "message": "主な出力を作成中…"
+  },
+  "f_analyze_9f73": {
+    "message": "分析"
+  },
+  "f_starts_when_the_current_main_1a7c": {
+    "message": "現在の主な出力が終わると開始"
+  },
+  "f_pick_a_way_to_run_your_resul_269b": {
+    "message": "主な出力の実行方法を選んでください。設定でいつでも変更できます。"
+  },
+  "f_tip_press_on_any_page_to_ana_0f1e": {
+    "message": "ヒント：どのページでも {key} を押すと主な出力できます。"
+  },
+  "f_main_output_c815": {
+    "message": "主な出力"
+  },
+  "f_the_voice_follows_the_langua_d773": {
+    "message": "音声はテキストの言語に従います。ドイツ語記事の英語主な出力は英語で、原文はドイツ語で読み上げられます。"
+  },
+  "f_enjoying_arguments_991d": {
+    "message": "Arguments を気に入っていただけましたか？"
+  },
+  "f_only_analyzed_articles_can_b_dfaf": {
+    "message": "主な出力済みの記事のみ送信できます"
+  },
+  "f_select_results_cac7": {
+    "message": "主な出力を選択"
+  },
+  "f_send_results_0ecd": {
+    "message": "主な出力を送信"
+  },
+  "f_send_main_output_fc91": {
+    "message": "{n}件の主な出力を送信"
+  },
+  "f_send_results_f1a9": {
+    "message": "{n}件の主な出力を送信"
+  },
+  "f_main_output_only_7011": {
+    "message": "主な出力のみ"
+  },
+  "f_main_output_full_article_b1cb": {
+    "message": "主な出力＋記事全文"
+  },
+  "f_main_output_db19": {
+    "message": "{n}件の主な出力"
+  },
+  "f_results_eb81": {
+    "message": "{n}件の主な出力"
+  },
+  "f_mark_main_output_as_bf44": {
+    "message": "{n}件の主な出力をマーク："
+  },
+  "f_mark_results_as_6bf0": {
+    "message": "{n}件の主な出力をマーク："
+  },
+  "f_digest_of_results_776c": {
+    "message": "{n}件の主な出力のダイジェスト"
+  },
+  "f_select_results_to_send_9cf2": {
+    "message": "送信する主な出力を選択"
+  },
+  "f_analyzing_cdca": {
+    "message": "主な出力中..."
+  },
+  "f_no_main_output_returned_3af7": {
+    "message": "主な出力が返されませんでした。"
+  },
+  "f_results_archive_73d9": {
+    "message": "主な出力とアーカイブ"
+  },
+  "f_resets_preferences_prompts_a_9142": {
+    "message": "このデバイスの設定、プロンプト、API キー、サインイン、送信先をリセットします。主な出力、ハイライト、フィードは、選択しない限り残ります。拡張機能が再読み込みされます。"
+  },
+  "f_permanently_removes_your_res_cd53": {
+    "message": "このデバイスから主な出力、アーカイブ、ハイライトを完全に削除します。設定とフィードは、選択しない限り残ります。元に戻せません。"
+  },
+  "f_invalid_backup_file_please_s_0b0d": {
+    "message": "無効なバックアップファイルです。Argumentsのエクスポートファイルを選択してください。"
+  },
+  "f_auto_analyze_favorites_3012": {
+    "message": "お気に入りを自動主な出力"
+  },
+  "f_highlight_and_main_output_pr_49e7": {
+    "message": "ハイライトと主な出力のプロンプト"
+  },
+  "f_analyze_send_e8ec": {
+    "message": "主な出力 / 送信"
+  },
+  "f_new_main_output_5b1f": {
+    "message": "新しい主な出力"
+  },
+  "f_output_language_7616": {
+    "message": "出力言語"
+  },
+  "f_output_length_cc00": {
+    "message": "出力の長さ"
+  },
+  "f_analysis_display_a211": {
+    "message": "分析の表示"
+  },
+  "f_automatic_light_blue_quote_h_cb6e": {
+    "message": "主な出力から引用を水色で自動ハイライト"
+  },
+  "f_for_unlimited_zero_config_re_80ba": {
+    "message": "無制限で設定不要の主な出力が使えます。"
+  },
+  "f_the_quick_brown_fox_jumps_ov_22b0": {
+    "message": "The quick brown fox jumps over the lazy dog。主な出力にはこのサイズと行間が使われます。"
+  },
+  "f_permanently_removes_your_res_12e9": {
+    "message": "主な出力、アーカイブ、ハイライトを完全に削除します。設定とフィードは残ります。先にバックアップを書き出してください。"
+  },
+  "f_removes_everything_this_exte_6b82": {
+    "message": "この拡張機能がこのデバイスに保存しているものをすべて削除します（主な出力、ハイライト、フィード、キー、設定）。先にバックアップを書き出してください。"
+  },
+  "f_resets_preferences_prompts_a_cfb1": {
+    "message": "このデバイスの設定、プロンプト、API キー、サインイン、送信先をリセットします。主な出力、ハイライト、フィードは残ります。"
+  },
+  "f_generate_a_bookmarklet_that__658d": {
+    "message": "どのブラウザでもページを分析できるブックマークレットを生成します。拡張機能が動作しないiOS/Androidでも利用できます。byphil Cloudのログインを使用します。"
   }
 }

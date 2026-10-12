@@ -1,4 +1,4 @@
-<!-- popup.html — AI Summary Helper
+<!-- popup.html — Arguments
      Architecture: header (sticky) → screens (natural flow) → bottom-nav (fixed)
      Screens: feeds | main | history (bottom nav) + settings (header button) — toggled via display:none/block
 -->
@@ -6,7 +6,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>AI Summary Helper</title>
+    <title>Arguments</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -88,8 +88,8 @@
     <!-- ── Header ──────────────────────────────────────────────────────── -->
     <div class="header">
       <div class="logoheader">
-        <img src="icons/icon.svg" alt="AI Summary Helper" width="32" height="32" />
-        <h2>AI Summary Helper</h2>
+        <img src="icons/icon.svg" alt="Arguments" width="32" height="32" />
+        <h2>Arguments</h2>
       </div>
       <div class="header-buttons">
         <button id="popoutButton" class="button-icon" title="Open in sidebar" aria-label="Open in sidebar" data-i18n-title="f_open_in_sidebar_648c"><span class="ic"><svg class="icon icon-arrow-up-right icon--lg" aria-hidden="true" focusable="false"><use href="#i-arrow-up-right"/></svg><span class="ic-e" aria-hidden="true">↗️</span></span></button>
@@ -109,8 +109,8 @@
           <div class="onboarding-options" role="group" id="onboardingOptions">
             <!-- 1 · Free cloud models (email + 4-digit code) -->
             <section class="onboarding-option" id="onboardingOptCloud">
-              <h3 id="onboardingTitle">Sign in to AI Summary Helper</h3>
-              <p id="onboardingLead">Free cloud models and your summaries on every device. Or skip this and use your own API key.</p>
+              <h3 id="onboardingTitle">Sign in to Arguments</h3>
+              <p id="onboardingLead">Free cloud models and your results on every device. Or skip this and use your own API key.</p>
               <div class="onboarding-auth-box auth-form">
                 <div id="onboardingEmailStage">
                   <input type="email" id="onboardingEmail" placeholder="name@example.com" autocomplete="email" />
@@ -152,8 +152,8 @@
               <img src="icons/icon.svg" alt="" width="24" height="24" />
             </div>
             <div class="recent-info">
-              <span class="recent-title" id="recentTitle" data-i18n="noRecentSummaries">No recent summaries</span>
-              <span class="recent-meta" id="recentMeta" data-i18n="summarizePageToSee">Summarize a page to see it here</span>
+              <span class="recent-title" id="recentTitle" data-i18n="noRecentSummaries">No recent results</span>
+              <span class="recent-meta" id="recentMeta" data-i18n="summarizePageToSee">Analyze a page to see it here</span>
             </div>
           </div>
         </div>
@@ -167,14 +167,14 @@
 
               <!-- Expandable panels (pop up above the chips) -->
               <div id="panelLanguage" class="chip-panel popup-panel" style="display:none">
-                <label class="chip-panel-label" data-i18n="f_summary_language_a8df">Summary Language</label>
+                <label class="chip-panel-label" data-i18n="f_output_language_7616">Output language</label>
                 <div id="languageTagGrid" class="tag-grid"></div>
                 <input type="search" id="languageSearch" class="chip-panel-search" placeholder="Search languages…" aria-label="Search languages" autocomplete="off" / data-i18n-placeholder="f_search_languages_1344">
                 <select id="languageSelect" style="display:none"></select>
               </div>
               <div id="panelLength" class="chip-panel popup-panel" style="display:none">
                 <div class="chip-panel-header">
-                  <label for="summaryLength" class="chip-panel-label" data-i18n="f_summary_length_2b31">Summary Length</label>
+                  <label for="summaryLength" class="chip-panel-label" data-i18n="f_output_length_cc00">Output length</label>
                   <div id="lengthModeGrid" class="tag-grid length-mode"></div>
                 </div>
                 <div id="lengthAutoBox">
@@ -194,7 +194,7 @@
                 </div>
               </div>
               <div id="panelMode" class="chip-panel popup-panel" style="display:none">
-                <label class="chip-panel-label" data-i18n="f_summary_mode_5ce6">Summary Mode</label>
+                <label class="chip-panel-label" data-i18n="f_analysis_display_a211">Analysis display</label>
                 <div class="mode-tabs">
                   <button id="modeExtension" class="mode-tab active" data-mode="extension">
                     <span class="mode-tab-title" data-i18n="f_extension_723a">Extension</span>
@@ -260,7 +260,7 @@
 
               <div class="split-btn">
               <button id="fetchSummary" class="button-primary fillAvailable">
-              <span class="ic"><svg class="icon icon-sparkles" aria-hidden="true" focusable="false"><use href="#i-sparkles"/></svg><span class="ic-e" aria-hidden="true">✨</span></span> <span data-i18n="navSummarize">Summarize</span>
+              <span class="ic"><svg class="icon icon-sparkles" aria-hidden="true" focusable="false"><use href="#i-sparkles"/></svg><span class="ic-e" aria-hidden="true">✨</span></span> <span data-i18n="navSummarize">Analyze</span>
               <span id="spinner" class="spinner" style="display:none"></span>
             </button>
             <button id="saveMenuBtn" type="button" class="button-primary save-split" aria-haspopup="menu" aria-expanded="false" title="More ways to save" aria-label="More ways to save">
@@ -285,11 +285,9 @@
                    toggles whether the search box filters the graph's node set down
                    to matches ("View: Filtered") or keeps every node and just
                    highlights matches ("View: Highlighted"). -->
-              <button class="graph-scope-toggle" id="graphScopeInlineToggle" type="button" title="Filtering graph to matches only" aria-label="Switch graph search to highlight mode" style="display:none">View: Filtered</button>
             </div>
           </div>
-          <button id="selectModeBtn" class="button-secondary action-btn" type="button" aria-pressed="false" title="Select summaries to send"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-square-check-big" aria-hidden="true" focusable="false"><use href="#i-square-check-big"/></svg><span class="ic-e" aria-hidden="true">☑️</span></span></span><span class="btn-label">Select</span></button>
-          <button id="graphToggleBtn" class="button-secondary action-btn" type="button" title="View graph" aria-label="View graph" data-i18n-title="viewGraph"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-network" aria-hidden="true" focusable="false"><use href="#i-network"/></svg><span class="ic-e" aria-hidden="true">🕸️</span></span></span><span class="btn-label" data-i18n="historyGraph">Graph</span></button>
+          <button id="selectModeBtn" class="button-secondary action-btn" type="button" aria-pressed="false" title="Select results to send"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-square-check-big" aria-hidden="true" focusable="false"><use href="#i-square-check-big"/></svg><span class="ic-e" aria-hidden="true">☑️</span></span></span><span class="btn-label">Select</span></button>
           <button id="reportToggleBtn" class="button-secondary action-btn" type="button" title="View analytics report" aria-label="View analytics report" data-i18n-title="viewAnalytics"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-chart-column" aria-hidden="true" focusable="false"><use href="#i-chart-column"/></svg><span class="ic-e" aria-hidden="true">📊</span></span></span><span class="btn-label" data-i18n="historyReport">Analytics</span></button>
         </div>
         </div>
@@ -299,13 +297,11 @@
           <button id="detailListenBtn" class="button-secondary action-btn" type="button" title="Read aloud" aria-label="Read aloud" hidden><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-volume-2" aria-hidden="true" focusable="false"><use href="#i-volume-2"/></svg><span class="ic-e" aria-hidden="true">🔊</span></span></span></button>
           <button id="detailMoreBtn" class="button-secondary action-btn" type="button" title="More" aria-label="More" aria-haspopup="menu" aria-expanded="false" data-i18n-title="f_more_d900"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-ellipsis" aria-hidden="true" focusable="false"><use href="#i-ellipsis"/></svg><span class="ic-e" aria-hidden="true">⋯</span></span></span></button>
           <div id="detailMoreMenu" class="more-menu" role="menu" hidden>
-            <button id="detailGraphToggleBtn" class="button-secondary" type="button" role="menuitem" title="View graph" aria-label="View graph" data-i18n-title="viewGraph"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-network" aria-hidden="true" focusable="false"><use href="#i-network"/></svg><span class="ic-e" aria-hidden="true">🕸️</span></span></span><span class="btn-label" data-i18n="historyGraph">Graph</span></button>
             <button id="detailReportToggleBtn" class="button-secondary" type="button" role="menuitem" title="View analytics report" aria-label="View analytics report" data-i18n-title="viewAnalytics"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-chart-column" aria-hidden="true" focusable="false"><use href="#i-chart-column"/></svg><span class="ic-e" aria-hidden="true">📊</span></span></span><span class="btn-label" data-i18n="historyReport">Analytics</span></button>
             <button id="detailDeleteBtn" class="button-secondary delete-top-button" type="button" role="menuitem" title="Delete Article" aria-label="Delete Article" data-i18n-title="f_delete_article_14d4"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-trash-2" aria-hidden="true" focusable="false"><use href="#i-trash-2"/></svg><span class="ic-e" aria-hidden="true">🗑️</span></span></span><span class="btn-label" data-i18n="f_delete_ea6a">Delete</span></button>
           </div>
         </div>
         <ul id="articleList"></ul>
-        <div id="graphContainer" style="display:none"></div>
         <div id="reportContainer" style="display:none"></div>
         <div id="articleDetail" style="display:none">
           <div id="articleDetailContent"></div>
@@ -334,16 +330,16 @@
   <span class="settings-row-text"><span class="settings-row-title" data-i18n="settingsModels">Models &amp; API</span><span class="settings-row-sub" data-sub="models">Connection · provider · key</span></span>
   <span class="settings-row-chev"><span class="ic"><svg class="icon icon-chevron-right" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg><span class="ic-e" aria-hidden="true">›</span></span></span>
 </button>
-<p class="settings-caption" data-i18n="settingsCapSummarizing">SUMMARIZING</p>
+<p class="settings-caption" data-i18n="settingsCapSummarizing">ANALYSIS</p>
 <button type="button" class="settings-row" data-panel="prompts">
   <span class="settings-row-icon"><span class="ic"><svg class="icon icon-message-square icon--lg" aria-hidden="true" focusable="false"><use href="#i-message-square"/></svg><span class="ic-e" aria-hidden="true">💬</span></span></span>
-  <span class="settings-row-text"><span class="settings-row-title" data-i18n="settingsPrompts">Prompts</span><span class="settings-row-sub" data-sub="prompts" data-i18n="pagePromptsHint">Highlight and summary prompts</span></span>
+  <span class="settings-row-text"><span class="settings-row-title" data-i18n="settingsPrompts">Prompts</span><span class="settings-row-sub" data-sub="prompts" data-i18n="pagePromptsHint">Highlight and main output prompts</span></span>
   <span class="settings-row-chev"><span class="ic"><svg class="icon icon-chevron-right" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg><span class="ic-e" aria-hidden="true">›</span></span></span>
 </button>
 <p class="settings-caption" data-i18n="settingsCapFeeds">FEEDS</p>
 <button type="button" class="settings-row" data-panel="feeds">
   <span class="settings-row-icon"><span class="ic"><svg class="icon icon-newspaper icon--lg" aria-hidden="true" focusable="false"><use href="#i-newspaper"/></svg><span class="ic-e" aria-hidden="true">📰</span></span></span>
-  <span class="settings-row-text"><span class="settings-row-title" data-i18n="f_sources_73d1">Sources</span><span class="settings-row-sub" data-sub="feeds" data-i18n="f_subscriptions_tags_opml_8892">Subscriptions · tags · OPML</span></span>
+  <span class="settings-row-text"><span class="settings-row-title" data-i18n="f_sources_73d1">Sources</span><span class="settings-row-sub" data-sub="feeds" data-i18n="f_subscriptions_opml_697e">Subscriptions · OPML</span></span>
   <span class="settings-row-chev"><span class="ic"><svg class="icon icon-chevron-right" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg><span class="ic-e" aria-hidden="true">›</span></span></span>
 </button>
 <button type="button" class="settings-row" data-panel="feedprefs">
@@ -380,7 +376,7 @@
 </button>
 <button type="button" class="settings-row" data-panel="library">
   <span class="settings-row-icon"><span class="ic"><svg class="icon icon-folders icon--lg" aria-hidden="true" focusable="false"><use href="#i-folders"/></svg><span class="ic-e" aria-hidden="true">🗂️</span></span></span>
-  <span class="settings-row-text"><span class="settings-row-title" data-i18n="settingsLibrary">Library &amp; Data</span><span class="settings-row-sub" data-sub="library" data-i18n="f_backup_tags_delete_5af9">Backup · tags · delete</span></span>
+  <span class="settings-row-text"><span class="settings-row-title" data-i18n="settingsLibrary">Library &amp; Data</span><span class="settings-row-sub" data-sub="library" data-i18n="f_backup_delete_5d95">Backup · delete</span></span>
   <span class="settings-row-chev"><span class="ic"><svg class="icon icon-chevron-right" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg><span class="ic-e" aria-hidden="true">›</span></span></span>
 </button>
 <button type="button" class="settings-row" data-panel="about">
@@ -435,7 +431,7 @@
                             <input type="password" id="licenseKey" placeholder="aish_live_...">
                             <button type="button" id="verifyLicenseButton" class="button-secondary btn-inline" data-i18n="f_activate_0190">Activate</button>
                         </div>
-                        <p class="input-caption"><span data-i18n="f_don_t_have_a_key_a26a">Don't have a key?</span> <a href="https://apps.byphil.eu/" target="_blank"><span data-i18n="f_upgrade_to_pro_pass_b708">Upgrade to Pro Pass</span></a> <span data-i18n="f_for_unlimited_zero_config_su_82c0">for unlimited, zero-config summaries.</span></p>
+                        <p class="input-caption"><span data-i18n="f_don_t_have_a_key_a26a">Don't have a key?</span> <a href="https://apps.byphil.eu/" target="_blank"><span data-i18n="f_upgrade_to_pro_pass_b708">Upgrade to Pro Pass</span></a> <span data-i18n="f_for_unlimited_zero_config_re_80ba">for unlimited, zero-config results.</span></p>
                     </div>
 </section>
 <section class="settings-panel" id="settingsPanel-models" data-panel="models" hidden>
@@ -443,7 +439,7 @@
     <button type="button" class="settings-back" data-back data-i18n="settingsBack">‹ Settings</button>
     <h2><span data-i18n="settingsModels">Models &amp; API</span></h2>
   </div>
-                <p data-i18n="modelDesc">Choose the LLM model to generate your summaries.</p>
+                <p data-i18n="modelDesc">Choose the LLM model to generate your results.</p>
                 <div class="setting-group mb-4">
                     <label class="type-badge" data-i18n="f_connection_path_790c">Connection Path</label>
                     <div class="segmented-control">
@@ -523,7 +519,7 @@
                 <div class="setting-group flex justify-between align-center mb-3">
                   <div class="setting-text">
                     <label class="setting-label" for="aiHighlightingToggle" data-i18n="f_ai_ghost_highlighting_6c00"><span class="ic"><svg class="icon icon-sparkles" aria-hidden="true" focusable="false"><use href="#i-sparkles"/></svg><span class="ic-e" aria-hidden="true">✨</span></span> AI Ghost Highlighting</label>
-                    <p class="setting-desc" data-i18n="f_automatic_light_blue_quote_h_419c">Automatic light-blue quote highlights from summaries</p>
+                    <p class="setting-desc" data-i18n="f_automatic_light_blue_quote_h_cb6e">Automatic light-blue quote highlights from results</p>
                   </div>
                   <label class="switch setting-switch">
                     <input type="checkbox" id="aiHighlightingToggle" />
@@ -588,13 +584,13 @@
                 </div>
                 <div class="setting-group mb-3 setting-divided">
                   <h4 class="setting-subhead" data-i18n="f_bookmarklet_generator_23fa"><span class="ic"><svg class="icon icon-bookmark" aria-hidden="true" focusable="false"><use href="#i-bookmark"/></svg><span class="ic-e" aria-hidden="true">🔖</span></span> Bookmarklet Generator</h4>
-                  <p class="setting-note" data-i18n="f_generate_a_bookmarklet_that__081e">
-                    Generate a bookmarklet that summarizes any page in any browser — including iOS/Android where the extension can't run. It uses your byphil Cloud login.
+                  <p class="setting-note" data-i18n="f_generate_a_bookmarklet_that__658d">
+                    Generate a bookmarklet that analyzes any page in any browser — including iOS/Android where the extension can't run. It uses your byphil Cloud login.
                   </p>
                   <button type="button" id="generateBookmarkletBtn" class="button-secondary w-full" data-i18n="f_generate_bookmarklet_280f"><span class="ic"><svg class="icon icon-sparkles" aria-hidden="true" focusable="false"><use href="#i-sparkles"/></svg><span class="ic-e" aria-hidden="true">✨</span></span> Generate Bookmarklet</button>
                   <div class="bookmarklet-result" id="bookmarkletResultContainer" style="display:none">
                     <p class="bookmarklet-drag-hint"><span data-i18n="f_drag_this_link_to_your_bookm_d09a">Drag this link to your bookmarks bar 🔖</span> <span class="fw-normal" data-i18n="f_on_ios_hold_to_drag_for_2_se_7fba">(on iOS, hold to drag for 2 seconds)</span></p>
-                    <a class="bookmarklet-link" id="bookmarkletDragLink" href="#" draggable="true"><span class="ic"><svg class="icon icon-sparkles" aria-hidden="true" focusable="false"><use href="#i-sparkles"/></svg><span class="ic-e" aria-hidden="true">✨</span></span> AI Summary</a>
+                    <a class="bookmarklet-link" id="bookmarkletDragLink" href="#" draggable="true"><span class="ic"><svg class="icon icon-sparkles" aria-hidden="true" focusable="false"><use href="#i-sparkles"/></svg><span class="ic-e" aria-hidden="true">✨</span></span> Main output</a>
                     <p class="bookmarklet-warning" data-i18n="f_keep_this_private_this_bookm_3463"><span class="ic"><svg class="icon icon-lock" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg><span class="ic-e" aria-hidden="true">🔒</span></span> Keep this private: This bookmarklet contains your personal cloud token. Do not share it with others. If your token expires, simply come back here to generate a new one.</p>
                   </div>
                 </div>
@@ -616,13 +612,13 @@
                 </div>
                 <div class="a11y-block">
                   <div class="setting-group flex justify-between align-center">
-                    <label class="setting-label-inline" for="notifyWhenDoneToggle">Notify when background summaries finish</label>
+                    <label class="setting-label-inline" for="notifyWhenDoneToggle">Notify when background results finish</label>
                     <label class="switch">
                       <input type="checkbox" id="notifyWhenDoneToggle" />
                       <span class="slider-toggle"></span>
                     </label>
                   </div>
-                  <p class="a11y-hint">The toolbar icon shows how many summaries are running or waiting. A notification appears when the queue is done.</p>
+                  <p class="a11y-hint">The toolbar icon shows how many results are running or waiting. A notification appears when the queue is done.</p>
                 </div>
                 <div class="a11y-block">
                   <div class="setting-group flex justify-between align-center">
@@ -694,7 +690,7 @@
                       <label class="switch"><input type="checkbox" id="readableFontToggle" /><span class="slider-toggle"></span></label>
                     </div>
                     <p class="a11y-hint" data-i18n="f_atkinson_hyperlegible_design_954e">Atkinson Hyperlegible, designed for low vision. Latin scripts only.</p>
-                    <div class="a11y-preview" id="a11yPreview" data-i18n="f_the_quick_brown_fox_jumps_ov_fd42">The quick brown fox jumps over the lazy dog. Summaries use this size and spacing.</div>
+                    <div class="a11y-preview" id="a11yPreview" data-i18n="f_the_quick_brown_fox_jumps_ov_22b0">The quick brown fox jumps over the lazy dog. Results use this size and spacing.</div>
                   </div>
                   <div class="a11y-block">
                     <h3 data-i18n="f_motion_layout_e4f1">Motion & layout</h3>
@@ -723,18 +719,6 @@
   <div class="settings-card local-intelligence">
     <div class="settings-card-head"><h3 data-i18n="f_on_device_tools_d85a"><span class="ic"><svg class="icon icon-brain" aria-hidden="true" focusable="false"><use href="#i-brain"/></svg><span class="ic-e" aria-hidden="true">🧠</span></span> On-device tools</h3><p data-i18n="f_runs_entirely_in_your_browse_6c55">Runs entirely in your browser — no data leaves it.</p></div>
     <div class="settings-action-row">
-      <div class="settings-action-text"><strong data-i18n="f_clean_up_merge_tags_096e">Clean up & merge tags</strong><span data-i18n="f_merges_near_duplicate_tags_s_343f">Merges near-duplicate tags such as “ML” and “Machine Learning” across your archive.</span></div>
-      <button type="button" id="cleanupTagsButton" class="button-secondary btn-sm" data-i18n="f_clean_up_4346"><span class="ic"><svg class="icon icon-eraser" aria-hidden="true" focusable="false"><use href="#i-eraser"/></svg><span class="ic-e" aria-hidden="true">🧹</span></span> Clean up</button>
-    </div>
-    <p id="cleanupTagsResult" class="settings-card-note" style="display:none"></p>
-    <div class="settings-divider"></div>
-    <div class="settings-action-row">
-      <div class="settings-action-text"><strong id="nameTagsTitle"></strong><span id="nameTagsHint"></span></div>
-      <button type="button" id="nameTagsButton" class="button-secondary btn-sm">Name tags</button>
-    </div>
-    <p id="nameTagsResult" class="settings-card-note" style="display:none" aria-live="polite"></p>
-    <div class="settings-divider"></div>
-    <div class="settings-action-row">
       <div class="settings-action-text"><strong id="libraryToolTitle"></strong><span id="libraryToolHint"></span></div>
       <button type="button" id="libraryToolButton" class="button-secondary btn-sm"></button>
     </div>
@@ -742,17 +726,17 @@
   <div class="settings-card settings-card--danger danger-zone">
     <div class="settings-card-head"><h3 data-i18n="f_danger_zone_01e3"><span class="ic"><svg class="icon icon-circle-alert" aria-hidden="true" focusable="false"><use href="#i-circle-alert"/></svg><span class="ic-e" aria-hidden="true">⚠️</span></span> Danger zone</h3></div>
     <div class="settings-action-row">
-      <div class="settings-action-text"><strong data-i18n="f_delete_settings_448b">Delete settings</strong><span data-i18n="f_resets_preferences_prompts_a_aab7">Resets preferences, prompts, API keys, sign-in and send targets on this device. Summaries, highlights and feeds stay.</span></div>
+      <div class="settings-action-text"><strong data-i18n="f_delete_settings_448b">Delete settings</strong><span data-i18n="f_resets_preferences_prompts_a_cfb1">Resets preferences, prompts, API keys, sign-in and send targets on this device. Results, highlights and feeds stay.</span></div>
       <button type="button" id="deleteSettingsButton" class="button-danger-outline btn-sm" data-i18n="f_delete_settings_7c57">Delete settings…</button>
     </div>
     <div class="settings-divider"></div>
     <div class="settings-action-row">
-      <div class="settings-action-text"><strong data-i18n="f_delete_history_09b6">Delete history</strong><span data-i18n="f_permanently_removes_your_sum_2de7">Permanently removes your summaries, the archive and your highlights. Settings and feeds stay. Export a backup first.</span></div>
+      <div class="settings-action-text"><strong data-i18n="f_delete_history_09b6">Delete history</strong><span data-i18n="f_permanently_removes_your_res_12e9">Permanently removes your results, the archive and your highlights. Settings and feeds stay. Export a backup first.</span></div>
       <button type="button" id="deleteHistoryButton" class="button-danger-outline btn-sm" data-i18n="f_delete_history_6db0">Delete history…</button>
     </div>
     <div class="settings-divider"></div>
     <div class="settings-action-row">
-      <div class="settings-action-text"><strong data-i18n="f_delete_all_data_2d9f">Delete all data</strong><span data-i18n="f_removes_everything_this_exte_b9a8">Removes everything this extension stores on this device: summaries, highlights, feeds, keys and settings. Export a backup first.</span></div>
+      <div class="settings-action-text"><strong data-i18n="f_delete_all_data_2d9f">Delete all data</strong><span data-i18n="f_removes_everything_this_exte_6b82">Removes everything this extension stores on this device: results, highlights, feeds, keys and settings. Export a backup first.</span></div>
       <button type="button" id="deleteAllButton" class="button-danger-outline btn-sm" data-i18n="f_delete_all_data_9a3b">Delete all data…</button>
     </div>
   </div>
@@ -772,13 +756,13 @@
           <p>
             <span data-i18n="f_open_source_software_by_0ec8">Open Source software by</span>
             <a href="https://link.philwornath.com/?ref=aish" target="_blank">Phil Wornath</a>
-            <br />AI Summary Helper v<span id="versionNumber">2.2.4</span> <span data-i18n="f_feel_free_to_c446">— Feel free to</span>
-            <a href="https://github.com/philffm/ai-summary-helper" target="_blank" data-i18n="f_contribute_on_github_5ab8">contribute on GitHub 💙</a>
+            <br />Arguments v<span id="versionNumber">2.2.4</span> <span data-i18n="f_feel_free_to_c446">— Feel free to</span>
+            <a href="https://github.com/tabokie/Arguments" target="_blank" data-i18n="f_contribute_on_github_5ab8">contribute on GitHub 💙</a>
           </p>
           <p class="about-links">
             <a href="https://ai-summary-helper.byphil.eu/privacy.html" target="_blank" rel="noopener" id="aboutPrivacyLink" data-i18n="f_privacy_policy_16ff">Privacy policy</a> ·
-            <a href="https://github.com/philffm/ai-summary-helper/blob/main/CHANGELOG.md" target="_blank" rel="noopener" data-i18n="f_changelog_8779">Changelog</a> ·
-            <a href="https://github.com/philffm/ai-summary-helper/blob/main/SECURITY.md" target="_blank" rel="noopener" data-i18n="f_security_policy_699b">Security policy</a>
+            <a href="https://github.com/tabokie/Arguments/blob/main/CHANGELOG.md" target="_blank" rel="noopener" data-i18n="f_changelog_8779">Changelog</a> ·
+            <a href="https://github.com/tabokie/Arguments/blob/main/SECURITY.md" target="_blank" rel="noopener" data-i18n="f_security_policy_699b">Security policy</a>
           </p>
 </section>
         </form>
@@ -789,7 +773,6 @@
         <div id="feedControls" class="topbar">
           <div class="feed-toolbar" id="feedToolbar">
             <input type="text" id="feedSearch" class="feed-search" placeholder="Search feeds…" data-i18n-placeholder="f_search_feeds_2a1e" autocomplete="off" spellcheck="false" />
-            <button type="button" id="feedGraphBtn" class="button-secondary action-btn" title="View graph" aria-label="View graph" aria-pressed="false" data-i18n-title="viewGraph"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-network" aria-hidden="true" focusable="false"><use href="#i-network"/></svg><span class="ic-e" aria-hidden="true">🕸️</span></span></span><span class="btn-label" data-i18n="historyGraph">Graph</span></button>
             <button type="button" id="feedInsightsBtn" class="button-secondary action-btn" title="View analytics report" aria-label="View analytics report" aria-pressed="false" data-i18n-title="viewAnalytics"><span class="btn-icon" aria-hidden="true"><span class="ic"><svg class="icon icon-chart-column" aria-hidden="true" focusable="false"><use href="#i-chart-column"/></svg><span class="ic-e" aria-hidden="true">📊</span></span></span><span class="btn-label" data-i18n="historyReport">Analytics</span></button>
           </div>
           <div class="feed-controlbar">
@@ -806,9 +789,8 @@
             <button type="button" class="pill active" data-status="all" data-i18n="f_all_e364">All</button>
             <button type="button" class="pill" data-status="unread" data-i18n="f_unread_c982">Unread</button>
             <button type="button" class="pill" data-status="fav" title="Favorites" aria-label="Favorites" data-i18n-title="f_favorites_53ba"><span class="ic"><svg class="icon icon-star" aria-hidden="true" focusable="false"><use href="#i-star"/></svg><span class="ic-e ic-e-pair" aria-hidden="true"><span class="e-off">☆</span><span class="e-on">★</span></span></span></button>
-            <button type="button" class="pill" data-status="sum" title="Summarized" aria-label="Summarized" data-i18n-title="f_summarized_415a"><span class="ic"><svg class="icon icon-check" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span class="ic-e" aria-hidden="true">✓</span></span></button>
+            <button type="button" class="pill" data-status="sum" title="Analyzed" aria-label="Analyzed" data-i18n-title="f_analyzed_7135"><span class="ic"><svg class="icon icon-check" aria-hidden="true" focusable="false"><use href="#i-check"/></svg><span class="ic-e" aria-hidden="true">✓</span></span></button>
             <button type="button" class="pill" data-status="audio" title="Podcasts" aria-label="Podcasts" data-i18n-title="f_podcasts_7c90"><span class="ic"><svg class="icon icon-headphones" aria-hidden="true" focusable="false"><use href="#i-headphones"/></svg><span class="ic-e" aria-hidden="true">🎧</span></span></button>
-            <button type="button" class="pill" id="feedMoodChip" aria-pressed="false" title="Good mood only" aria-label="Good mood only"><span class="ic"><svg class="icon icon-smile" aria-hidden="true" focusable="false"><use href="#i-smile"/></svg><span class="ic-e" aria-hidden="true">😊</span></span></button>
           </div>
             <button type="button" id="feedFilterChip" class="pill" aria-haspopup="dialog">Any time ▾</button>
           </div>
@@ -816,7 +798,6 @@
         </div>
         <div id="feedRecapCard" class="feed-recapcard" hidden></div>
         <ul id="feedItemList" class="feed-list"></ul>
-        <div id="feedGraph" class="feed-graph" hidden></div>
         <div id="feedInsights" class="feed-insights" hidden></div>
         <div id="feedEmpty" class="explanatory-card" style="display:none"></div>
         <input type="file" id="feedOpmlInput" accept=".opml,.xml,text/xml,application/xml" hidden />
@@ -874,7 +855,7 @@
       </button>
       <button class="nav-item active" data-screen="main">
         <span class="nav-icon"><span class="ic"><svg class="icon icon-sparkles icon--xl" aria-hidden="true" focusable="false"><use href="#i-sparkles"/></svg><span class="ic-e" aria-hidden="true">✨</span></span></span>
-        <span class="nav-label" data-i18n="navSummarize">Summarize</span>
+        <span class="nav-label" data-i18n="navSummarize">Analyze</span>
       </button>
       <button class="nav-item" data-screen="history">
         <span class="nav-icon"><span class="ic"><svg class="icon icon-clock icon--xl" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg><span class="ic-e" aria-hidden="true">🕐</span></span></span>

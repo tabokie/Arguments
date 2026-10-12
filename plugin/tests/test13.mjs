@@ -28,17 +28,14 @@ assert.equal(titles().length, 4);
 click($('#feedInsightsBtn')); await tick(50);
 assert.ok(!$('#feedInsights').hidden && $('#feedItemList').hidden, 'insights shown');
 const txt = $('#feedInsights').textContent; console.log(txt.replace(/\s+/g, ' ').slice(0, 300));
-assert.ok(/Items/.test(txt) && /Mood/.test(txt) && /Economy/.test(txt) && /Podcasts/.test(txt), 'sections');   // category 'Wirtschaft' is shown in the UI language
+assert.ok(/Items/.test(txt) && !/Mood|Categories|Economy/.test(txt) && /Podcasts/.test(txt), 'sections');   // category 'Wirtschaft' is shown in the UI language
 assert.ok($$('#feedInsights .ar-cat-row').some(r => /Alpha/.test(r.textContent)), 'top sources');
-// click category → search + list
-click($$('#feedInsights .ar-cat-row').find(r => /Economy/.test(r.textContent))); await tick(50);   // searches the stored spelling
-assert.ok($('#feedItemList').hidden === false && $('#feedInsights').hidden, 'back to list'); assert.equal($('#feedSearch').value, 'Wirtschaft');
-console.log('after category click →', titles()); assert.deepEqual(titles(), ['Börse steigt kräftig']);
-// toggling graph button flips view (graph lib can't load in jsdom → no crash)
-click($('#feedGraphBtn')); await tick(80);
-assert.ok(!$('#feedGraph').hidden && $('#feedItemList').hidden && $('#feedGraphBtn').classList.contains('active'), 'graph view');
-click($('#feedGraphBtn')); await tick(30);
-assert.ok($('#feedGraph').hidden && !$('#feedItemList').hidden);
+// The source chart still returns to the matching source in the list.
+click($$('#feedInsights .ar-cat-row').find(row => /Alpha/.test(row.textContent))); await tick(50);
+click($('#feedInsightsBtn')); await tick(50);
+assert(!$('#feedItemList').hidden && $('#feedInsights').hidden);
+assert(titles().every(title => /climate/i.test(title)));
+assert(!$('#feedGraphBtn') && !$('#feedGraph'));
 // scroll hide
 const sc = $('#feedsScreen'); const bar = $('#feedControls');
 const scrollTo = async (y) => { Object.defineProperty(sc, 'scrollTop', { value: y, configurable: true }); sc.dispatchEvent(new w.Event('scroll')); };

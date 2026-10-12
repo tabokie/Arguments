@@ -33,7 +33,7 @@ d.getElementById('deleteHistoryButton').click(); await tick(60);
 assert(dialog(), 'dialog open');
 let b = boxes();
 assert.deepEqual(Object.keys(b).filter((k) => b[k].checked).sort(), ['articles', 'highlights']);
-assert(/2 summaries/.test(dialog().textContent) && /1 feed/.test(dialog().textContent), dialog().textContent);
+assert(/2 results/.test(dialog().textContent) && /1 feed/.test(dialog().textContent), dialog().textContent);
 assert(ok().disabled, 'needs DELETE'); type('DELETE'); assert(!ok().disabled);
 tickBox('articles', false); tickBox('highlights', false); assert(ok().disabled, 'nothing ticked → blocked');
 tickBox('articles', true); tickBox('highlights', true); assert(!ok().disabled);

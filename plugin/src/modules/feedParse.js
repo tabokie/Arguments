@@ -111,13 +111,14 @@ export function parseFeed(xmlText, feedUrl) {
 
 function escXml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-/** OPML 2.0 document for the subscriptions (first tag = folder for readers without tags; all tags in `category`). */
+/** Export subscriptions, retaining legacy OPML metadata only for round trips. */
 export function opmlXml(subs) {
-    const line = (s, ind) => `${ind}<outline type="rss" text="${escXml(subTitle(s))}" title="${escXml(subTitle(s))}" xmlUrl="${escXml(s.url)}"${s.siteUrl ? ` htmlUrl="${escXml(s.siteUrl)}"` : ''}${(s.tags || []).length ? ` category="${escXml(s.tags.join(','))}"` : ''}/>`;
+    const tags = s => s.tags || (s.folder ? [s.folder] : []);
+    const line = (s, ind) => `${ind}<outline type="rss" text="${escXml(subTitle(s))}" title="${escXml(subTitle(s))}" xmlUrl="${escXml(s.url)}"${s.siteUrl ? ` htmlUrl="${escXml(s.siteUrl)}"` : ''}${tags(s).length ? ` category="${escXml(tags(s).join(','))}"` : ''}/>`;
     // Readers without tags get the first tag as a folder; all tags also go in `category`.
-    const first = (s) => (s.tags || [])[0] || '';
+    const first = (s) => tags(s)[0] || '';
     const folders = [...new Set(subs.map(first).filter(Boolean))].sort();
-    const out = ['<?xml version="1.0" encoding="UTF-8"?>', '<opml version="2.0">', '  <head><title>AI Summary Helper feeds</title></head>', '  <body>'];
+    const out = ['<?xml version="1.0" encoding="UTF-8"?>', '<opml version="2.0">', '  <head><title>Arguments feeds</title></head>', '  <body>'];
     subs.filter(s => !first(s)).forEach(s => out.push(line(s, '    ')));
     folders.forEach(f => {
         out.push(`    <outline text="${escXml(f)}" title="${escXml(f)}">`);

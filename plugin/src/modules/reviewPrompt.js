@@ -41,7 +41,7 @@ export async function initReviewPrompt(el = document.getElementById('reviewPromp
     if (!el) return;
     const { state, installedAt, summaries } = await readState();
     if (!shouldShow({ now: Date.now(), installedAt, summaries, state, chrome: isChromeStore() })) return;
-    el.innerHTML = `<div class="review-card-text"><strong>${T('Enjoying AI Summary Helper?')}</strong>
+    el.innerHTML = `<div class="review-card-text"><strong>${T("Enjoying Arguments?")}</strong>
         <span>${T('A quick review on the Chrome Web Store helps other people find it.')}</span></div>
       <div class="review-card-actions">
         <button type="button" class="button-primary btn-sm" data-r="rate">${T('⭐ Leave a review')}</button>

@@ -3,12 +3,11 @@ import { t } from './i18n.js';
 import { mountReadingTools, destroyReadingTools } from './readingTools.js';
 import { showSkeleton, clearSkeleton } from './skeleton.js';
 import { modelIcon } from './modelBadge.js';
-import { icon, iconEl, setIconLabel, stripEmoji } from './icons.js';
+import { icon, setIconLabel, stripEmoji } from './icons.js';
 import { SK } from './storageKeys.js';
 import { escapeHtml, cleanUntrustedHtml } from './textUtils.js';
 // Article Manager
 // Handles article rendering, expand/collapse, search, etc.
-
 
 import StorageManager from './storageManager.js';
 import { syncTabbarLater } from './tabbar.js';
@@ -17,16 +16,10 @@ import { buildIndex, search as tfidfSearch, similarTo } from './localSearch.js';
 import { computeMetrics } from './textMetrics.js';
 import { initSelection, registerCard, toggleCard, selectionActive, canSelect, startSelectionWith } from './sendSheet.js';
 import { attachCardMenu } from './cardMenu.js';
-import { T, locale, uiLocale } from './feedI18n.js';
-import { topicLabel } from './topicConcepts.js';
-import { tagMatches } from './topicConcepts.js';
-import { loadLexicon } from './topicLexicon.js';
+import { T, locale } from './feedI18n.js';
+
 import { withQuestions, qaMarkdown } from './conversation.js';
 import { qaSection } from './qaView.js';
-import { normalizeDoi } from '../content/paper.js';
-import { paperState, paperChips, paperDoi, doiUrl, paperLine, paperType, paperFacts, paperSearchText, extractPaperFacts } from './paperInfo.js';
-import { aiComplete } from './feedAi.js';
-import { CITE_STYLES, formatCitation, ensureCsl, copyText, getCiteStyle, loadCiteStyle, setCiteStyle } from './citation.js';
 import { buildAnnotationsSection, fetchAnnotationsForArticle, buildAnnotationsPlainText, markHighlights } from './annotationExporter.js';
 
 // Escapes translated text for use inside double-quoted HTML attributes.
@@ -42,15 +35,12 @@ let historyTab = 'inbox';         // 'inbox' | 'read' | 'sent' | 'archive'
 let pendingRender = false;
 
 const isSent = (a) => Array.isArray(a.sentTo) && a.sentTo.length > 0;
-const TAB_DEFS = [['inbox', () => T('Inbox')], ['read', () => T('Read')], ['sent', () => T('Sent')], ['research', () => T('Research')], ['archive', () => T('Archive')]];
-const RESEARCH_FILTERS = [['all', () => T('All')], ['review', () => T('Reviews')], ['trial', () => T('Trials')], ['preprint', () => T('Preprints')]];
-let researchFilter = 'all';
+const TAB_DEFS = [['inbox', () => T('Inbox')], ['read', () => T('Read')], ['sent', () => T('Sent')], ['archive', () => T('Archive')]];
 
 function tabList(tab) {
     if (tab === 'read') return cachedArticles.filter(a => a.readAt);
     if (tab === 'sent') return cachedArticles.filter(isSent);
     if (tab === 'archive') return archivedCache;
-    if (tab === 'research') return cachedArticles.filter(a => paperState(a) && (researchFilter === 'all' || paperType(a) === researchFilter));
     return cachedArticles;
 }
 
@@ -87,8 +77,7 @@ function buildTabs() {
         b.classList.toggle('on', historyTab === id);
         b.setAttribute('aria-selected', String(historyTab === id));
         b.firstChild.textContent = label();
-        if (id === 'research') b.hidden = historyTab !== 'research' && !cachedArticles.some(a => paperState(a));   // only for people who save papers
-        b.lastChild.textContent = String(id === 'research' ? cachedArticles.filter(a => paperState(a)).length : tabList(id).length);
+        b.lastChild.textContent = String(tabList(id).length);
     });
     syncTabbarLater(nav);
     return nav;
@@ -126,60 +115,12 @@ export async function applyStatus(ids, patch) {
     if (list && list.style.display !== 'none') renderTab(); else pendingRender = true;
 }
 
-// Whether the knowledge graph's node set is hard-filtered by the archive
-// search box ('filtered', the default — nodes for non-matches are removed)
-// or the whole archive stays rendered and the search box just dims
-// non-matches instead ('all'). Set via the inline toggle button in the
-// search input itself (only shown while the graph is open — see
-// setGraphScopeMode()/graphScopeToggleBtn in initArticleManager()).
-let graphScopeMode = 'filtered';
-
-// On-device TF-IDF index, shared by search, "similar articles", and (via
-// tagIntelligence.js elsewhere) tag suggestions. Built lazily on first use
-// and rebuilt only when the archive actually changes — not on every
-// keystroke or render.
+// Archive text index, rebuilt only when saved articles change.
 let searchIndex = null;
 let searchIndexDirty = true;
 
 function invalidateSearchIndex() {
     searchIndexDirty = true;
-}
-
-// Debounces applyGraphSearchDim() calls driven by search-box keystrokes.
-// Dimming touches every node/link/label in the graph (O(archive size)); on
-// a large archive, running that on every single keystroke visibly lags
-// typing. Waiting for a short pause collapses a fast typing burst into one
-// pass instead of one per character.
-let graphSearchDimTimer = null;
-const GRAPH_SEARCH_DIM_DELAY = 150;
-
-function scheduleGraphSearchDim(container, query) {
-    if (graphSearchDimTimer) clearTimeout(graphSearchDimTimer);
-    graphSearchDimTimer = setTimeout(() => {
-        graphSearchDimTimer = null;
-        import('./archiveGraph.js').then(mod => mod.applyGraphSearchDim(container, query));
-    }, GRAPH_SEARCH_DIM_DELAY);
-}
-
-/**
- * The article set to actually render as graph nodes, given graphScopeMode:
- * the full archive when scope is 'all' (the search box narrows via dimming
- * instead — see applyGraphSearchDim, applied separately, not here),
- * otherwise the cheap title/tag match against the search text for a hard
- * rebuild — falling back to the full archive if that match is empty, so an
- * over-narrow query doesn't leave the graph blank.
- */
-function graphScopeVisibleArticles() {
-    if (graphScopeMode === 'all') return cachedArticles;
-    const searchInput = document.getElementById('searchInput');
-    const filterText = (searchInput?.value || '').toLowerCase();
-    if (!filterText) return cachedArticles;
-    const filtered = cachedArticles.filter(a => {
-        const titleMatch = (a.title || '').toLowerCase().includes(filterText);
-        const tagMatch = (a.tags || []).some(t => tagMatches(t, filterText));
-        return titleMatch || tagMatch;
-    });
-    return filtered.length > 0 ? filtered : cachedArticles;
 }
 
 /**
@@ -208,7 +149,7 @@ function ensureSearchIndex() {
 }
 
 function buildSafeArticleTitle(title) {
-    return (title || 'AI Summary').replace(/[^a-z0-9_-]/gi, '_');
+    return (title || 'Arguments').replace(/[^a-z0-9_-]/gi, '_');
 }
 
 async function includeAllQuestions() {
@@ -239,11 +180,11 @@ async function buildArticleDocumentHtml(article) {
     const contentHtml = markHighlights(article.content, annotations, placed);
     const summaryHtml = markHighlights(article.summary, annotations, placed);
     return `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>${escapeHtml(article.title || 'AI Summary')}</title>
+<html><head><meta charset="utf-8"><title>${escapeHtml(article.title || 'Arguments')}</title>
 <style>body{font-family:sans-serif;line-height:1.6;padding:20px;max-width:800px;margin:auto;}h1{border-bottom:2px solid #333;padding-bottom:5px;}.meta{color:#555;font-style:italic;}.summary{background:#f8f9fa;padding:15px;border-left:4px solid #0284c7;margin:20px 0;}img{max-width:100%;height:auto;}</style>
-</head><body><h1>${escapeHtml(article.title || 'AI Summary')}</h1>
-<div class="meta">Captured via AI Summary Helper &middot; <a href="${escAttr(article.url || '#')}">Source</a></div>
-${summaryHtml ? `<div class="summary"><h2>🧙 AI Summary</h2>${summaryHtml}</div>` : ''}
+</head><body><h1>${escapeHtml(article.title || 'Arguments')}</h1>
+<div class="meta">Captured via Arguments &middot; <a href="${escAttr(article.url || '#')}">Source</a></div>
+${summaryHtml ? `<div class="summary"><h2>🧙 Main output</h2>${summaryHtml}</div>` : ''}
 ${annotationsHtml}
 ${contentHtml ? `<h2>📄 Content</h2><div>${contentHtml}</div>` : ''}</body></html>`;
 }
@@ -272,7 +213,7 @@ export async function shareArticle(article) {
     try {
         const { file } = await buildArticleHtmlFile(article);
         const fileShareData = {
-            title: article.title || 'AI Summary',
+            title: article.title || 'Arguments',
             files: [file]
         };
 
@@ -285,8 +226,8 @@ export async function shareArticle(article) {
 
         // Fallback for environments that only support URL/text share.
         await navigator.share({
-            title: article.title || 'AI Summary',
-            text: `Check out this summary: \n\n${article.summary || ''}\n\nRead more at:`,
+            title: article.title || 'Arguments',
+            text: `Check out these arguments: \n\n${article.summary || ''}\n\nRead more at:`,
             url: article.url || ''
         });
     } catch (err) {
@@ -302,38 +243,27 @@ export async function shareArticle(article) {
 export async function exportToMarkdown(article) {
     // 1. Format date as YYYY-MM-DD for Obsidian frontmatter
     const createdDate = new Date(article.timestamp).toISOString().split('T')[0];
-    
+
     // 2. Sanitize title for YAML (escape double quotes)
     const safeTitle = (article.title || 'Untitled Article').replace(/"/g, '\\"');
-    
-    // 3. Format tags into YAML list format
-    let tagsFrontmatter = 'tags:';
-    if (article.tags && article.tags.length > 0) {
-        tagsFrontmatter += '\n' + article.tags.map(tag => `  - "${tag.replace(/"/g, '\\"')}"`).join('\n');
-    }
 
-    // Paper fields (only for pages detected / marked as papers)
-    const pm = (paperState(article) && article.meta && article.meta.paper) || {};
     const yamlStr = (v) => v ? `"${String(v).replace(/"/g, '\\"')}"` : '';
-    const doi = paperState(article) ? paperDoi(article) : '';
-    const paperFm = (doi ? `\ndoi: "${doi}"` : '') + (pm.journal ? `\njournal: ${yamlStr(pm.journal)}` : '') + (paperState(article) ? '\ntype: paper' : '');
 
     // 4. Construct the YAML Frontmatter
     const frontmatter = `---
 title: "${safeTitle}"
 source: "${article.url || ''}"
-author: ${yamlStr(pm.authors || (article.meta && article.meta.author) || '')}
-published: ${yamlStr(pm.year || '')}
-created: ${createdDate}${paperFm}
+author: ${yamlStr(article.meta?.author || '')}
+published: ${yamlStr(article.meta?.published || '')}
+created: ${createdDate}
 description: 
-${tagsFrontmatter}
 bookrecs: 
 why: 
 ---`;
 
     // 5. Construct the Markdown Body — convert vanilla <img> and <a> to Markdown
     const baseSummary = article.summaryBase !== undefined ? article.summaryBase : article.summary;
-    const summaryPlain = baseSummary ? baseSummary.replace(/<[^>]+>/g, '').trim() : 'No summary available.';
+    const summaryPlain = baseSummary ? baseSummary.replace(/<[^>]+>/g, '').trim() : '';
 
     // Parse stored clean HTML and convert tags to Markdown syntax
     const parser = new DOMParser();
@@ -372,7 +302,7 @@ why:
     const qaMd = qaMarkdown(await conversationOf(article), { all: await includeAllQuestions() });
     const mdContent = `${frontmatter}
 
-# Summary
+# Main output
 ${summaryPlain}
 ${qaMd ? '\n' + qaMd : ''}
 ${annotationsPlain}
@@ -387,15 +317,15 @@ ${contentPlain.trim().replace(/\n{3,}/g, '\n\n')}
     const blob = new Blob([mdContent], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    
+
     // Create a safe, clean filename
     const safeFilename = (article.title || 'article').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    
+
     a.href = url;
-    a.download = `${createdDate}_${safeFilename}_summary.md`;
+    a.download = `${createdDate}_${safeFilename}_arguments.md`;
     document.body.appendChild(a);
     a.click();
-    
+
     // Cleanup
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
@@ -406,7 +336,7 @@ ${contentPlain.trim().replace(/\n{3,}/g, '\n\n')}
  */
 export async function copyArticleToClipboard(article) {
     article = await exportView(article);
-    const title = article.title || 'AI Summary';
+    const title = article.title || 'Arguments';
     const summary = article.summary || '';
     const content = article.content || '';
 
@@ -425,7 +355,7 @@ export async function copyArticleToClipboard(article) {
             <h1>${escapeHtml(title)}</h1>
             <p><a href="${escAttr(article.url)}">${escapeHtml(article.url)}</a></p>
             <hr>
-            <h2>🧙 AI Summary</h2>
+            <h2>🧙 Main output</h2>
             <div>${summaryMarked}</div>
             ${annotationsHtml ? `<hr><div>${annotationsHtml}</div>` : ''}
             <hr>
@@ -438,14 +368,14 @@ export async function copyArticleToClipboard(article) {
     });
 
     // Create a plain text / markdown version
-    const plainText = `# ${title}\nSource: ${article.url || 'N/A'}\n\n## 🧙 AI SUMMARY\n${summary.replace(/<[^>]+>/g, '').trim()}\n\n${annotationsPlain}\n\n---\n\n## 📄 ORIGINAL CONTENT\n${content.replace(/<[^>]+>/g, '').trim()}`;
+    const plainText = `# ${title}\nSource: ${article.url || 'N/A'}\n\n## 🧙 MAIN OUTPUT\n${summary.replace(/<[^>]+>/g, '').trim()}\n\n${annotationsPlain}\n\n---\n\n## 📄 ORIGINAL CONTENT\n${content.replace(/<[^>]+>/g, '').trim()}`;
 
     try {
         const typeHtml = 'text/html';
         const typePlain = 'text/plain';
         const blobHtml = new Blob([cleanHtml], { type: typeHtml });
         const blobPlain = new Blob([plainText], { type: typePlain });
-        
+
         const data = [new ClipboardItem({
             [typeHtml]: blobHtml,
             [typePlain]: blobPlain
@@ -464,7 +394,6 @@ export async function copyArticleToClipboard(article) {
         }
     }
 }
-
 
 /**
  * Sends article summary and content to a Kindle email via the proxy API
@@ -515,7 +444,7 @@ export async function sendToKindle(article) {
             headers,
             body: (() => { const kPlaced = new Set(); return JSON.stringify({
                 kindle_email: kindleEmail,
-                title: article.title || 'AI Summary Document',
+                title: article.title || 'Arguments document',
                 content: [markHighlights(article.content || article.summary || '', annotations, kPlaced), annotationsHtml].filter(Boolean).join('\n'),
                 summary: markHighlights(article.summary || '', annotations, kPlaced),
                 url: article.url || ''
@@ -597,7 +526,7 @@ export async function deliverKindle(article, device) {
             method: 'POST', headers,
             body: (() => { const kPlaced = new Set(); return JSON.stringify({
                 kindle_email: kindleEmail,
-                title: article.title || 'AI Summary Document',
+                title: article.title || 'Arguments document',
                 content: [markHighlights(article.content || article.summary || '', annotations, kPlaced), annotationsHtml].filter(Boolean).join('\n'),
                 summary: markHighlights(article.summary || '', annotations, kPlaced),
                 url: article.url || ''
@@ -655,10 +584,7 @@ export async function removeArticle(article) {
 }
 
 export function initArticleManager(uiManager) {
-    loadLexicon();   // learned tag names (History search, graph and charts group tags across languages with them)
     uiManagerRef = uiManager;
-    // The lexicon grew (tag naming in Settings or a background run): tag chips change language, so redraw the list.
-    document.addEventListener('aish:lexiconChanged', () => { try { if (document.getElementById('articleList')) renderTab(); } catch (e) { /* list not mounted */ } });
     initSelection({
         deliverKindle, deliverLocalSend,
         applyStatus, currentTab: () => historyTab,
@@ -682,63 +608,6 @@ export function initArticleManager(uiManager) {
         if (detailTopBar) detailTopBar.classList.toggle('scroll-hidden', hidden);
     };
 
-    // ── Graph search-scope toggle (lives inline in the search input) ──────
-    const graphScopeToggleBtn = document.getElementById('graphScopeInlineToggle');
-
-    const syncGraphScopeToggleBtn = () => {
-        if (!graphScopeToggleBtn) return;
-        if (graphScopeMode === 'all') {
-            graphScopeToggleBtn.textContent = T('View: Highlighted');
-            graphScopeToggleBtn.title = T('Highlighting matches in the whole archive — click to filter to matches only');
-            graphScopeToggleBtn.setAttribute('aria-label', T('Switch graph search to filter mode'));
-        } else {
-            graphScopeToggleBtn.textContent = T('View: Filtered');
-            graphScopeToggleBtn.title = T('Filtering graph to matches only — click to highlight matches in the whole archive instead');
-            graphScopeToggleBtn.setAttribute('aria-label', T('Switch graph search to highlight mode'));
-        }
-    };
-
-    const setGraphScopeToggleVisible = (visible) => {
-        if (graphScopeToggleBtn) graphScopeToggleBtn.style.display = visible ? 'flex' : 'none';
-        if (searchInput) searchInput.classList.toggle('graph-scope-toggle-visible', visible);
-    };
-
-    // Only relevant once there's something to filter/highlight against —
-    // shown while the graph is open AND the search box has text, hidden
-    // otherwise (including as soon as the box is cleared).
-    const updateGraphScopeToggleVisibility = () => {
-        const graphContainer = document.getElementById('graphContainer');
-        const graphOpen = !!graphContainer && graphContainer.style.display === 'block';
-        setGraphScopeToggleVisible(graphOpen && !!(searchInput && searchInput.value.length > 0));
-    };
-
-    // Switches graphScopeMode and, if the graph is currently open, re-renders
-    // it immediately in the new scope (mirrors what toggleGraph's fresh-open
-    // path does, just triggered by the inline button instead).
-    const setGraphScopeMode = (nextMode) => {
-        if (nextMode === graphScopeMode) return;
-        graphScopeMode = nextMode;
-        syncGraphScopeToggleBtn();
-
-        const graphContainer = document.getElementById('graphContainer');
-        if (!graphContainer || graphContainer.style.display !== 'block') return;
-        if (nextMode === 'all') graphContainer.style.opacity = '1';
-
-        const source = graphScopeVisibleArticles();
-        import('./archiveGraph.js').then(mod => {
-            const rendered = mod.initArchiveGraph(graphContainer, source, currentDetailArticle?.timestamp, ensureSearchIndex());
-            if (nextMode === 'all') {
-                Promise.resolve(rendered).then(() => mod.applyGraphSearchDim(graphContainer, searchInput?.value || ''));
-            }
-        });
-    };
-
-    if (graphScopeToggleBtn) {
-        graphScopeToggleBtn.addEventListener('click', () => {
-            setGraphScopeMode(graphScopeMode === 'all' ? 'filtered' : 'all');
-        });
-    }
-
     const deleteCurrentDetailArticle = () => {
         if (!currentDetailArticle) return;
         if (!confirm(T('Are you sure you want to delete this article?'))) return;
@@ -754,10 +623,10 @@ export function initArticleManager(uiManager) {
 
             const articleDetail = document.getElementById('articleDetail');
             const articleList = document.getElementById('articleList');
-            const graphContainer = document.getElementById('graphContainer');
+
             const reportContainer = document.getElementById('reportContainer');
             if (articleDetail) articleDetail.style.display = 'none';
-            if (graphContainer && !wsActive()) graphContainer.style.display = 'none';
+
             if (reportContainer && !wsActive()) reportContainer.style.display = 'none';
             if (articleList) articleList.style.display = 'block';
             if (historyTopBar) historyTopBar.style.display = 'flex';
@@ -772,10 +641,10 @@ export function initArticleManager(uiManager) {
             const openedId = currentDetailArticle && currentDetailArticle.id;
             const articleDetail = document.getElementById('articleDetail');
             const articleList = document.getElementById('articleList');
-            const graphContainer = document.getElementById('graphContainer');
+
             const reportContainer = document.getElementById('reportContainer');
             if (articleDetail) articleDetail.style.display = 'none';
-            if (graphContainer && !wsActive()) graphContainer.style.display = 'none';
+
             if (reportContainer && !wsActive()) reportContainer.style.display = 'none';
             if (articleList) articleList.style.display = 'block';
             if (historyTopBar) historyTopBar.style.display = 'flex';
@@ -829,7 +698,6 @@ export function initArticleManager(uiManager) {
 
     if (searchInput) {
         searchInput.addEventListener('input', filterArticles);
-        searchInput.addEventListener('input', updateGraphScopeToggleVisibility);
 
         // Show/hide clear button as user types
         const clearBtn = document.getElementById('searchClearBtn');
@@ -844,7 +712,7 @@ export function initArticleManager(uiManager) {
                 clearBtn.hidden = true;
                 searchInput.classList.remove('has-clear');
                 filterArticles();
-                updateGraphScopeToggleVisibility();
+
                 searchInput.focus();
             });
         }
@@ -856,29 +724,6 @@ export function initArticleManager(uiManager) {
     // In the multi-pane layout (workspaceManager.js) graph/analytics are shown
     // next to the list instead of replacing it, so they need open/close paths
     // that leave the list and detail alone.
-    const initGraphView = () => {
-        const graphContainer = document.getElementById('graphContainer');
-        graphScopeMode = 'filtered';
-        graphContainer.__archiveGraphStatsDismissed = false;
-        syncGraphScopeToggleBtn();
-        updateGraphScopeToggleVisibility();
-        const source = graphScopeVisibleArticles();
-        if (source.length > 0) {
-            import('./archiveGraph.js').then(mod => {
-                mod.initArchiveGraph(graphContainer, source, currentDetailArticle?.timestamp, ensureSearchIndex());
-            });
-        } else {
-            StorageManager.getArticlesIndex().then(articles => {
-                if (articles.length > 0) {
-                    import('./archiveGraph.js').then(mod => {
-                        mod.initArchiveGraph(graphContainer, articles, currentDetailArticle?.timestamp, buildIndex(articles));
-                    });
-                } else {
-                    graphContainer.innerHTML = `<div class="graph-empty">${T('No articles to graph yet.')}</div>`;
-                }
-            });
-        }
-    };
     const initReportView = () => {
         const reportContainer = document.getElementById('reportContainer');
         StorageManager.getArticlesIndex({ includeArchived: true }).then(articles => {
@@ -890,13 +735,9 @@ export function initArticleManager(uiManager) {
     document.addEventListener('aish:ws-view', (e) => {
         const { view, open, scope } = e.detail || {};
         if (scope && scope !== 'history') return;
-        const graphContainer = document.getElementById('graphContainer');
+
         const reportContainer = document.getElementById('reportContainer');
-        if (view === 'graph' && graphContainer) {
-            const isOpen = graphContainer.style.display === 'block';
-            if (open && !isOpen) { graphContainer.style.display = 'block'; graphContainer.style.opacity = '1'; initGraphView(); }
-            if (!open && isOpen) graphContainer.style.display = 'none'; // observer destroys the simulation
-        }
+
         if (view === 'report' && reportContainer) {
             const isOpen = reportContainer.style.display === 'block';
             if (open && !isOpen) { reportContainer.style.display = 'block'; initReportView(); }
@@ -907,8 +748,8 @@ export function initArticleManager(uiManager) {
     // Graph / Analytics buttons mirror what is open (same as the Feeds toolbar): pressed = that view is showing.
     const syncViewButtons = () => {
         const open = (id) => { const c = document.getElementById(id); return !!c && c.style.display === 'block'; };
-        const g = open('graphContainer'), r = open('reportContainer');
-        [['graphToggleBtn', g], ['detailGraphToggleBtn', g], ['reportToggleBtn', r], ['detailReportToggleBtn', r]].forEach(([id, on]) => {
+        const r = open('reportContainer');
+        [['reportToggleBtn', r], ['detailReportToggleBtn', r]].forEach(([id, on]) => {
             const b = document.getElementById(id);
             if (!b) return;
             b.classList.toggle('active', on);
@@ -916,53 +757,14 @@ export function initArticleManager(uiManager) {
         });
     };
     const viewObserver = new MutationObserver(syncViewButtons);
-    ['graphContainer', 'reportContainer'].forEach(id => { const c = document.getElementById(id); if (c) viewObserver.observe(c, { attributes: true, attributeFilter: ['style'] }); });
+    ['reportContainer'].forEach(id => { const c = document.getElementById(id); if (c) viewObserver.observe(c, { attributes: true, attributeFilter: ['style'] }); });
     syncViewButtons();
-
-    // ── Shared graph toggle ─────────────────────────────────────────────
-    const toggleGraph = () => {
-        const articleList = document.getElementById('articleList');
-        const articleDetail = document.getElementById('articleDetail');
-        const graphContainer = document.getElementById('graphContainer');
-        if (!graphContainer) return;
-        const isGraph = graphContainer.style.display === 'block';
-        if (isGraph) {
-            graphContainer.style.display = 'none';
-            // Stop the D3 force simulation + release its listeners when the
-            // graph is hidden — otherwise it keeps ticking on an animation
-            // loop and retaining the node/link object graph in memory.
-            // Hiding the inline scope toggle happens via the shared
-            // graphVisibilityObserver below (covers every hide path, not
-            // just this one).
-            import('./archiveGraph.js').then(mod => mod.destroyArchiveGraph(graphContainer));
-            if (detailTopBar?.style.display === 'flex') {
-                if (articleDetail) articleDetail.style.display = 'block';
-            } else {
-                if (articleList) articleList.style.display = 'block';
-            }
-        } else {
-            if (articleList) articleList.style.display = 'none';
-            if (articleDetail) articleDetail.style.display = 'none';
-            const rc = document.getElementById('reportContainer');
-            const split = document.getElementById('historyScreen')?.classList.contains('ws-active');
-            if (rc && !split) rc.style.display = 'none';   // one pane: one view at a time, graph replaces analytics
-            graphContainer.style.display = 'block';
-            graphContainer.style.opacity = '1';
-            initGraphView();
-        }
-        syncViewButtons();
-    };
-
-    const graphToggleBtn = document.getElementById('graphToggleBtn');
-    const detailGraphToggleBtn = document.getElementById('detailGraphToggleBtn');
-    if (graphToggleBtn) graphToggleBtn.addEventListener('click', toggleGraph);
-    if (detailGraphToggleBtn) detailGraphToggleBtn.addEventListener('click', toggleGraph);
 
     // ── Shared report toggle ────────────────────────────────────────────
     const toggleReport = () => {
         const articleList = document.getElementById('articleList');
         const articleDetail = document.getElementById('articleDetail');
-        const graphContainer = document.getElementById('graphContainer');
+
         const reportContainer = document.getElementById('reportContainer');
         if (!reportContainer) return;
         const isReport = reportContainer.style.display === 'block';
@@ -976,7 +778,7 @@ export function initArticleManager(uiManager) {
         } else {
             if (articleList) articleList.style.display = 'none';
             if (articleDetail) articleDetail.style.display = 'none';
-            if (graphContainer) graphContainer.style.display = 'none';
+
             reportContainer.style.display = 'block';
             initReportView();
         }
@@ -988,81 +790,16 @@ export function initArticleManager(uiManager) {
     if (reportToggleBtn) reportToggleBtn.addEventListener('click', toggleReport);
     if (detailReportToggleBtn) detailReportToggleBtn.addEventListener('click', toggleReport);
 
-    // ── Listen for open-article events from the graph preview card ────
-    const graphContainer = document.getElementById('graphContainer');
-    if (graphContainer) {
-        // Stop the D3 force simulation whenever the graph container is
-        // hidden (toggle, back button, delete, report switch, screen
-        // change). A single observer covers every hide path instead of
-        // sprinkling destroyArchiveGraph() calls at each call site. The
-        // simulation otherwise keeps ticking on an animation loop and
-        // retains the node/link object graph while the graph is invisible.
-        const graphVisibilityObserver = new MutationObserver(() => {
-            if (graphContainer.style.display === 'none') {
-                import('./archiveGraph.js').then(mod => mod.destroyArchiveGraph(graphContainer));
-                setGraphScopeToggleVisible(false);
-            }
-        });
-        graphVisibilityObserver.observe(graphContainer, { attributes: true, attributeFilter: ['style'] });
-
-        graphContainer.addEventListener('open-article', (e) => {
-            if (e.detail) {
-                uiManager.showScreen('history');
-                setTimeout(() => showArticleDetail(e.detail), 400);
-            }
-        });
-
-        // ── Listen for filter-by-tag events from the graph ────────────
-        // Clicking a tag node in the graph filters to that tag via the
-        // shared search box, but stays in graph mode (dims/narrows the
-        // graph itself per the current filter/highlight scope) rather than
-        // switching away to the plain article list.
-        graphContainer.addEventListener('filter-by-tag', (e) => {
-            const tag = e.detail?.tag;
-            if (!tag) return;
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.value = tag;
-                // A real 'input' event, not a direct filterArticles() call,
-                // so the clear button's own 'input' listener (toggling its
-                // visibility + the input's has-clear class) fires too.
-                searchInput.dispatchEvent(new Event('input'));
-            }
-        });
-
-    }
-
-    // ── Listen for tag-search events from the analytics report ────────
-    const reportContainerEl = document.getElementById('reportContainer');
-    if (reportContainerEl) {
-        reportContainerEl.addEventListener('tag-search', (e) => {
-            const tag = e.detail?.tag;
-            if (!tag) return;
-            // Hide report, show article list
-            if (!wsActive()) reportContainerEl.style.display = 'none';
-            const articleList = document.getElementById('articleList');
-            const historyTopBar = document.getElementById('historyTopBar');
-            if (articleList) articleList.style.display = 'block';
-            if (historyTopBar) historyTopBar.style.display = 'flex';
-            // Pre-fill search and filter
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.value = tag;
-                searchInput.dispatchEvent(new Event('input'));
-                searchInput.focus();
-            }
-        });
-    }
 }
 
 export function loadHistory() {
-    const graphContainer = document.getElementById('graphContainer');
+
     const reportContainer = document.getElementById('reportContainer');
     const articleList = document.getElementById('articleList');
     const articleDetail = document.getElementById('articleDetail');
     const historyTopBar = document.getElementById('historyTopBar');
     const detailTopBar = document.getElementById('detailTopBar');
-    if (graphContainer && !wsActive()) graphContainer.style.display = 'none';
+
     if (reportContainer && !wsActive()) reportContainer.style.display = 'none';
     if (articleDetail) articleDetail.style.display = 'none';
     if (detailTopBar) detailTopBar.style.display = 'none';
@@ -1084,21 +821,6 @@ export function loadHistory() {
         }).catch(() => clearSkeleton(articleList));
 }
 
-function renderResearchFilters(bar) {
-    if (!bar) return;
-    let row = bar.querySelector('.research-filters');
-    if (historyTab !== 'research') { if (row) row.remove(); return; }
-    if (!row) { row = document.createElement('div'); row.className = 'research-filters'; bar.appendChild(row); }
-    row.replaceChildren();
-    RESEARCH_FILTERS.forEach(([id, label]) => {
-        const b = document.createElement('button');
-        b.type = 'button'; b.className = 'research-filter' + (researchFilter === id ? ' on' : ''); b.dataset.filter = id;
-        b.textContent = label(); b.setAttribute('aria-pressed', String(researchFilter === id));
-        b.addEventListener('click', () => { researchFilter = id; renderTab(); });
-        row.appendChild(b);
-    });
-}
-
 export function renderArticles(articles) {
     const articleList = document.getElementById('articleList');
     articleList.innerHTML = '';
@@ -1106,7 +828,6 @@ export function renderArticles(articles) {
     const tabsBar = document.getElementById('historyTopBar');
     const tabsNav = buildTabs();
     if (tabsBar && tabsNav.parentNode !== tabsBar) tabsBar.appendChild(tabsNav);
-    renderResearchFilters(tabsBar);
     if (!articles || articles.length === 0) {
         const emptyMessage = document.createElement('div');
         emptyMessage.id = 'emptyMessage';
@@ -1172,10 +893,6 @@ function buildArticleCard(article) {
     if (article.url) {
         articleDomain = new URL(article.url).hostname;
     }
-    const tags = article.tags || [];
-    // known and learned topics are shown in the UI language (the stored tag keeps its original); two tags that read the same collapse to one chip
-    const shownTags = [...new Set(tags.map(t => topicLabel(t, uiLocale())))];
-    const tagsHtml = shownTags.length ? `<div class="card-tags">${shownTags.map(t => `<span class="tag-chip">${escapeHtml(t)}</span>`).join('')}</div>` : '';
     const modelBadge = article.modelId ? `<span class="card-model">${modelIcon(article)} ${escapeHtml(article.modelId)}</span>` : '';
 
     // Decision metadata (timeframe + reason)
@@ -1191,7 +908,6 @@ function buildArticleCard(article) {
           <div>
             <h4>${escapeHtml(articleHeader)}</h4>
             <p class="article-date">💾 ${formattedDate} ${article.url ? `${T('from')} <a href="${escAttr(article.url)}" target="_blank" rel="noopener">${escapeHtml(articleDomain)}</a> ↗` : ''}</p>
-            ${tagsHtml}
             ${modelBadge}
             ${decisionHtml}
           </div>
@@ -1212,15 +928,15 @@ function buildArticleCard(article) {
         sumBtn.type = 'button';
         sumBtn.className = 'button-primary btn-sm';
         sumBtn.style.marginTop = '8px';
-        setIconLabel(sumBtn, 'sparkles', T('✨ Summarize'));
+        setIconLabel(sumBtn, 'sparkles', T("✨ Analyze"));
         sumBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             sumBtn.disabled = true;
-            setIconLabel(sumBtn, 'loader', T('⏳ Summarizing…'));
+            setIconLabel(sumBtn, 'loader', T("⏳ Analyzing…"));
             chrome.runtime.sendMessage({ action: 'openFeedItem', url: article.url, summarize: true }, (res) => {
                 if (chrome.runtime.lastError || !res || !res.success) {
                     sumBtn.disabled = false;
-                    setIconLabel(sumBtn, 'sparkles', T('✨ Summarize'));
+                    setIconLabel(sumBtn, 'sparkles', T("✨ Analyze"));
                     return;
                 }
                 // Re-check shortly; the summary replaces this placeholder when saved.
@@ -1233,7 +949,7 @@ function buildArticleCard(article) {
                         if (done || tries > 40) {
                             clearInterval(poll);
                             if (done && document.getElementById('articleList')?.style.display !== 'none') loadHistory();
-                            else { sumBtn.disabled = false; setIconLabel(sumBtn, 'sparkles', T('✨ Summarize')); }
+                            else { sumBtn.disabled = false; setIconLabel(sumBtn, 'sparkles', T("✨ Analyze")); }
                         }
                     } catch (_) { clearInterval(poll); }
                 }, 3000);
@@ -1268,21 +984,11 @@ function buildArticleCard(article) {
             badges.forEach(([tone, text]) => { const b = document.createElement('span'); b.className = 'tag-chip status-badge ' + tone; b.textContent = text; frag.appendChild(b); });
             row.prepend(frag);
         }
-        const pChips = paperChips(article);
-        if (host && pChips.length) {   // 🎓 paper badges share the status/tag row
-            let row = host.querySelector('.card-tags');
-            if (!row) { row = document.createElement('div'); row.className = 'card-tags'; const anchor = host.querySelector('.article-date'); if (anchor) anchor.after(row); else host.appendChild(row); }
-            // Order in the row: status (New / Read / Sent / Archived), then the type (research paper), then the tags.
-            const typeFrag = document.createDocumentFragment();
-            pChips.forEach(([tone, text]) => { const b = document.createElement('span'); b.className = 'tag-chip paper paper-' + tone; b.textContent = text; typeFrag.appendChild(b); });
-            const statusChips = row.querySelectorAll('.status-badge');
-            if (statusChips.length) statusChips[statusChips.length - 1].after(typeFrag); else row.prepend(typeFrag);
-        }
         if (host && article.archived) {
-            const r = document.createElement('button');
-            r.type = 'button'; r.className = 'button-secondary status-restore'; r.textContent = T('↩ Restore to Inbox');
-            r.addEventListener('click', (e) => { e.stopPropagation(); applyStatus([article.id], { archived: false }); });
-            host.appendChild(r);
+            const restore = document.createElement('button');
+            restore.type = 'button'; restore.className = 'button-secondary status-restore'; restore.textContent = T('↩ Restore to Inbox');
+            restore.addEventListener('click', event => { event.stopPropagation(); applyStatus([article.id], { archived: false }); });
+            host.appendChild(restore);
         }
     }
     registerCard(article, listItem);
@@ -1369,34 +1075,14 @@ export function filterArticles() {
     const searchInput = document.getElementById('searchInput');
     const filterText = searchInput.value.trim();
     const lowerFilter = filterText.toLowerCase();
-    const graphContainer = document.getElementById('graphContainer');
 
     // Tier 1: cheap title/tag substring match — this is the whole cost for
     // an empty or very short query, same as the original behaviour.
     const cheapMatch = (a) => {
         const titleMatch = (a.title || '').toLowerCase().includes(lowerFilter);
-        const tagMatch = (a.tags || []).some(t => tagMatches(t, lowerFilter));
-        return titleMatch || tagMatch || paperSearchText(a).includes(lowerFilter);
+        return titleMatch;
     };
 
-    // If graph is visible, react to the search box per graphScopeMode:
-    // 'filtered' rebuilds to only the matching articles (nodes for
-    // non-matches disappear); 'all' keeps every node and just dims
-    // non-matches in place (no rebuild, no simulation restart). The graph
-    // is keyed on tags anyway, so filtered mode stays on the cheap tier only.
-    if (graphContainer && graphContainer.style.display === 'block') {
-        if (graphScopeMode === 'all') {
-            scheduleGraphSearchDim(graphContainer, filterText);
-            if (!wsActive()) return;
-        } else {
-        const filtered = cachedArticles.filter(cheapMatch);
-        import('./archiveGraph.js').then(mod => {
-            mod.initArchiveGraph(graphContainer, filtered.length > 0 ? filtered : cachedArticles, currentDetailArticle?.timestamp, ensureSearchIndex());
-        });
-        graphContainer.style.opacity = filterText && filtered.length < cachedArticles.length ? '0.9' : '1';
-        if (!wsActive()) return;
-        }
-    }
     scheduleReportSearch(filterText, cheapMatch);
 
     // Tier 2: once the query is long enough to be meaningful (2-char
@@ -1414,10 +1100,7 @@ export function filterArticles() {
     cards.forEach(card => {
         if (!filterText) { card.style.display = 'block'; return; }
         const headerText = card.querySelector('.article-header h4').textContent.toLowerCase();
-        const tagText = Array.from(card.querySelectorAll('.tag-chip'))
-            .map(chip => chip.textContent.toLowerCase()).join(' ');
-        const art = cachedArticles.find(x => String(x.timestamp) === card.dataset.ts) || archivedCache.find(x => String(x.timestamp) === card.dataset.ts);
-        const cheapHit = headerText.includes(lowerFilter) || tagText.includes(lowerFilter) || (art ? paperSearchText(art).includes(lowerFilter) : false);
+        const cheapHit = headerText.includes(lowerFilter);
         const indexedHit = indexedMatchIds ? indexedMatchIds.has(card.dataset.ts) : false;
         card.style.display = (cheapHit || indexedHit) ? 'block' : 'none';
     });
@@ -1425,8 +1108,8 @@ export function filterArticles() {
 
 /**
  * Fills in the #localInsights placeholder for the current article detail
- * view with reading-level/sentiment badges and "similar in your archive"
- * links. Everything here runs on-device: readingLevel/sentiment are pure
+ * view with readability badges and "similar in your archive"
+ * links. Everything here runs on-device: readingLevel is pure
  * text math (textMetrics.js), and similarTo() reuses the same TF-IDF index
  * search already builds — no extra indexing pass, no network calls.
  */
@@ -1442,10 +1125,6 @@ async function renderLocalInsights(article, container) {
         const badges = [];
         if (metrics.readingLevel) {
             badges.push(`<span class="tag-chip insight-chip" title="${escAttr(T('Flesch reading ease: {ease}/100', { ease: metrics.readingLevel.ease }))}">📖 ${T('{label} · grade {grade}', { label: metrics.readingLevel.label, grade: metrics.readingLevel.grade })}</span>`);
-        }
-        if (metrics.sentiment && metrics.sentiment.matches > 0) {
-            const moodEmoji = metrics.sentiment.label === 'Positive' ? '🙂' : metrics.sentiment.label === 'Negative' ? '🙁' : '😐';
-            badges.push(`<span class="tag-chip insight-chip">${moodEmoji} ${metrics.sentiment.label === 'Positive' ? T('Positive tone') : metrics.sentiment.label === 'Negative' ? T('Negative tone') : metrics.sentiment.label === 'Neutral' ? T('Neutral tone') : T('{label} tone', { label: metrics.sentiment.label })}</span>`);
         }
         if (metrics.estimatedMinutes) {
             badges.push(`<span class="tag-chip insight-chip">⏱️ ${T('~{n} min read', { n: metrics.estimatedMinutes })}</span>`);
@@ -1494,177 +1173,7 @@ async function renderDetailQa(article, mount) {
     draw();
 }
 
-/** 🎓 row in the detail view: badges, authors · journal · year, DOI link and the "Mark as paper / Not a paper" override. */
-/** Tag row of the detail view (status badges only exist on list cards, where they come before the type): 🎓 paper chips first (✕ = not a paper), then the tags (✕ removes), then "+ Tag" (also: mark as research paper). */
-function renderDetailTags(article, host) {
-    if (!host) return;
-    host.replaceChildren();
-    const mk = (cls, text) => { const c = document.createElement('span'); c.className = cls; c.textContent = text; return c; };
-    const xBtn = (label, onClick) => {
-        const x = document.createElement('button'); x.type = 'button'; x.className = 'tag-x'; x.append(iconEl('x', 'icon--sm')); x.title = label; x.setAttribute('aria-label', label);
-        x.addEventListener('click', (e) => { e.stopPropagation(); onClick(); });
-        return x;
-    };
-    const refresh = () => { renderDetailTags(article, host); renderPaperRow(article, host.parentNode && host.parentNode.querySelector('.paper-row')); };
-    paperChips(article).forEach(([tone, text], i) => {
-        const c = mk('tag-chip paper paper-' + tone, text);
-        if (i === 0) c.appendChild(xBtn(T('Not a paper'), async () => { await applyStatus([article.id], { paperOverride: 'no' }); article.paperOverride = 'no'; refresh(); }));
-        host.appendChild(c);
-    });
-    const saveTags = async (next) => {
-        const stored = await StorageManager.setTags(article.id, next);
-        if (!stored) return;
-        article.tags = stored;
-        const hit = cachedArticles.find(a => a.id === article.id) || archivedCache.find(a => a.id === article.id);
-        if (hit) hit.tags = stored;
-        refresh();
-    };
-    (article.tags || []).forEach((t) => {
-        const shown = topicLabel(t, uiLocale());
-        const c = mk('tag-chip', shown);
-        if (shown !== t) c.title = t;   // the stored (original) spelling
-        if (article.id) c.appendChild(xBtn(T('Remove tag'), () => saveTags((article.tags || []).filter(x => x !== t))));
-        host.appendChild(c);
-    });
-    if (!article.id) return;
-    const add = document.createElement('button');
-    add.type = 'button'; add.className = 'tag-chip tag-add'; add.textContent = T('+ Tag / DOI');
-    add.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const input = document.createElement('input');
-        input.type = 'text'; input.className = 'tag-input'; input.maxLength = 200; input.placeholder = T('Add tag or DOI…'); input.setAttribute('aria-label', T('Add tag or DOI…'));
-        const assignDoi = async (doi) => {
-            await StorageManager.savePaperInfo(article.id, { state: 'yes', doi });
-            await applyStatus([article.id], { paperOverride: 'yes' });
-            article.paperOverride = 'yes'; article.doi = doi; article.paper = 'yes';
-            article.meta = Object.assign({}, article.meta, { paper: Object.assign({}, article.meta && article.meta.paper, { state: 'yes', doi }) });
-            const hit = cachedArticles.find(a => a.id === article.id) || archivedCache.find(a => a.id === article.id);
-            if (hit) { hit.doi = doi; hit.paper = 'yes'; }
-            refresh();
-        };
-        const commit = () => {
-            const v = input.value.trim();
-            const doi = v ? normalizeDoi(v) : '';
-            if (doi && /^(?:https?:\/\/\S*doi\.org\/|doi:\s*)?10\./i.test(v)) assignDoi(doi);   // a pasted DOI / doi.org link is assigned to the paper, not saved as a tag
-            else if (v) saveTags([...(article.tags || []), v]); else refresh();
-        };
-        input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && !ev.isComposing) { ev.preventDefault(); commit(); } else if (ev.key === 'Escape') { ev.stopPropagation(); refresh(); } });
-        input.addEventListener('blur', () => setTimeout(() => { if (input.isConnected) commit(); }, 120));
-        add.replaceWith(input);
-        // Suggestions: 🎓 Research paper (unless already one), built-in categories, then the user's most used tags.
-        const have = new Set((article.tags || []).map(t => t.toLowerCase()));
-        const freq = new Map();
-        (cachedArticles || []).forEach(a => (a.tags || []).forEach(t => freq.set(t, (freq.get(t) || 0) + 1)));
-        const used = [...freq.entries()].sort((x, y) => y[1] - x[1]).map(e => e[0]);
-        const cats = [T('News'), T('Tutorial'), T('Opinion'), T('Reference'), T('Interview')];
-        const names = [...new Set([...cats, ...used].filter(t => !have.has(t.toLowerCase())))].slice(0, 10);
-        const sugg = [];
-        const mkSugg = (label, onPick, isPaper) => {
-            const b = document.createElement('button');
-            b.type = 'button'; b.className = 'tag-chip tag-add tag-suggest' + (isPaper ? ' tag-suggest-paper' : ''); b.textContent = label;
-            b.addEventListener('mousedown', (ev) => ev.preventDefault());   // keep the input's blur from swallowing the click
-            b.addEventListener('click', onPick);
-            sugg.push(b); return b;
-        };
-        if (!paperState(article)) mkSugg(T('🎓 Research paper'), async () => { await applyStatus([article.id], { paperOverride: 'yes' }); article.paperOverride = 'yes'; refresh(); }, true);
-        names.forEach(n => mkSugg(n, () => saveTags([...(article.tags || []), n])));
-        input.after(...sugg);
-        const doiSugg = mkSugg('', () => { const d = normalizeDoi(input.value); if (d) assignDoi(d); }, true);
-        doiSugg.hidden = true;
-        input.after(doiSugg);
-        input.addEventListener('input', () => {
-            const dv = /^(?:https?:\/\/\S*doi\.org\/|doi:\s*)?10\./i.test(input.value.trim()) ? normalizeDoi(input.value) : '';
-            doiSugg.hidden = !dv; if (dv) doiSugg.textContent = T('🎓 Assign DOI {doi}', { doi: dv });
-            const q = input.value.trim().toLowerCase();
-            sugg.forEach(b => { if (b === doiSugg) return; b.hidden = !!q && !b.textContent.toLowerCase().includes(q) && !b.classList.contains('tag-suggest-paper'); });
-        });
-        input.focus();
-    });
-    host.appendChild(add);
-}
-
-function renderCiteBlock(article, host) {
-    host.replaceChildren();
-    const doi = paperDoi(article);
-    const csl = article.meta && article.meta.paper && article.meta.paper.csl;
-    const head = () => host.appendChild(Object.assign(document.createElement('div'), { className: 'cite-head', textContent: T('❝ Cite') }));
-    if (!doi || !doiUrl(doi)) { head(); host.appendChild(Object.assign(document.createElement('div'), { className: 'cite-note', textContent: T('Citation unavailable — no DOI found') })); return; }
-    if (!csl) {
-        head();
-        host.appendChild(Object.assign(document.createElement('div'), { className: 'cite-note', textContent: T('Looks the citation up at doi.org. Only the DOI is sent.') }));
-        const b = document.createElement('button');
-        b.type = 'button'; b.className = 'button-secondary'; b.textContent = T('Get citation');
-        b.addEventListener('click', async (e) => {
-            e.stopPropagation(); b.disabled = true; b.textContent = T('Looking up…');
-            try {
-                const got = await ensureCsl(article, doi);
-                article.meta = { ...(article.meta || {}), paper: { ...((article.meta || {}).paper || {}), csl: got } };
-                renderCiteBlock(article, host);
-            } catch (_) { b.disabled = false; b.textContent = T('Citation lookup failed — try again'); }
-        });
-        host.appendChild(b);
-        return;
-    }
-    const text = formatCitation(csl, getCiteStyle());
-    // Header row (like the Figma "Cite" panel): style dropdown left, Copy + DOI right; the citation text sits below.
-    const bar = document.createElement('div'); bar.className = 'cite-actions';
-    const sel = document.createElement('select'); sel.className = 'cite-style'; sel.setAttribute('aria-label', T('❝ Cite'));
-    CITE_STYLES.forEach(([id, label]) => { const o = document.createElement('option'); o.value = id; o.textContent = label; if (id === getCiteStyle()) o.selected = true; sel.appendChild(o); });
-    sel.addEventListener('click', (e) => e.stopPropagation());
-    sel.addEventListener('change', (e) => { e.stopPropagation(); setCiteStyle(sel.value); renderCiteBlock(article, host); });
-    const sp = document.createElement('span'); sp.className = 'cite-spacer';
-    const copy = document.createElement('button'); copy.type = 'button'; copy.className = 'cite-btn cite-copy'; copy.textContent = '⧉ ' + T('Copy');
-    copy.addEventListener('click', async (e) => { e.stopPropagation(); if (await copyText(text) && uiManagerRef) uiManagerRef.showToast(T('Copied to clipboard! 📋')); });
-    const open = document.createElement('a'); open.className = 'cite-btn cite-open'; open.href = doiUrl(doi); open.target = '_blank'; open.rel = 'noopener noreferrer'; open.textContent = T('DOI ↗'); open.title = T('Open DOI ↗');
-    bar.append(sel, sp, copy, open);
-    const box = document.createElement('pre'); box.className = 'cite-text'; box.textContent = text;
-    host.append(bar, box, Object.assign(document.createElement('div'), { className: 'cite-src', textContent: T('Source: doi.org') }));
-}
-
-let paperDetailsOpen = false;
-function renderPaperRow(article, row) {
-    if (!row) return;
-    row.replaceChildren();
-    if (!paperState(article)) { row.hidden = true; return; }   // the 🎓 chip itself lives in the tag row (renderDetailTags)
-    row.hidden = false;
-    row.className = 'paper-row';
-    const wrapper = document.createElement('details'); wrapper.className = 'paper-details'; wrapper.open = paperDetailsOpen;
-    wrapper.addEventListener('toggle', () => { paperDetailsOpen = wrapper.open; });
-    const sum = document.createElement('summary'); sum.textContent = T('🎓 Paper details · Facts · Cite · DOI');
-    wrapper.appendChild(sum); row.appendChild(wrapper);
-    const line = paperLine(article);
-    if (line) { const l = document.createElement('div'); l.className = 'paper-line'; l.textContent = line; wrapper.appendChild(l); }
-    const facts = paperFacts(article);
-    const card = document.createElement('div'); card.className = 'paper-card';
-    if (facts.length) {
-        const box = document.createElement('dl'); box.className = 'paper-facts';
-        facts.forEach(([k, v]) => { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; box.append(dt, dd); });
-        card.appendChild(box);
-    }
-    if (article.id && paperState(article)) {
-        const cite = document.createElement('div'); cite.className = 'cite-block';
-        card.appendChild(cite); renderCiteBlock(article, cite);
-    }
-    wrapper.appendChild(card);
-    if (!facts.length && article.id && paperState(article)) {
-        const f = document.createElement('button');
-        f.type = 'button'; f.className = 'button-secondary paper-facts-btn'; f.textContent = T('🔎 Key facts');
-        f.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            f.disabled = true; f.textContent = T('Thinking…');
-            try {
-                const merged = await extractPaperFacts(article, aiComplete, new Intl.DisplayNames(['en'], { type: 'language' }).of(locale()) || 'English');
-                article.meta = { ...(article.meta || {}), paper: { ...((article.meta || {}).paper || {}), ...merged } };
-                article.paperType = merged.type;
-                renderPaperRow(article, row);
-            } catch (err) { f.disabled = false; f.textContent = '❌ ' + ((err && err.message) || T('AI request failed')); }
-        });
-        card.insertBefore(f, card.firstChild);
-    }
-}
-
 export async function showArticleDetail(article) {
-    await loadCiteStyle();
     // List/graph/search cards only carry the lean articlesIndex shape (no
     // content) — load the full article:<id> record before rendering detail.
     // Callers that already pass a full in-memory article (e.g. mainScreen.js
@@ -1695,7 +1204,7 @@ export async function showArticleDetail(article) {
     const articleList = document.getElementById('articleList');
     const articleDetail = document.getElementById('articleDetail');
     const articleDetailContent = document.getElementById('articleDetailContent');
-    const graphContainer = document.getElementById('graphContainer');
+
     const historyTopBar = document.getElementById('historyTopBar');
     const detailTopBar = document.getElementById('detailTopBar');
 
@@ -1707,9 +1216,9 @@ export async function showArticleDetail(article) {
     const safeTitle = escapeHtml(article.title || (rawContentSource && rawContentSource.split('\n')[0]) || T('Article'));
     // Saved summary and page HTML come from arbitrary pages (and restored backups): parse inert, then clean.
     const fallbackSummary = article.savedOnly
-        ? '<p><em>' + escapeHtml(T('Saved without an AI summary. Open the page and tap ✨ Summarize to add one.')) + '</em></p>'
-        : escapeHtml(T('No summary available'));
-    const summaryDoc = new DOMParser().parseFromString(article.summaryBase !== undefined ? article.summaryBase : (article.summary || fallbackSummary), 'text/html');
+        ? '<p><em>' + escapeHtml(T("Saved without an AI main output. Open the page and tap ✨ Analyze to add one.")) + '</em></p>'
+        : escapeHtml(T("No main output available"));
+    const summaryDoc = new DOMParser().parseFromString(article.summaryBase !== undefined ? article.summaryBase : (typeof article.summary === 'string' ? article.summary : fallbackSummary), 'text/html');
     summaryDoc.querySelectorAll('img').forEach(el => el.remove());
     const safeSummary = cleanUntrustedHtml(summaryDoc.body).innerHTML;
 
@@ -1720,7 +1229,7 @@ export async function showArticleDetail(article) {
     const domain = article.url ? (() => { try { return new URL(article.url).hostname; } catch { return ''; } })() : '';
     const modelInfo = article.modelId ? `<span class="detail-model">${modelIcon(article)} ${escapeHtml(article.modelId)}</span>` : '';
     const lengthInfo = article.summaryLength ? `<span class="detail-length">📏 ${escapeHtml(article.summaryLength)}w</span>` : '';
-    
+
     // Decision metadata
     const decisionBadge = article.isDecision ? `
       <div class="detail-decision">
@@ -1741,9 +1250,7 @@ export async function showArticleDetail(article) {
           ${article.url ? `<a href="${escAttr(article.url)}" target="_blank" rel="noopener">${escapeHtml(domain)} ↗</a> · ` : ''}
           ${new Date(article.timestamp).toLocaleDateString()}${(modelInfo || lengthInfo) ? ' · ' : ''}${modelInfo}${lengthInfo}
         </p>
-        <div class="detail-tags"></div>
         ${decisionBadge}
-        <div class="paper-row" hidden></div>
         <div class="action-bar detail-actions">
           <button class="button-secondary open-button">${icon('book-open')} ${lbl('Read 👓')}</button>
           <button class="button-secondary copy-button">${icon('copy')} ${lbl('Copy 📋')}</button>
@@ -1753,7 +1260,7 @@ export async function showArticleDetail(article) {
           <button class="button-secondary localsend-button">${icon('smartphone')} ${lbl('LocalSend 📱')}</button>
         </div>
         <div class="summary-box">
-          <strong class="summary-box-title">${T('🧙 AI Summary')}</strong>
+          <strong class="summary-box-title">${T("🧙 Main output")}</strong>
           <div>${safeSummary}</div>
           <div id="qaMount" class="detail-qa"></div>
         </div>
@@ -1768,12 +1275,10 @@ export async function showArticleDetail(article) {
     const highlights = renderHighlights(article.highlights, key => t(key));
     if (highlights) articleDetailContent.querySelector('.summary-box').appendChild(highlights);
 
-    // On-device insights (reading level, sentiment, similar articles) load
+    // On-device insights (reading level and similar articles) load
     // asynchronously and progressively fill in — they never block the rest
     // of the detail view from rendering.
     renderLocalInsights(article, articleDetailContent.querySelector('#localInsights'));
-    renderDetailTags(article, articleDetailContent.querySelector('.detail-tags'));
-    renderPaperRow(article, articleDetailContent.querySelector('.paper-row'));
     renderDetailQa(article, articleDetailContent.querySelector('#qaMount'));
     {   // saved page metadata: favicon + description (set as text, never as HTML)
         const m = article.meta || {};
@@ -1824,7 +1329,7 @@ export async function showArticleDetail(article) {
     }
     // Show detail, hide list and graph
     if (articleList) articleList.style.display = 'none';
-    if (graphContainer && !wsActive()) graphContainer.style.display = 'none';
+
     if (historyTopBar) historyTopBar.style.display = 'none';
     if (detailTopBar) detailTopBar.style.display = 'flex';
     articleDetail.style.display = 'block';

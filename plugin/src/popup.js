@@ -5,7 +5,6 @@ import { applyA11y } from './modules/a11y.js';
 import { SK } from './modules/storageKeys.js';
 import { initLengthControl } from './modules/lengthControl.js';
 import { warn } from './modules/log.js';
-import { initMoodSetting } from './modules/moodSetting.js';
 import UIManager from './modules/uiManager.js';
 import StorageManager from './modules/storageManager.js';
 import { initWorkspace } from './modules/workspaceManager.js';
@@ -66,7 +65,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     initShortcuts(ui);
     initMainScreen(ui);
     initReviewPrompt();
-    initMoodSetting();
     initWorkspace();
     initAccordion(ui);
     initBackToTop();

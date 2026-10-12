@@ -12,7 +12,7 @@ const panel = d.getElementById('panelLanguage');
 const kids = [...panel.children].map(c => c.id || c.tagName.toLowerCase());
 assert(kids.indexOf('languageTagGrid') < kids.indexOf('languageSearch'), 'search below the list: ' + kids);
 assert(d.getElementById('languageSearch').getAttribute('aria-label'), 'search labelled');
-for (const id of ['addKindleDeviceButton', 'addLocalSendDeviceButton', 'feedMoodChip']) assert(d.getElementById(id).getAttribute('aria-label'), id + ' labelled');
+for (const id of ['addKindleDeviceButton', 'addLocalSendDeviceButton']) assert(d.getElementById(id).getAttribute('aria-label'), id + ' labelled');
 
 // focus trap
 const opener = d.createElement('button'); opener.textContent = 'open'; d.body.appendChild(opener); opener.focus();

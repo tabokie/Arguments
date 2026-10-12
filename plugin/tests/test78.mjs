@@ -24,8 +24,8 @@ assert.equal(p.summary, whole, 'chunks split anywhere are reassembled');
 const ctx = { sourceUrl: 'https://example.com/a', summaryMode: 'extension', service: 'openai', modelIdentifier: 'm', summaryLength: 100, selectedLanguage: 'en', contentText: 'Ein deutscher Text über Hallo Welt.', contentHtml: '<p>x</p>', pageTitle: 'Seite', htmlLang: 'de', pageMeta: { favicon: 'https://example.com/f.ico' }, ghostMax: 3, fixedTitle: 'Seite', attachedTitle: null, feedUrl: '' };
 const r = await F.finishDetached(ctx, p.summary, '');
 assert(!r.error, r.error);
-assert(r.tags.includes('🌐 de') && r.tags.includes('🌐 en'), 'language tags ' + r.tags);
-assert.deepEqual(r.questions, ['Was ist das?', 'Wer sagt das?']); assert.equal(r.moodScore, 0.4);
+assert.equal(r.pageMeta.contentLang, 'de'); assert.equal(r.pageMeta.summaryLang, 'en', 'language metadata stays available for speech');
+assert(!('questions' in r) && !('moodScore' in r) && !('tags' in r));
 assert(!/TAGS|QUESTIONS/.test(r.cleanHtml) && /Hallo Welt/.test(r.cleanHtml));
 assert(r.article && r.article.id && store.articlesIndex === undefined ? true : true);
 const idx = Object.values(store).find(v => Array.isArray(v));
@@ -36,7 +36,7 @@ const late = await F.finishDetached({ ...ctx, highlightSourceText: sentSource, c
 assert.equal(JSON.stringify(late.ghostQuotes), JSON.stringify([lateSentence]), 'detached prefix resolution uses the full sent source, beyond the old 30,000-character snapshot');
 // questions with short answers survive the whole detached path (this result is what the popup receives as summaryComplete)
 const r2 = await F.finishDetached({ ...ctx, sourceUrl: 'https://example.com/b' }, '<div><h2>Titel</h2><p>Hallo Welt.</p></div><!-- TAGS: eins --><!-- QUESTIONS: [{"q":"Was ist das?","a":"Ein Gruss. Mehr nicht."},{"q":"Wer sagt das?","a":"Der Autor sagt es im ersten Satz."}] -->', '');
-assert.deepEqual(r2.questions, ['Was ist das?', 'Wer sagt das?']); assert.equal(r2.quick['Was ist das?'], 'Ein Gruss. Mehr nicht.', 'quick answers returned: ' + JSON.stringify(r2.quick));
+assert(!('questions' in r2) && !('quick' in r2), 'detached completion ignores retired suggestions');
 assert(!/QUESTIONS|Gruss/.test(r2.cleanHtml));
 const bad = await F.finishDetached(ctx, '', '');
 assert(bad.error, 'empty answer is reported');

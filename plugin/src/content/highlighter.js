@@ -205,7 +205,7 @@ function normalizeAnnotationEntries(rawAnnotations) {
     return rawAnnotations
       .filter(a => a && typeof a === 'object')
       .map(a => {
-        const url = typeof a.url === 'string' ? a.url.split('#')[0].split('?')[0] : '';
+        const url = typeof a.url === 'string' ? pageKeyForUrl(a.url) : '';
         const text = typeof a.text === 'string' ? a.text.replace(/\s+/g, ' ').trim() : '';
         const type = a.type === 'ghost' ? 'ghost' : 'user';
         const timestamp = typeof a.timestamp === 'string' ? a.timestamp : new Date().toISOString();
@@ -224,7 +224,7 @@ function normalizeAnnotationEntries(rawAnnotations) {
 
   const migrated = [];
   for (const [urlKey, value] of Object.entries(rawAnnotations)) {
-    const url = (urlKey || '').split('#')[0].split('?')[0];
+    const url = pageKeyForUrl(urlKey);
     if (!url || !value) continue;
 
     if (Array.isArray(value)) {

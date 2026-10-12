@@ -39,26 +39,7 @@ function computeStreak(articles) {
     return { current, longest };
 }
 
-function topCategories(articles, topN = 10) {
-    const freq = {};
-    articles.forEach(a => {
-        (a.tags || []).forEach(tag => {
-            // Split camelCase (e.g. UXDesign → UX Design), then normalize to lowercase key
-            const split = tag.trim().replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
-            // News = Nachrichten = Noticias (built-in or learned): counted as one category
-            const key = isKnownTopic(split) ? conceptKey(split) : split.toLowerCase().replace(/\s+/g, ' ').trim();
-            if (key) freq[key] = (freq[key] || 0) + 1;
-        });
-    });
-    // Display as title case
-    return Object.entries(freq)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, topN)
-        .map(([key, count]) => [
-            labelOfKey(key, uiLocale()) || key.replace(/\b\w/g, c => c.toUpperCase()),
-            count
-        ]);
-}
+
 
 function wordFrequency(articles, topN = 60) {
     const stopWords = new Set([
@@ -161,13 +142,8 @@ function defaultActivityView(articles) {
     return ageDays >= 21 ? 'week' : 'day';
 }
 
-import { T, TN, locale, uiLocale } from './feedI18n.js';
-import { conceptKey, isKnownTopic, labelOfKey } from './topicConcepts.js';
-import { renderTopicsSection } from './topicsChart.js';
-import { moodSection } from './moodView.js';
-import { moodStoreFor, unscoredIn, scoreArticles } from './historyMood.js';
-import StorageManager from './storageManager.js';
-import { countWords, escapeHtml } from './textUtils.js';
+import { T, TN, locale } from './feedI18n.js';
+import { countWords } from './textUtils.js';
 import { startOfDay } from './dateUtils.js';
 
 /** Localized bar tooltips; `cnt(n)` formats the count with the right noun (articles / items). */
@@ -261,29 +237,17 @@ export function initAnalyticsReport(container, articles) {
     container.innerHTML = '';
 
     if (!articles || articles.length === 0) {
-        container.innerHTML = `<div class="ar-empty-state">${T('No articles yet — start summarizing pages to see your analytics! 📖')}</div>`;
+        container.innerHTML = `<div class="ar-empty-state">${T("No articles yet — start analyzing pages to see your analytics! 📖")}</div>`;
         return;
     }
 
     const tips = chartTips(artCnt);
     const streak = computeStreak(articles);
-    const cats = topCategories(articles);
     const words = wordFrequency(articles);
     const days = articlesByDay(articles);
     const weeks = articlesByWeek(articles);
     const totalSummaryWords = articles.reduce((sum, a) => sum + (typeof a.summaryWordCount === 'number' ? a.summaryWordCount : countWords(a.summary)), 0);
     const timeSavings = computeTimeSavings(articles);
-
-    const catsHtml = cats.length
-        ? cats.map(([tag, count]) => {
-            const pct = Math.round((count / cats[0][1]) * 100);
-            return `<div class="ar-cat-row" data-tag="${escapeHtml(tag)}" title="${escapeHtml(T('Search “{term}”', { term: tag }))}">
-              <span class="ar-cat-label">${escapeHtml(tag)}</span>
-              <div class="ar-cat-bar-track"><div class="ar-cat-bar" style="width:${pct}%"></div></div>
-              <span class="ar-cat-count">${count}</span>
-            </div>`;
-          }).join('')
-        : `<p class="ar-empty">${T('No tags found. Add tags to your summaries!')}</p>`;
 
     const timeSavingsHtml = timeSavings ? `
         <!-- Time savings section -->
@@ -297,7 +261,7 @@ export function initAnalyticsReport(container, articles) {
             <div class="ar-savings-arrow">→</div>
             <div class="ar-savings-block ar-savings-summary">
               <span class="ar-savings-value">${formatMinutes(timeSavings.summaryMinutes)}</span>
-              <span class="ar-savings-label">${T('With summaries')}</span>
+              <span class="ar-savings-label">${T("With results")}</span>
             </div>
             <div class="ar-savings-arrow">=</div>
             <div class="ar-savings-block ar-savings-saved">
@@ -351,14 +315,6 @@ export function initAnalyticsReport(container, articles) {
           </div>
         </div>
 
-        <div id="arMoodMount"></div>
-
-        <!-- Top categories -->
-        <div class="ar-section">
-          <h3 class="ar-section-title">${T('🏷️ Top Categories')}</h3>
-          <div class="ar-cat-list">${catsHtml}</div>
-        </div>
-
         <!-- Word cloud -->
         <div class="ar-section">
           <h3 class="ar-section-title">${T('☁️ Word Cloud')}</h3>
@@ -367,39 +323,6 @@ export function initAnalyticsReport(container, articles) {
 
       </div>
     `;
-
-    // Topics over time (stacked tag columns), placed right before the top-categories list
-    const catSection = container.querySelector('.ar-cat-list')?.closest('.ar-section');
-    if (catSection) catSection.before(renderTopicsSection(articles, container));
-
-    // Mood over time (needs AI scores on the articles; same card as Feeds insights)
-    const mount = container.querySelector('#arMoodMount');
-    if (mount) {
-        const rerender = async () => { const arts = await StorageManager.getArticlesIndex({ includeArchived: true }); initAnalyticsReport(container, arts); };
-        mount.replaceWith(moodSection({
-            moodStore: moodStoreFor(articles),
-            unscored: (from, to) => unscoredIn(articles, from, to),
-            onScore: async (list) => {
-                const btns = [...container.querySelectorAll('.feed-mt .btn-sm')];
-                btns.forEach(b => { b.disabled = true; b.textContent = T('Scoring with AI… {a}/{b}', { a: 0, b: list.length }); });
-                try { await scoreArticles(list, (a, b) => btns.forEach(x => { x.textContent = T('Scoring with AI… {a}/{b}', { a, b }); })); }
-                catch (e) { btns.forEach(b => { b.disabled = false; b.textContent = (e && e.message) || T('AI scoring failed'); }); return; }
-                rerender();
-            },
-            emptyHint: T('No article has a mood yet — let the AI score them.'),
-            scoreMax: 120
-        }));
-    }
-
-    // Attach click handlers to category rows after rendering
-    container.querySelectorAll('.ar-cat-row[data-tag]').forEach(row => {
-        row.addEventListener('click', () => {
-            container.dispatchEvent(new CustomEvent('tag-search', {
-                bubbles: true,
-                detail: { tag: row.dataset.tag }
-            }));
-        });
-    });
 
     // ── Activity day/week toggle ───────────────────────────────────────
     // Switch the activity chart between a 30-day daily view and a 12-week

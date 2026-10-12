@@ -1,25 +1,25 @@
 import { T, N_ } from './feedI18n.js';
 import { SK } from './storageKeys.js';
 // workspaceManager.js — split-screen workspace for wide windows.
-// Shows up to three of List / Graph / Analytics side by side inside the History
+// Shows List and Analytics side by side inside the History
 // and Feeds screens (layout switcher lives in the app header). Narrow windows keep the single-pane behaviour (nothing changes).
-// Breakpoints: <720px one pane · 720–1099px up to two · ≥1100px up to three.
+// Breakpoints: <720px one pane; wider windows allow List and Analytics side by side.
 
-const VIEWS = ['list', 'graph', 'report'];
-const LABEL = { list: N_('List'), graph: N_('Graph'), report: N_('Analytics') };
+const VIEWS = ['list', 'report'];
+const LABEL = { list: N_('List'), report: N_('Analytics') };
 const STORE_KEY = SK.workspace;
 
-let layout = 1;                       // user's wish (1..3)
-let views = ['list', 'graph', 'report']; // view per pane slot
+let layout = 1;                       // user's wish (1 or 2)
+let views = ['list', 'report']; // view per pane slot
 
-export const maxPanes = () => (window.innerWidth >= 1100 ? 3 : window.innerWidth >= 720 ? 2 : 1);
+export const maxPanes = () => (window.innerWidth >= 720 ? 2 : 1);
 const effective = () => Math.min(layout, maxPanes());
 
 const SCREENS = [
     { scope: 'history', id: 'historyScreen', bar: 'historyTopRow', top: 'historyTopBar',
-      ids: { list: ['articleList', 'articleDetail'], graph: ['graphContainer'], report: ['reportContainer'] } },
+      ids: { list: ['articleList', 'articleDetail'], report: ['reportContainer'] } },
     { scope: 'feeds', id: 'feedsScreen', bar: 'feedToolbar', top: 'feedControls',
-      ids: { list: ['feedListPane'], graph: ['feedGraph'], report: ['feedInsights'] } },
+      ids: { list: ['feedListPane'], report: ['feedInsights'] } },
 ];
 const elsOf = (cfg) => Object.fromEntries(VIEWS.map(v => [v, cfg.ids[v].map(i => document.getElementById(i)).filter(Boolean)]));
 const emit = (scope, view, open) => document.dispatchEvent(new CustomEvent('aish:ws-view', { detail: { scope, view, open } }));
@@ -61,7 +61,6 @@ function applyScreen(cfg) {
     const top = cfg.top && document.getElementById(cfg.top);
     if (top) top.classList.remove('ws-off', 'ws-p1', 'ws-p2', 'ws-p3');
     if (!on) {
-        emit(cfg.scope, 'graph', false);
         emit(cfg.scope, 'report', false);
         if (cfg.scope === 'history') {
             const detailOpen = e.list[1]?.style.display === 'block';
@@ -114,7 +113,7 @@ function buildSwitchers() {
     seg.className = 'ws-seg';
     seg.setAttribute('role', 'group');
     seg.setAttribute('aria-label', T('Layout'));
-    [1, 2, 3].forEach(k => {
+    [1, 2].forEach(k => {
         const b = document.createElement('button');
         b.type = 'button'; b.dataset.n = String(k);
         b.title = k === 1 ? T('One pane') : T('{n} panes', { n: k });
@@ -140,8 +139,8 @@ export async function initWorkspace() {
     try {
         const r = await chrome.storage?.local?.get(STORE_KEY);
         const s = r?.[STORE_KEY];
-        if (s && [1, 2, 3].includes(s.layout) && Array.isArray(s.views) && s.views.length === 3 && VIEWS.every(v => s.views.includes(v))) {
-            layout = s.layout; views = s.views;
+        if (s && [1, 2, 3].includes(s.layout) && Array.isArray(s.views) && VIEWS.every(v => s.views.includes(v))) {
+            layout = s.layout; views = s.views.filter(v => VIEWS.includes(v)); layout = Math.min(layout, VIEWS.length);
         }
     } catch (_) { /* defaults */ }
     buildSwitchers();

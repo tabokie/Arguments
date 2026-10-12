@@ -23,9 +23,9 @@ assert.ok(calls[0].user.includes('[1] Alpha') && calls[0].user.includes('snip'))
 assert.ok($('.feed-recap-overview').textContent.startsWith('Overview'));
 assert.equal($$('.feed-recap-themes li').length, 2);
 assert.ok(Object.keys(store['feeds:recaps']).length === 1, 'cached');
-assert.deepEqual(store['feeds:items'].map(i => i.cat), ['Tech', 'Politics', 'World News'], 'labels applied');
+assert(store['feeds:items'].every(item => !item.cat && !item.ai), 'legacy metadata in a recap reply is ignored');
 assert.ok(!('labels' in Object.values(store['feeds:recaps'])[0]), 'labels not duplicated in cache');
-assert.ok($$('.feed-cat').length === 3, 'chips');
+assert.equal($$('.feed-cat').length, 0, 'category chips removed');
 // reopen uses cache
 click($('#feedSheetBody .feed-sheet-done')); click($('.feed-day-ai')); await tick(50);
 assert.equal(calls.length, 1, 'cache hit');
@@ -34,21 +34,9 @@ store['feeds:items'].push(mk('d', 'New', 0.001));
 await fm.onFeedsScreenShown(uiStub); await tick(50);
 click($('#feedSheetBody .feed-sheet-done')); click($('.feed-day-ai')); await tick(50);
 assert.ok($('.feed-recap-stale'), 'stale hint');
-// score with AI from recap sheet
-click($$('#feedSheetBody .feed-manage-link').find(b => b.textContent.includes('Score'))); await tick(80);
-const scored = store['feeds:items'].filter(i => i.ai);
-console.log('scored', scored.map(i => [i.id, i.sent]), toasts.slice(-2));
-assert.ok(scored.length >= 3);
-assert.equal(store['feeds:items'].find(i => i.id === 'd').sent, 0.8);
-await tick(30);
-const tinted = $$('.feed-item.has-mood'); assert.equal(tinted.length, 2, 'tint on non-neutral');
-console.log('tint', tinted.map(t => t.style.getPropertyValue('--mood-tint')));
-// no double scoring: second run makes no AI call
-const before = calls.length;
-click($('#feedSheetBody .feed-sheet-done')); click($('.feed-day-ai')); await tick(50);
-const btnTxt = $$('#feedSheetBody .feed-manage-link').map(b => b.textContent).join('|'); console.log('after:', btnTxt);
-assert.ok(/All items here are scored|Score \d+ unscored/.test(btnTxt));
-assert.equal(calls.length, before);
+// The cached recap has no scoring controls or mood/category decorations.
+assert(!$$('#feedSheetBody .feed-manage-link').some(button => /Score/.test(button.textContent)));
+assert.equal($$('.feed-item.has-mood, .feed-cat, .feed-mood').length, 0);
 // error path
 globalThis.__ai = () => ({ ok: false, error: 'Monthly limit reached' });
 click($('#feedSheetBody .feed-sheet-done'));

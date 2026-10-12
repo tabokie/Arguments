@@ -29,5 +29,5 @@ assert.deepEqual(store['feeds:background'].ratings.existing, { ai: true, sent: 0
 
 await fm.onFeedsScreenShown(ui);
 assert.equal(w.document.querySelectorAll('.feed-item').length, 2);
-assert.equal(store['feeds:items'].find(item => item.id === 'existing').sent, 0.7, 'popup merges worker rating into its read model');
+assert.equal(store['feeds:items'].find(item => item.id === 'existing').sent, undefined, 'retired worker ratings stay preserved without entering the active read model');
 console.log('TEST 109 OK');

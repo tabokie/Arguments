@@ -21,7 +21,7 @@ export async function initLengthControl() {
 
     slider.min = SLIDER_MIN; slider.max = SLIDER_MAX; slider.step = 10;
     number.min = MIN_WORDS; number.max = MAX_WORDS; number.step = 1;
-    number.setAttribute('aria-label', T('Summary length in words'));
+    number.setAttribute('aria-label', T("Main output length in words"));
     const unit = document.getElementById('lengthUnit'); if (unit) unit.textContent = T('words');
     hint.textContent = T('Short pages get a few sentences, long reads get more. Never longer than half the article.');
 

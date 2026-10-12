@@ -35,7 +35,7 @@ input.value = 'How are writes handled?';
 d.getElementById('fetchSummary').click(); await tick(250);
 assert(prompt && /embedded replicas for edge/.test(prompt.user) && /EARLIER QUESTIONS/.test(prompt.user), 'prompt has that page text and earlier turns');
 assert.equal(host.querySelectorAll('.chat-turn-group').length, 2, 'new turn inside the thread');
-assert.deepEqual([...host.querySelectorAll('.chat-suggest-chip')].map(x => x.textContent), ['What about backups?', 'Any downsides?']);
+assert.deepEqual([...host.querySelectorAll('.chat-suggest-chip')].map(x => x.textContent), [], 'automatic suggestions stay hidden even if an old-format reply includes them');
 assert.equal(store[articleRecKey('a1')].conversation.length, 2, 'saved');
 assert(/2 replies/.test(b1.querySelector('.ask-count').textContent), 'count updated');
 // Another card: first thread goes away

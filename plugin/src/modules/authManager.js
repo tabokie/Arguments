@@ -299,9 +299,9 @@ async function refreshAuthState(forceData = null) {
 }
 
 function applyHero(view, stateName) {
-    if (view.titleEl) view.titleEl.textContent = stateName === 'otpPending' ? T('Enter your code') : (view.heroTitle ? view.heroTitle() : T('Sign in to AI Summary Helper'));
+    if (view.titleEl) view.titleEl.textContent = stateName === 'otpPending' ? T('Enter your code') : (view.heroTitle ? view.heroTitle() : T("Sign in to Arguments"));
     if (view.leadEl) {
-        view.leadEl.textContent = view.heroLead ? view.heroLead() : T('Free cloud models and your summaries on every device. Or skip this and use your own API key.');
+        view.leadEl.textContent = view.heroLead ? view.heroLead() : T("Free cloud models and your results on every device. Or skip this and use your own API key.");
         view.leadEl.style.display = stateName === 'otpPending' ? 'none' : '';
     }
 }

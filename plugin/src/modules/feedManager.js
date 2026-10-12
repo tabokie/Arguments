@@ -12,36 +12,35 @@ import { SK, articleRecKey } from './storageKeys.js';
 //
 // Screen model (see Figma "Feeds UX sprint"):
 //   control bar  = source pill (opens source picker) + refresh + add (opens sheet)
-//   chip row     = status (Unread / All / ★ / ✓) + date & mood sheet
+//   chip row     = status (Unread / All / ★ / ✓) + date sheet
 //   list         = day groups with a scoped "Mark read" and an undo bar
-//   Settings > Feeds = subscriptions (rename / tags / mute / remove), OPML, behavior
+//   Settings > Feeds = subscriptions (rename / mute / remove), OPML, behavior
 
 import { showSkeleton, clearSkeleton } from './skeleton.js';
 import StorageManager from './storageManager.js';
 import { normalizeUrl } from './textUtils.js';
-import { itemMood, MOOD_EMOJI } from './feedSentiment.js';
+
 import { play as playAudio, initPlayer, isPlaying, formatDuration } from './feedPlayer.js';
-import { T, TN, TU, N_, locale, uiLocale } from './feedI18n.js';
+import { T, TN, TU, N_, locale } from './feedI18n.js';
 import { syncTabbar } from './tabbar.js';
 import { trapFocus } from './sheet.js';
 import { buildIndex, search as indexSearch } from './localSearch.js';
 import { renderInsights } from './feedInsights.js';
-import { snapshotMood } from './feedMood.js';
-import { openRollup, coverage, weekCells, weekStart, monthStart, periodEnd, isoWeek, rangeText, rollKey, tally, isStale, moodBar, recapKeyTs, isDayRecapKey } from './feedRollup.js';
-import { generateRecap, generateRecapUpdate, generateFeedTopics, translateFeedTopics, learnTagNames, uiLanguage, itemSig, scoreItems, MAX_RECAP_ITEMS, getRecapLimit, setRecapLimit } from './feedAi.js';
+
+import { openRollup, coverage, weekCells, weekStart, monthStart, periodEnd, isoWeek, rangeText, rollKey, isStale, recapKeyTs, isDayRecapKey } from './feedRollup.js';
+import { generateRecap, generateRecapUpdate, itemSig, getRecapLimit, setRecapLimit } from './feedAi.js';
 import { el } from './dom.js';
 import { renderAnswer, renderInline } from './qaView.js';
 import { createRecapStatus } from './recapStatus.js';
 import { runningJob, trackJob, notifyReady } from './recapJobs.js';
-import { moodEnabled, setMoodEnabled } from './moodSetting.js';
+
 import { startOfDay } from './dateUtils.js';
-import { PRESET_IDS, PRESETS, REFERENCE, REQUEST_STEPS, DEFAULT_REQUESTS, presetOf, presetSettings, projection, recommend, classOf, benchItems, BENCH_COUNT } from './libraryPresets.js';
-import { planLibrary, runLibrary, categoryCounts, chunksOf, countRequests, formatEta, cleanBatchSize, BATCH_SIZES, DEFAULT_BATCH } from './libraryBatch.js';
+import { REQUEST_STEPS, DEFAULT_REQUESTS } from './libraryPresets.js';
+import { planLibrary, runLibrary, chunksOf, countRequests, formatEta, cleanBatchSize, BATCH_SIZES, DEFAULT_BATCH } from './libraryBatch.js';
 import { subTitle, hash, safeHttpUrl, normalizeInputUrl, timeAgo } from './feedUtil.js';
 import { parseFeed, opmlXml } from './feedParse.js';
 import { stackItems } from './feedStacks.js';
-import { conceptKey, topicLabel } from './topicConcepts.js';
-import { loadLexicon, saveLexicon } from './topicLexicon.js';
+
 import { icon, setLabel } from './icons.js';
 import { estimateFeedInterval, feedPriority, feedQualityWeight } from './feedWorker.js';
 
@@ -50,7 +49,6 @@ const ITEMS_KEY = SK.feedItems;
 const UI_KEY = SK.feedUi;
 const SETTINGS_KEY = SK.feedSettings;
 const RECAPS_KEY = SK.feedRecaps;
-const MOOD_KEY = SK.feedMood;   // per-day mood counts; outlives item retention (see feedMood.js)
 // Items are kept until the retention window (Settings > Feeds) runs out; favorites are kept longer.
 // These are only safety nets so storage can't grow without bound.
 const MAX_ITEMS_PER_FEED = 1500;
@@ -62,7 +60,6 @@ const DAY_MS = 86400000;
 
 export const FEED_DEFAULTS = {
     markReadOnOpen: true,
-    rateWithRecap: true,
     autoSummarizeFavs: false,
     backgroundPoll: false,
     refreshMinutes: 30,
@@ -73,7 +70,6 @@ export const FEED_DEFAULTS = {
     autoProcessMinutes: 30,
     stackExclude: [],                    // ids of items the user marked "not the same story" (never stacked)
     requestsPerTick: DEFAULT_REQUESTS,   // AI requests per automatic run (see libraryPresets.js)
-    libraryBench: null,                  // last benchmark of this machine: { at, model, cold, warm }
     autoProcessAt: 0,
     smartRefreshOrder: true
 };
@@ -82,10 +78,10 @@ let subs = [];
 let items = [];
 let recaps = {};
 let backgroundStatus = null;
-let moodDaily = {};
+
 let settings = { ...FEED_DEFAULTS };
 // UI filter state (persisted so the screen reopens the way you left it)
-let ui = { source: 'all', status: 'all', date: 'any', mood: 'any', sort: 'new', stack: false };
+let ui = { source: 'all', status: 'all', date: 'any', sort: 'new', stack: false };
 const DEFAULT_STATUS = 'all';
 let refreshing = false;
 let els = {};
@@ -99,8 +95,8 @@ const stickyRead = new Set();
 let stackMembers = new Map();
 const openStacks = new Set();   // lead ids whose stack is expanded
 let searchQuery = '';          // free-text search over the items (TF-IDF, same engine as History)
-let view = 'list';             // 'list' | 'graph' | 'insights'
-const splitExtra = new Set();  // extra panes shown beside the list in the split workspace ('graph' | 'insights')
+let view = 'list';             // 'list' | 'insights'
+const splitExtra = new Set();  // extra panes shown beside the list in the split workspace ('insights')
 let searchCache = null;        // { ref, len, rated, idx, byStamp, stampOf }
 // normalized URL -> { fav: boolean, summarized: boolean } built from the History index
 let historyByUrl = new Map();
@@ -108,9 +104,8 @@ let historyByUrl = new Map();
 // ── Storage ────────────────────────────────────────────────────────────────
 async function load() {
     const data = await chrome.storage.local.get({
-        [SUBS_KEY]: [], [ITEMS_KEY]: [], [UI_KEY]: null, [SETTINGS_KEY]: null, [RECAPS_KEY]: {}, [MOOD_KEY]: {}, [SK.feedBackground]: {}
+        [SUBS_KEY]: [], [ITEMS_KEY]: [], [UI_KEY]: null, [SETTINGS_KEY]: null, [RECAPS_KEY]: {}, [SK.feedBackground]: {}
     });
-    moodDaily = data[MOOD_KEY] || {};
     const background = data[SK.feedBackground] || {};
     recaps = { ...(data[RECAPS_KEY] || {}) };
     subs = data[SUBS_KEY] || [];
@@ -119,87 +114,42 @@ async function load() {
     mergeBackground(background);
     setRecapLimit(settings.recapLimit);
     if (data[UI_KEY]) ui = { ...ui, ...data[UI_KEY] };
-    // Folders became tags: each feed's folder turns into its first tag.
-    subs.forEach(s => {
-        if ('folder' in s) { s.tags = cleanTags([...(s.tags || []), s.folder]); delete s.folder; }
-        if (!Array.isArray(s.tags)) s.tags = [];
-    });
-    if (typeof ui.source === 'string' && ui.source.startsWith('folder:')) ui.source = 'tag:' + ui.source.slice(7);
-    // Older builds scored mood on-device; only AI scores are kept now.
-    items.forEach(i => { if (!i.ai) delete i.sent; });
+    delete ui.mood; ui.sort = 'new';
+    if (typeof ui.source === 'string' && /^(?:tag|folder):/.test(ui.source)) ui.source = 'all';
     // A filter pointing at a source that no longer exists falls back to "all".
     if (!sourceExists(ui.source)) ui.source = 'all';
-    syncMood();
+
 }
 
 function mergeBackground(background = {}) {
     backgroundStatus = background.status || null;
     const byId = new Map(items.map(item => [item.id, item]));
     (background.items || []).forEach(item => { if (!byId.has(item.id)) byId.set(item.id, item); });
-    Object.entries(background.ratings || {}).forEach(([id, rating]) => {
-        const item = byId.get(id);
-        if (item) byId.set(id, { ...item, ...rating });
-    });
     items = [...byId.values()];
     Object.entries(background.recaps || {}).forEach(([key, recap]) => {
         if (!recaps[key] || (Number(recap.at) || 0) >= (Number(recaps[key].at) || 0)) recaps[key] = recap;
     });
 }
 
-// Count the current items' moods into the long-lived daily store (older days survive item pruning).
-function syncMood() {
-    if (snapshotMood(moodDaily, items, itemMood, startOfDay)) chrome.storage.local.set({ [MOOD_KEY]: moodDaily }).catch(() => {});
-}
-
 function persist() {
-    syncMood();
+
     return chrome.storage.local.set({ [SUBS_KEY]: subs, [ITEMS_KEY]: items });
 }
 function persistUi() { stickyRead.clear(); shown = PAGE_SIZE; return chrome.storage.local.set({ [UI_KEY]: ui }).catch(() => {}); }
 function persistSettings() { return chrome.storage.local.set({ [SETTINGS_KEY]: settings }).catch(() => {}); }
 
-// ── Tags (a feed can have several) ─────────────────────────────────────────
-// A tag's identity is its topic, not its spelling: News = Nachrichten = Noticias, Wirtschaft = Economics (see topicConcepts.js).
-const tagKey = conceptKey;
-let topicLang = '';   // UI language code (locale folder): topic tags are written and shown in it
-function cleanTags(list) {
-    const seen = new Set(), out = [];
-    (Array.isArray(list) ? list : String(list || '').split(',')).forEach(t => {
-        const v = String(t || '').replace(/^\/+/, '').replace(/[#,]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24);
-        if (v && !seen.has(tagKey(v))) { seen.add(tagKey(v)); out.push(v); }
-    });
-    return out;
-}
-const allOf = (s) => cleanTags([...(s.tags || []), ...(s.topics || [])]).map(t => topicLabel(t, topicLang));   // the user's tags + the AI's topic tags, known topics in the UI language
-const hasTag = (s, t) => allOf(s).some(x => tagKey(x) === tagKey(t));
-function allTags() {
-    const m = new Map();
-    subs.forEach(s => allOf(s).forEach(t => { if (!m.has(tagKey(t))) m.set(tagKey(t), t); }));
-    return [...m.values()].sort((a, b) => a.localeCompare(b));
-}
+
 
 function sourceExists(src) {
     if (!src || src === 'all') return true;
     const [kind, val] = splitSource(src);
     if (kind === 'sub') return subs.some(s => s.id === val);
-    if (kind === 'tag') return subs.some(s => hasTag(s, val));
+
     return false;
 }
 function splitSource(src) {
     const i = src.indexOf(':');
     return i < 0 ? [src, ''] : [src.slice(0, i), src.slice(i + 1)];
-}
-
-// A feed item that was already AI-scored hands its mood to the History entry once it is summarized/saved.
-async function carryMoodToHistory() {
-    try {
-        const scored = new Map(items.filter(i => i.ai && typeof i.sent === 'number' && i.link).map(i => [normalizeUrl(i.link), i.sent]));
-        if (!scored.size) return;
-        const { [SK.articlesIndex]: articlesIndex = [] } = await StorageManager.getLocal({ [SK.articlesIndex]: [] });
-        const map = {};
-        articlesIndex.forEach(a => { if (a.url && typeof a.moodScore !== 'number' && scored.has(normalizeUrl(a.url))) map[a.id] = scored.get(normalizeUrl(a.url)); });
-        if (Object.keys(map).length) await StorageManager.setArticleMoods(map);
-    } catch (e) { /* mood carry-over is best effort */ }
 }
 
 // An article matches a feed link by its page URL or the original feed link it was started from.
@@ -287,7 +237,7 @@ async function toggleFavorite(item) {
                 url: item.link,
                 title: item.title,
                 description: item.snippet || '',
-                tags: ['feed'],
+
                 extra: { favorite: true, feedStub: true, fromFeed: feedName, lastOpened: new Date().toISOString() }
             });
             createdStub = true;
@@ -422,7 +372,6 @@ function mergeItems(sub, parsedItems) {
 // Drop items older than the retention window (favorites are kept; they also
 // live in History).
 function pruneItems() {
-    syncMood();   // keep the mood of days that are about to be pruned
     const cutoff = Date.now() - settings.keepDays * DAY_MS;
     items = items.filter(i => i.published >= cutoff || histOf(i).fav);
     // Recaps follow the same retention window (key starts with the day's timestamp).
@@ -554,7 +503,7 @@ async function refreshAll(uiObj, { force = false } = {}) {
 }
 
 // ── Add / remove / import / export ─────────────────────────────────────────
-async function addFeed(uiObj, rawUrl, inputEl, tags = []) {
+async function addFeed(uiObj, rawUrl, inputEl) {
     const url = normalizeInputUrl(rawUrl);
     if (!url) return toast(uiObj, T('Enter a valid web address'));
     setBusy(true);
@@ -569,7 +518,7 @@ async function addFeed(uiObj, rawUrl, inputEl, tags = []) {
             url: feedUrl,
             title: parsed.title || new URL(feedUrl).hostname,
             siteUrl: parsed.siteUrl || '',
-            tags: cleanTags(tags),
+
             addedAt: Date.now(),
             lastFetched: Date.now(),
             error: ''
@@ -606,7 +555,6 @@ async function importOpml(uiObj, file) {
         if (doc.querySelector('parsererror')) throw new Error(T('Not a valid OPML file'));
         let added = 0;
         const addOutline = (o, folder) => {
-            const own = cleanTags(String(o.getAttribute('category') || '').split(','));
             const url = safeHttpUrl(o.getAttribute('xmlUrl') || o.getAttribute('xmlurl'));
             if (!url || subs.some(s => s.url === url)) return;
             subs.push({
@@ -614,15 +562,16 @@ async function importOpml(uiObj, file) {
                 url,
                 title: o.getAttribute('title') || o.getAttribute('text') || new URL(url).hostname,
                 siteUrl: safeHttpUrl(o.getAttribute('htmlUrl')) || '',
-                tags: cleanTags([...(folder ? [folder] : []), ...own]),
+                // Retain imported OPML metadata for round trips; it is never used for filtering or analysis.
+                tags: [...new Set([folder, ...String(o.getAttribute('category') || '').split(',')].map(t => t.replace(/^\/+/, '').replace(/[#,]/g, '').trim()).filter(Boolean))],
+
                 addedAt: Date.now(),
                 lastFetched: 0,
                 error: ''
             });
             added++;
         };
-        // A top-level outline without xmlUrl is a folder: its feeds get the folder name as a tag.
-        // OPML `category` attributes (comma-separated) become tags too.
+        // Preserve folder/category metadata at the OPML import boundary.
         const body = doc.querySelector('body');
         const top = body ? [...body.children].filter(n => n.localName === 'outline') : [];
         for (const o of top) {
@@ -646,7 +595,7 @@ function exportOpml() {
     const blob = new Blob([xml], { type: 'text/x-opml' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'ai-summary-helper-feeds.opml';
+    a.download = 'arguments-feeds.opml';
     document.body.appendChild(a);
     a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -700,7 +649,7 @@ function paintSum(id) {
         b.setAttribute('aria-busy', st ? 'true' : 'false');
         if (queued) {
             b.style.removeProperty('--p'); b.removeAttribute('aria-valuenow'); b.removeAttribute('role');
-            setLabel(b, T('⏳ Queued')); b.title = T('Waiting for the running summary — click to remove from the queue');
+            setLabel(b, T('⏳ Queued')); b.title = T("Waiting for the running main output — click to remove from the queue");
             return;
         }
         b.removeAttribute('title');
@@ -761,7 +710,7 @@ function onSummaryMessage(msg, sender) {
             for (let k = 0; k < 8; k++) {
                 await new Promise(r => setTimeout(r, k ? 500 : 300));
                 await loadHistoryMap();
-                if (!item || histOf(item).summarized) { await carryMoodToHistory(); break; }
+                if (!item || histOf(item).summarized) { break; }
             }
             endSumProgress(id); render();
         })();
@@ -789,8 +738,8 @@ function openItem(item, summarize) {
         if (summarize && res && res.mode === 'extension') {
             const st = sumBusy.get(item.id);
             if (st) { st.jobId = res.id == null ? null : res.id; st.queued = !!res.queued; if (st.queued) rearmSum(item.id, 60 * 60 * 1000); paintSum(item.id); }
-            if (res.queued) toast(uiRef, T('Queued — it will start when the current summary is done'));
-            else toast(uiRef, T('Summarizing in the background — it will show up under Summarize and History'));
+            if (res.queued) toast(uiRef, T("Queued — it will start when the current main output is done"));
+            else toast(uiRef, T("Analyzing in the background — it will show up under Analyze and History"));
         }
     });
 }
@@ -803,7 +752,7 @@ function inSource(i, sm, source = ui.source) {
     if (!s) return false;
     const [kind, val] = splitSource(source);
     if (kind === 'sub') return i.feedId === val;
-    if (kind === 'tag') return hasTag(s, val) && !s.muted;
+
     return !s.muted;
 }
 
@@ -828,7 +777,7 @@ function dateText(d = ui.date) {
     if (isDayRange(d)) return `${fmtDayNoWeek(d.from)} – ${fmtDayNoWeek(d.to)}`;
     return '';
 }
-const filtersActive = () => ui.date !== 'any' || ui.mood === 'nonneg' || ui.sort !== 'new';
+const filtersActive = () => ui.date !== 'any';
 
 function passes(i, sm, skipDate = false) {
     if (!inSource(i, sm)) return false;
@@ -838,32 +787,23 @@ function passes(i, sm, skipDate = false) {
     if (ui.status === 'sum' && !h.summarized) return false;
     if (ui.status === 'audio' && !i.audio) return false;
     if (!skipDate && !inDateFilter(i)) return false;
-    const mood = itemMood(i) || 'neu';
-    if (moodEnabled()) {
-        if (ui.mood === 'pos' && mood !== 'pos') return false;
-        if (ui.mood === 'nonneg' && mood === 'neg') return false;
-    }
+
     return true;
 }
 
-// Items as "articles" so the History search index and graph can be reused (unique numeric timestamp per item).
+// Items as "articles" so the History search index can be reused (unique numeric timestamp per item).
 function toArticle(item, stamp, sm) {
     const s = sm.get(item.feedId);
-    const tags = [];
-    if (item.cat) tags.push(item.cat);
-    if (s) tags.push(subTitle(s), ...allOf(s));
-    if (item.audio) tags.push('🎧');
-    return { timestamp: stamp, title: item.title, summary: item.snippet || '', description: '', tags, url: item.link, _item: item };
+    return { timestamp: stamp, title: item.title, summary: item.snippet || '', description: s ? subTitle(s) : '', url: item.link, _item: item };
 }
 function feedIndex() {
-    const rated = items.reduce((n, i) => n + (i.cat ? 1 : 0), 0);
-    if (searchCache && searchCache.ref === items && searchCache.len === items.length && searchCache.rated === rated) return searchCache;
+    if (searchCache && searchCache.ref === items && searchCache.len === items.length) return searchCache;
     const sm = subMap(); const used = new Set(); const stampOf = new Map(); const arts = [];
     for (const i of items) {
         let st = Math.floor(i.published) || 0; while (used.has(st)) st++;
         used.add(st); stampOf.set(i.id, st); arts.push(toArticle(i, st, sm));
     }
-    searchCache = { ref: items, len: items.length, rated, idx: buildIndex(arts), arts, stampOf };
+    searchCache = { ref: items, len: items.length, idx: buildIndex(arts), arts, stampOf };
     return searchCache;
 }
 function applySearch(list) {
@@ -877,9 +817,7 @@ function applySearch(list) {
 
 function visibleItems() {
     const sm = subMap();
-    const list = items.filter(i => passes(i, sm));
-    if (ui.sort === 'mood' && moodEnabled()) list.sort((a, b) => (itemMood(b) ? b.sent : -2) - (itemMood(a) ? a.sent : -2) || b.published - a.published);
-    else list.sort((a, b) => b.published - a.published);
+    const list = items.filter(i => passes(i, sm)).sort((a, b) => b.published - a.published);
     return searchQuery.trim() ? applySearch(list) : list;
 }
 
@@ -896,8 +834,7 @@ function dayLabel(ts) {
 function filterChipLabel() {
     const parts = [];
     if (ui.date !== 'any') parts.push(dateText());
-    if (ui.mood === 'nonneg') parts.push(T('No 😟'));
-    if (ui.sort === 'mood') parts.push(T('Mood ↓'));
+
     return (parts.join(' · ') || T('🎛️ Filter')) + ' ▾';
 }
 
@@ -922,7 +859,7 @@ function btn(className, text, onClick, title) {
 function sourceLabel() {
     const [kind, val] = splitSource(ui.source);
     if (kind === 'sub') { const s = subs.find(x => x.id === val); return '📰  ' + (s ? subTitle(s) : T('Source')); }
-    if (kind === 'tag') return '🏷️  ' + val;
+
     return T('📰  All sources');
 }
 
@@ -937,24 +874,19 @@ function renderControls() {
         const s = sm.get(i.feedId);
         if (!s) return false;
         if (kind === 'sub') return i.feedId === val;
-        if (kind === 'tag') return hasTag(s, val) && !s.muted;
+
         return !s.muted;
     };
     const unread = unreadCount(scoped);
     els.sourceCount.textContent = unread ? String(unread) : '';
     els.chipRow.querySelectorAll('[data-status]').forEach(b => {
         // The chips are one quick-filter group: 😊 replaces the status chip (incl. All).
-        const on = b.dataset.status === ui.status && !(moodEnabled() && ui.mood === 'pos');
+        const on = b.dataset.status === ui.status;
         b.classList.toggle('active', on);
         b.setAttribute('aria-pressed', String(on));
         if (b.dataset.status === 'unread') b.textContent = unread ? T('Unread · {n}', { n: unread }) : T('Unread');
     });
-    if (els.moodChip) {
-        const on = ui.mood === 'pos';
-        els.moodChip.classList.toggle('active', on);
-        els.moodChip.setAttribute('aria-pressed', String(on));
-        els.moodChip.title = els.moodChip.ariaLabel = T('Good mood only');
-    }
+
     setLabel(els.filterChip, filterChipLabel());
     els.filterChip.classList.toggle('active', filtersActive());
 }
@@ -962,13 +894,13 @@ function renderControls() {
 // Starter suggestions (shown on first run and in the Add sheet). Feeds are only
 // requested after a click.
 const SUGGESTED_FEEDS = [
-    { name: 'Street Phil-osophy', tags: ['Podcast', 'Design', 'Independent'], note: N_('Podcast by the author · design, life & tech'), url: 'https://philwornath.com/api/podcast.xml', icon: '🎧' },
-    { name: 'BBC News', tags: ['News'], note: N_('World news'), url: 'https://feeds.bbci.co.uk/news/rss.xml', icon: '🌍' },
-    { name: 'DW', tags: ['News'], note: N_('Deutsche Welle · top stories'), url: 'https://rss.dw.com/rdf/rss-en-top', icon: '📡' },
-    { name: 'Al Jazeera', tags: ['News'], note: N_('World news'), url: 'https://www.aljazeera.com/xml/rss/all.xml', icon: '🗞️' },
-    { name: 'ProPublica', tags: ['Independent', 'News'], note: N_('Independent investigative journalism'), url: 'https://www.propublica.org/feeds/propublica/main', icon: '🔎' },
-    { name: '404 Media', tags: ['Independent', 'Tech'], note: N_('Independent tech journalism'), url: 'https://www.404media.co/rss/', icon: '💾' },
-    { name: 'The Markup', tags: ['Independent', 'Tech'], note: N_('Independent tech accountability'), url: 'https://themarkup.org/feeds/rss.xml', icon: '🔬' }
+    { name: 'Street Phil-osophy', note: N_('Podcast by the author · design, life & tech'), url: 'https://philwornath.com/api/podcast.xml', icon: '🎧' },
+    { name: 'BBC News', note: N_('World news'), url: 'https://feeds.bbci.co.uk/news/rss.xml', icon: '🌍' },
+    { name: 'DW', note: N_('Deutsche Welle · top stories'), url: 'https://rss.dw.com/rdf/rss-en-top', icon: '📡' },
+    { name: 'Al Jazeera', note: N_('World news'), url: 'https://www.aljazeera.com/xml/rss/all.xml', icon: '🗞️' },
+    { name: 'ProPublica', note: N_('Independent investigative journalism'), url: 'https://www.propublica.org/feeds/propublica/main', icon: '🔎' },
+    { name: '404 Media', note: N_('Independent tech journalism'), url: 'https://www.404media.co/rss/', icon: '💾' },
+    { name: 'The Markup', note: N_('Independent tech accountability'), url: 'https://themarkup.org/feeds/rss.xml', icon: '🔬' }
 ];
 
 function suggestionsNode() {
@@ -983,7 +915,7 @@ function suggestionsNode() {
         b.append(el('span', 'feed-suggest-icon', f.icon),
             (() => { const t = el('span', 'feed-suggest-text'); t.append(el('span', 'feed-suggest-name', f.name), el('span', 'feed-suggest-note', T(f.note))); return t; })(),
             el('span', 'feed-suggest-add', '＋'));
-        b.addEventListener('click', () => { closeSheet(); addFeed(uiRef, f.url, null, f.tags); });
+        b.addEventListener('click', () => { closeSheet(); addFeed(uiRef, f.url, null); });
         wrap.append(b);
     });
     return wrap;
@@ -995,7 +927,7 @@ function renderFirstRun() {
     box.className = 'feed-firstrun';
     box.style.display = 'flex';
     box.append(el('div', 'feed-firstrun-icon', '📰'), el('h3', null, T('Follow the sites you read')),
-        el('p', null, T('New posts land here. Skim, summarize what matters, clear the rest.')));
+        el('p', null, T("New posts land here. Skim, analyze what matters, clear the rest.")));
     const row = el('div', 'feed-add-row');
     const input = el('input');
     input.type = 'text'; input.placeholder = T('Site or feed address…'); input.autocomplete = 'off'; input.spellcheck = false;
@@ -1016,17 +948,15 @@ function renderEmptyFiltered(hasAny) {
     box.className = 'explanatory-card feed-emptycard';
     box.style.display = 'block';
     if (refreshing && !hasAny) { box.textContent = T('Loading…'); return; }
-    const unreadMode = ui.status === 'unread' && ui.source === 'all' && ui.date === 'any' && ui.mood === 'any';
+    const unreadMode = ui.status === 'unread' && ui.source === 'all' && ui.date === 'any';
     box.append(el('p', null, unreadMode ? T('You’re all caught up. 🎉') : T('Nothing matches these filters.')));
     box.append(btn('button-secondary btn-sm', unreadMode ? T('Show all items') : T('Clear filters'), () => {
-        ui = { source: 'all', status: unreadMode ? 'all' : DEFAULT_STATUS, date: 'any', mood: 'any', sort: 'new' };
+        ui = { source: 'all', status: unreadMode ? 'all' : DEFAULT_STATUS, date: 'any', sort: 'new' };
         persistUi(); render();
     }));
 }
 
-// ── Search, graph and insights ──────────────────────────────────────────────
-const GRAPH_MAX = 150;
-let graphSig = '', graphToken = 0;
+// ── Search and insights ──────────────────────────────────────────────
 
 function setSearch(term, nextView = 'list') {
     searchQuery = term || '';
@@ -1035,7 +965,7 @@ function setSearch(term, nextView = 'list') {
 }
 function setView(v) { view = view === v ? 'list' : v; render(); }
 function syncViewButtons() {
-    [[els.graphBtn, 'graph'], [els.insightsBtn, 'insights']].forEach(([b, v]) => {
+    [[els.insightsBtn, 'insights']].forEach(([b, v]) => {
         if (!b) return;
         b.classList.toggle('active', view === v);
         b.setAttribute('aria-pressed', String(view === v));
@@ -1044,27 +974,9 @@ function syncViewButtons() {
 
 function renderAltView() {
     els.list.hidden = true; els.empty.style.display = 'none';
-    if (els.graph) els.graph.hidden = view !== 'graph';
-    if (els.insights) els.insights.hidden = view !== 'insights';
-    if (view === 'graph') renderGraphView(); else renderInsightsView();
-}
 
-async function renderGraphView() {
-    const box = els.graph; if (!box) return;
-    const all = visibleItems();
-    const sig = [items.length, all.length, all[0] && all[0].id, ui.source, ui.status, JSON.stringify(ui.date), ui.mood, searchQuery].join('|');
-    if (sig === graphSig && box.childElementCount) return;
-    graphSig = sig;
-    if (!all.length) { box.replaceChildren(el('p', 'feed-muted feed-ins-empty', T('Nothing matches these filters.'))); return; }
-    const c = feedIndex(); const byId = new Map(c.arts.map(a => [a._item.id, a]));
-    const arts = all.slice(0, GRAPH_MAX).map(i => byId.get(i.id)).filter(Boolean);
-    const token = ++graphToken;
-    box.replaceChildren(el('p', 'feed-muted feed-ins-empty', T('Loading…')));
-    try {
-        const mod = await import('./archiveGraph.js');
-        if (token !== graphToken || (view !== 'graph' && !splitExtra.has('graph'))) { graphSig = ''; return; }
-        mod.initArchiveGraph(box, arts, undefined, c.idx);
-    } catch (e) { graphSig = ''; box.replaceChildren(el('p', 'feed-muted feed-ins-empty', T('Failed'))); }
+    if (els.insights) els.insights.hidden = view !== 'insights';
+    renderInsightsView();
 }
 
 function openPeriod(sc, ts) {
@@ -1079,17 +991,6 @@ function renderInsightsView() {
         items: (() => { const base = items.filter(i => inSource(i, sm)); return splitExtra.has('insights') && searchQuery.trim() ? applySearch(base) : base; })(),
         scopeLabel: sourceLabel(),
         subTitle: (id) => subTitle(sm.get(id)),
-        moodStore: moodDaily,
-        feedIds: new Set(subs.filter(s => inSource({ feedId: s.id }, sm)).map(s => s.id)),
-        unscored: (from, to) => items.filter(i => inSource(i, sm) && !i.ai && i.published >= from && i.published < startOfDay(to) + DAY_MS),
-        onScore: async (list) => {
-            // Keep going while batches succeed: the mood view caps its list, so pick up what is still unscored.
-            for (let guard = 0; guard < 50 && list.length; guard++) {
-                const ok = await scoreWithAi(list);
-                if (!ok) break;
-                list = items.filter(i => inSource(i, subMap()) && !i.ai).sort((a, b) => b.published - a.published).slice(0, 120);
-            }
-        },
         hasRecap: (sc, st) => !!recaps[sc === 'day' ? `${st}|${ui.source}` : rollKey(sc, st, ui.source)],
         onOpen: (sc, st) => openPeriod(sc, st),
         onRecap: (sc, st) => { openPeriod(sc, st); if (sc === 'day') openRecap(st, dayLabel(st)); else openRollup(sc, st, rollCtx()); },
@@ -1108,17 +1009,9 @@ function initSearchAndViews() {
         });
         els.search.addEventListener('keydown', (e) => { if (e.key === 'Escape') { els.search.value = ''; searchQuery = ''; render(); } });
     }
-    if (els.graphBtn) els.graphBtn.addEventListener('click', () => setView('graph'));
+
     if (els.insightsBtn) els.insightsBtn.addEventListener('click', () => setView('insights'));
-    if (els.graph) {
-        // Tag nodes → search for that tag; article nodes → open the item (the preview card's button says "Open in History").
-        els.graph.addEventListener('filter-by-tag', (e) => { if (e.detail && e.detail.tag) setSearch(e.detail.tag, 'list'); });
-        els.graph.addEventListener('open-article', (e) => { const it = e.detail && e.detail._item; if (it) openItem(it, false); });
-        if (typeof MutationObserver !== 'undefined') new MutationObserver(() => {
-            const b = els.graph.querySelector('.graph-preview-open');
-            if (b && !b.dataset.feed) { b.dataset.feed = '1'; b.textContent = T('Open ↗'); }
-        }).observe(els.graph, { childList: true, subtree: true });
-    }
+
 }
 
 // Same behaviour as the History screen: scrolling down hides the top bar, scrolling up (from anywhere) brings it back.
@@ -1142,36 +1035,17 @@ function initScrollHide() {
 
 function renderCard(item, sm) {
     const hist = histOf(item);
-    const mood = itemMood(item);
     const li = el('li', 'article-card feed-item' + (item.read ? ' is-read' : '') + (hist.fav ? ' is-favorite' : ''));
-    if (mood && mood !== 'neu') {
-        // subtle tint: red/orange for heavy news through green for good news, stronger with the score
-        const sc = item.sent, a = Math.min(1, Math.abs(sc));
-        const hue = sc >= 0 ? 95 + sc * 45 : 5 + (1 + sc) * 30;
-        li.classList.add('has-mood');
-        li.style.setProperty('--mood-tint', `hsla(${Math.round(hue)}, 75%, 48%, ${(0.07 + 0.10 * a).toFixed(3)})`);
-        li.style.setProperty('--mood-bar', `hsla(${Math.round(hue)}, 70%, 46%, ${(0.55 + 0.35 * a).toFixed(2)})`);
-    }
+
     const meta = el('p', 'article-date', `${subTitle(sm.get(item.feedId))} · ${timeAgo(item.published)}`);
-    if (item.cat) { const c = el('span', 'feed-cat', topicLabel(item.cat, topicLang || uiLocale())); c.title = T('AI category'); meta.append(' · ', c); }
     if (item.audio) meta.append(el('span', 'feed-dur', ` · 🎧${item.dur ? ' ' + formatDuration(item.dur) : ''}`));
-    if (scoringIds.has(item.id)) {
-        li.classList.add('is-scoring');
-        const s = el('span', 'feed-scoring', ' ⏳');
-        s.title = T('Scoring with AI…');
-        meta.append(s);
-    } else if (MOOD_EMOJI[mood]) {
-        const m = el('span', 'feed-mood', ' ' + MOOD_EMOJI[mood]);
-        m.title = mood === 'pos' ? T('AI-rated: positive news') : T('AI-rated: heavy news');
-        meta.append(m);
-    }
     const title = el('h4', null, item.title);
     const head = el('div', 'article-header');
     const headText = el('div');
     headText.append(title, meta);
     if (hist.summarized) {
-        const badge = el('span', 'feed-badge', T('✓ Summarized'));
-        badge.title = T('You have a saved summary of this page');
+        const badge = el('span', 'feed-badge', T("✓ Analyzed"));
+        badge.title = T("You have a saved main output of this page");
         headText.append(badge);
     }
     const star = btn('star-button', '', (e) => { e.stopPropagation(); toggleFavorite(item); }, T('Favorite'));
@@ -1182,7 +1056,7 @@ function renderCard(item, sm) {
     if (item.snippet) li.appendChild(el('p', 'feed-snippet', item.snippet));
 
     const actions = el('div', 'feed-actions');
-    const sum = btn('button-primary btn-sm feed-sum-btn', hist.summarized ? T('📄 View summary') : T('✨ Summarize'), (e) => { e.stopPropagation(); onSummarizeClick(item); });
+    const sum = btn('button-primary btn-sm feed-sum-btn', hist.summarized ? T("📄 View main output") : T("✨ Analyze"), (e) => { e.stopPropagation(); onSummarizeClick(item); });
     sum.dataset.id = item.id;
     if (sumBusy.has(item.id)) queueMicrotask(() => paintSum(item.id));
     const open = btn('button-secondary btn-sm', T('Open ↗'), (e) => { e.stopPropagation(); openItem(item, false); });
@@ -1228,19 +1102,19 @@ function dayStops() {
 function render() { renderList(); renderSplitExtras(); renderScopeRow(); renderRecapCard(); }
 function renderSplitExtras() {
     if (!els.list || !subs || !subs.length) return;
-    if (els.graph && splitExtra.has('graph')) { els.graph.hidden = false; renderGraphView(); }
+
     if (els.insights && splitExtra.has('insights')) { els.insights.hidden = false; renderInsightsView(); }
 }
 document.addEventListener('aish:ws-view', (e) => {
     const d = e.detail || {};
     if (d.scope !== 'feeds') return;
     const v = d.view === 'report' ? 'insights' : d.view;
-    if (v !== 'graph' && v !== 'insights') return;
+    if (v !== 'insights') return;
     const had = splitExtra.has(v);
     if (d.open) splitExtra.add(v); else splitExtra.delete(v);
     if (had === !!d.open || !els || !els.list) return;
     if (d.open && view !== 'list') view = 'list';
-    if (!d.open) { if (v === 'graph' && els.graph) els.graph.hidden = true; if (v === 'insights' && els.insights) els.insights.hidden = true; }
+    if (!d.open) {  if (v === 'insights' && els.insights) els.insights.hidden = true; }
     else render();
 });
 /** The "+N similar items" row under a stack's lead card; expands the other items inline. */
@@ -1277,7 +1151,7 @@ function renderList() {
 
     if (!subs.length) { els.list.hidden = true; renderFirstRun(); return; }
     els.list.hidden = false;
-    if (els.graph) els.graph.hidden = true;
+
     if (els.insights) els.insights.hidden = true;
     syncViewButtons();
 
@@ -1286,17 +1160,18 @@ function renderList() {
     if (view !== 'list') { renderAltView(); return; }
     if (effScope() === 'month') { renderMonthWeeks(); return; }
     if (!all.length) { renderEmptyFiltered(items.length > 0); return; }
-    // Stacking applies to the plain newest-first list only (not to search results or the mood ranking).
+    // Stacking applies to the plain newest-first list only (outside search results).
     stackMembers = new Map();
     const stackDay = new Map();   // lead id -> day of the stack's newest item: the stack sits there even when its lead is an older item
     let flat = all;
-    if (ui.stack && ui.sort !== 'mood' && !searchQuery.trim()) {
+    if (ui.stack && !searchQuery.trim()) {
         const stacks = stackItems(all, { exclude: new Set(settings.stackExclude || []), prefer: (i) => { const h = histOf(i); return (h.fav ? 2 : 0) + (h.summarized ? 1 : 0); } });
         flat = stacks.map(st => {
             if (st.others.length) { stackMembers.set(st.lead.id, st.others); stackDay.set(st.lead.id, startOfDay(Math.max(st.lead.published, ...st.others.map(o => o.published)))); }
             return st.lead;
         });
     }
+
     const dayKeyOf = (i) => stackDay.get(i.id) ?? startOfDay(i.published);
     const visible = flat.slice(0, shown);
     els.empty.style.display = 'none';
@@ -1326,7 +1201,8 @@ function renderList() {
             const lab = btn('feed-day-label feed-day-open', '📅 ' + labelText + '  ▾', () => openFilterSheet({ view: 'calendar', day: groupDay }), T('Pick a day'));
             header.append(lab);
         }
-        if (ui.sort !== 'mood') {
+
+        {
             const dayStart = groupDay;
             const dayName = dayLabel(groupDay);
             header.append(btn('feed-day-action feed-day-ai', T('✨ Recap') + (recaps[`${dayStart}|${ui.source}`] ? ' ✓' : ''), () => openRecap(dayStart, dayName), T('AI recap of this day')));
@@ -1343,9 +1219,10 @@ function renderList() {
         });
         group = [];
     };
-    if (ui.sort === 'mood' || searchQuery.trim()) {
+
+    if (searchQuery.trim()) {
         const header = el('li', 'feed-day');
-        header.append(el('span', 'feed-day-label', searchQuery.trim() ? T('Best match · {n} items', { n: all.length }) : T('Most positive first · {n} items', { n: all.length })));
+        header.append(el('span', 'feed-day-label', T('Best match · {n} items', { n: all.length })));
         els.list.appendChild(header);
         visible.forEach(i => els.list.appendChild(renderCard(i, sm)));
     } else {
@@ -1375,7 +1252,7 @@ function openSheet(title, bodyNode) {
     layer.hidden = false;
     trapSheet(layer, title);
 }
-// Replace the whole sheet content (custom header) — used by the two-level Date & mood sheet.
+// Replace the whole sheet content (custom header) — used by the two-level Date sheet.
 function showSheet(...nodes) {
     const layer = document.getElementById('feedSheetLayer');
     const body = document.getElementById('feedSheetBody');
@@ -1413,7 +1290,7 @@ async function openFeedSettings() {
 // Section label with a small Edit link to the feed settings.
 function pickHead(label) {
     const row = el('div', 'feed-pick-head');
-    const e = btn('feed-pick-edit', T('Edit'), openFeedSettings, T('Edit feeds & tags in Settings'));
+    const e = btn('feed-pick-edit', T('Edit'), openFeedSettings, T('Edit feeds in Settings'));
     row.append(el('div', 'feed-pick-label', label), e);
     return row;
 }
@@ -1430,24 +1307,10 @@ function openSourcePicker() {
         const sm = subMap();
         const cnt = (pred) => { const n = unreadCount(i => sm.has(i.feedId) && pred(i)); return n ? String(n) : ''; };
         if (!q) list.append(radioRow(T('All sources'), cnt(i => !sm.get(i.feedId).muted), ui.source === 'all', () => choose('all')));
-        const tags = allTags().filter(t => !q || t.toLowerCase().includes(q));
-        if (tags.length) {
-            list.append(pickHead(TU('Tags')));
-            const chips = el('div', 'feed-tag-chips');
-            tags.forEach(t => {
-                const on = ui.source === 'tag:' + t, n = cnt(i => hasTag(sm.get(i.feedId), t) && !sm.get(i.feedId).muted);
-                const c = el('button', 'pill pill--soft feed-tag-chip' + (on ? ' selected' : ''));
-                c.type = 'button'; c.setAttribute('aria-pressed', String(on));
-                c.append(el('span', null, '# ' + t)); if (n) c.append(el('span', 'feed-tag-n', n));
-                c.addEventListener('click', () => choose('tag:' + t));
-                chips.append(c);
-            });
-            list.append(chips);
-        }
-        const matching = (s) => !q || subTitle(s).toLowerCase().includes(q) || allOf(s).some(t => t.toLowerCase().includes(q));
+        const matching = (s) => !q || subTitle(s).toLowerCase().includes(q);
         const shown = subs.filter(matching);
         if (shown.length) {
-            if (tags.length) list.append(pickHead(TU('Feeds')));
+            list.append(pickHead(TU('Feeds')));
             shown.sort((a, b) => subTitle(a).localeCompare(subTitle(b))).forEach(s => {
                 list.append(radioRow((s.muted ? '🔕 ' : '') + subTitle(s), cnt(i => i.feedId === s.id), ui.source === 'sub:' + s.id, () => choose('sub:' + s.id), { muted: s.muted }));
             });
@@ -1455,7 +1318,7 @@ function openSourcePicker() {
         if (!list.children.length) list.append(el('p', 'feed-muted', T('No sources match.')));
     };
     search.addEventListener('input', draw);
-    body.append(search, list, btn('feed-manage-link', T('⚙️  Manage feeds & tags in Settings  ›'), openFeedSettings));
+    body.append(search, list, btn('feed-manage-link', T('⚙️  Manage feeds in Settings  ›'), openFeedSettings));
     openSheet(T('Sources'), body);
     draw();
 }
@@ -1466,7 +1329,7 @@ function openFilterSheet(opts = {}) {
     let anchor = null;                      // first day of a range being picked
     let calPage = 0;                        // 0 = newest weeks
 
-    const reset = () => { ui.date = 'any'; ui.mood = 'any'; ui.sort = 'new'; persistUi(); render(); draw(); };
+    const reset = () => { ui.date = 'any'; delete ui.mood; ui.sort = 'new'; persistUi(); render(); draw(); };
     const head = (left, title) => {
         const h = el('div', 'feed-sheet-head feed-sheet-head3');
         h.append(left, el('h3', null, title), btn('feed-sheet-done', T('Done'), closeSheet));
@@ -1488,8 +1351,7 @@ function openFilterSheet(opts = {}) {
         pick.append(el('span', 'feed-pick-name', T('📅  Pick a day or range…')), el('span', 'feed-pick-count', custom ? dateText() : ''), el('span', 'feed-pick-chevron', '›'));
         pick.addEventListener('click', () => { view = 'cal'; calSel = null; draw(); });
         body.append(pick);
-        if (moodEnabled()) section(TU('Mood'), 'mood', [['any', T('Any mood')], ['pos', T('😊  Positive only')], ['nonneg', T('Hide negative')]]);
-        if (moodEnabled()) section(TU('Sort'), 'sort', [['new', T('Newest first')], ['mood', T('Most positive first')]]);
+
         section(TU('Stacking'), 'stack', [[false, T('Off')], [true, T('Stack similar items')]]);
         body.append(el('div', 'feed-pick-label', TU('More')));
         body.append(btn('feed-manage-link', T('✓  Mark everything in this view read'), () => {
@@ -1497,7 +1359,6 @@ function openFilterSheet(opts = {}) {
             closeSheet();
             if (list.length) setRead(list, true, { label: T('Marked {n} read', { n: list.length }) });
         }));
-        body.append(el('p', 'feed-muted', T('Mood comes from AI scoring only — items you haven’t scored have no mood and are never hidden by the mood filter. Scoring sends titles and short snippets to your AI connection when you click it.')));
         showSheet(head(left, T('🎛️ Filter')), body);
     };
 
@@ -1632,7 +1493,7 @@ function openAddSheet() {
     setTimeout(() => input.focus(), 50);
 }
 
-// ── AI recap + scoring (explicit clicks only) ──────────────────────────────
+// ── AI recaps (explicit clicks only) ──────────────────────────────
 function recapScope(dayStart, source) {
     const sm = subMap();
     return items.filter(i => inSource(i, sm, source) && startOfDay(i.published) === dayStart)
@@ -1642,30 +1503,15 @@ function recapScope(dayStart, source) {
 const recapCovered = (all) => all.slice(0, getRecapLimit());
 function idsHash(list) { return hash(list.map(i => i.id).sort().join(',')); }
 function aiTitleOf(sm) { return i => subTitle(sm.get(i.feedId)); }
-
-// Rate/categorize in the same request as a recap. Existing ratings and categories are never overwritten.
 // Also called while the reply streams in (live = true): only re-renders when something changed, saves at the end.
-function applyRatings(arr, r, rate, live = false) {
-    if (!rate || !(r.labels || r.scores)) return;
-    let changed = false;
-    arr.forEach((x, n) => {
-        if (r.labels && !x.cat && r.labels[n]) { x.cat = r.labels[n]; changed = true; }
-        if (r.scores && !x.ai && r.scores[n] != null) { x.sent = r.scores[n]; x.ai = true; changed = true; }
-    });
-    if (live && !changed) return;
-    if (!live) persist();
-    render();
-}
-const liveRatings = (arr, rate) => (r) => applyRatings(arr, r, rate, true);
 
 /** Write (and store) a day recap without opening its sheet — used by week/month recaps for days that have none yet. */
 async function buildDayRecap(dayStart, source) {
     const all = recapScope(dayStart, source);
     const list = recapCovered(all);
     if (!list.length) return null;
-    const rate = settings.rateWithRecap !== false;
-    const r = await generateRecap(list, aiTitleOf(subMap()), { rate, onRatings: liveRatings(list, rate) });
-    applyRatings(list, r, rate);
+        const r = await generateRecap(list, aiTitleOf(subMap()), {});
+
     const { labels: _l, scores: _s, ...rc } = r;
     const key = `${dayStart}|${source}`;
     recaps[key] = { ...rc, hash: idsHash(list), at: Date.now(), n: list.length, total: all.length, covered: Object.fromEntries(list.map(x => [x.id, itemSig(x)])) };
@@ -1676,7 +1522,7 @@ async function buildDayRecap(dayStart, source) {
 function rollCtx(source = ui.source) {
     const sm = subMap();
     return {
-        source, el, btn, T, TN, startOfDay, itemMood, openSheet, closeSheet,
+        source, el, btn, T, TN, startOfDay, openSheet, closeSheet,
         getItems: () => items, getRecaps: () => recaps,
         saveRecaps: () => { chrome.storage.local.set({ [RECAPS_KEY]: recaps }).catch(() => {}); renderRecapCard(); },
         inSource: (i) => inSource(i, sm, source),
@@ -1687,7 +1533,7 @@ function rollCtx(source = ui.source) {
 
 // ── Scope row: Feed | Day | Week | Month ────────────────────────────────────
 // Feed = plain scroll across days. Day / Week / Month show that period as a page: its recap on top, its items
-// (Month: its weeks) below. A search, graph/insights view or an explicit date filter always wins over the scope.
+// (Month: its weeks) below. A search, insights view or an explicit date filter always wins over the scope.
 const SCOPES = ['feed', 'day', 'week', 'month'];
 const effScope = () => (searchQuery.trim() || view !== 'list' || ui.date !== 'any') ? 'feed' : (SCOPES.includes(ui.scope) ? ui.scope : 'feed');
 function addDaysTs(ts, n) { const d = new Date(ts); d.setDate(d.getDate() + n); d.setHours(0, 0, 0, 0); return d.getTime(); }
@@ -1784,10 +1630,6 @@ function renderRecapCard() {
     else if (rec) stale = isStale(sc, a, ctx);
     if (rec && rec.overview) { const sum = el('div', 'feed-rc-sum md-body'); renderAnswer(sum, rec.overview); box.append(sum); }
     if (rec && sc === 'day' && rec.total > rec.n) box.append(el('p', 'feed-muted', TN(rec.total - rec.n, '{n} older item is not in this recap.', '{n} older items are not in this recap.')));
-    if (rec) {
-        const tl = tally(items, ctx, ps, Math.min(addDaysTs(pe, -1), startOfDay(Date.now())), itemMood);
-        if (tl.rated) box.append(moodBar(el, tl));
-    }
     if (sc !== 'day') {
         const cv = coverage(sc, a, ctx);
         if (cv.of) box.append(el('p', 'feed-muted feed-rc-cov', T('{a} of {b} days have a recap', { a: cv.have, b: cv.of })));
@@ -1848,8 +1690,6 @@ async function openRecap(dayStart, label, source = ui.source, autoRefresh = fals
 
     const draw = (r, stale) => {
         body.replaceChildren();
-        const chip = { pos: T('😊 Mostly positive'), neu: T('😐 Mixed'), neg: T('😟 Mostly heavy') }[r.mood] || T('😐 Mixed');
-        body.append(el('span', 'feed-recap-mood', chip));
         if (r.overview) { const ov = el('div', 'feed-recap-overview md-body'); renderAnswer(ov, r.overview); body.append(ov); }
         if (r.themes.length) {
             const ul = el('ul', 'feed-recap-themes');
@@ -1880,7 +1720,6 @@ async function openRecap(dayStart, label, source = ui.source, autoRefresh = fals
                 catch (e) { toast(uiRef, T('Copy failed')); }
             }));
         body.append(row,
-            btn('feed-manage-link', list.some(needsAi) ? TN(list.filter(needsAi).length, '🤖  Score {n} unscored item with AI', '🤖  Score {n} unscored items with AI') : T('✓  All items here are scored'), () => { closeSheet(); scoreWithAi(list); }),
             el('p', 'feed-muted', T('AI-generated from {n} headlines and snippets. Generated at {time}. Not a substitute for reading.', { n: list.length, time: new Date(r.at).toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' }) })));
     };
     const sigsOf = (arr) => Object.fromEntries(arr.map(x => [x.id, itemSig(x)]));
@@ -1891,7 +1730,7 @@ async function openRecap(dayStart, label, source = ui.source, autoRefresh = fals
         const hsh = idsHash(list);
         const fresh = cached && cached.covered ? changedSince(cached) : null;
         if (cached && !force) return draw(cached, fresh ? fresh.length > 0 : cached.hash !== hsh);
-        const rate = settings.rateWithRecap !== false;
+
         // Refresh = previous recap + only the new/edited items; nothing new means no AI request at all.
         if (cached && fresh) {
             if (!fresh.length) {
@@ -1904,9 +1743,9 @@ async function openRecap(dayStart, label, source = ui.source, autoRefresh = fals
             body.replaceChildren(st.node);
             const done = trackJob('d:' + key, body);
             try {
-                const r = await generateRecapUpdate(cached, fresh, aiTitleOf(sm), { rate, edited: (x) => x.id in cached.covered, onStage: st.onStage, signal: st.signal, onProgress: st.onProgress, onRatings: liveRatings(fresh.slice(0, getRecapLimit()), rate) });
+                const r = await generateRecapUpdate(cached, fresh, aiTitleOf(sm), { edited: (x) => x.id in cached.covered, onStage: st.onStage, signal: st.signal, onProgress: st.onProgress });
                 st.stop();
-                applyRatings(r.sent, r, rate);
+
                 const { labels: _l, scores: _s, sent: sentItems, ...rc } = r;
                 recaps[key] = { ...rc, hash: hsh, at: Date.now(), n: list.length, total: all.length, covered: { ...cached.covered, ...sigsOf(sentItems) } };
                 chrome.storage.local.set({ [RECAPS_KEY]: recaps }).catch(() => {});
@@ -1927,9 +1766,9 @@ async function openRecap(dayStart, label, source = ui.source, autoRefresh = fals
         body.replaceChildren(st.node);
         const done = trackJob('d:' + key, body);
         try {
-            const r = await generateRecap(list, aiTitleOf(sm), { rate, onStage: st.onStage, signal: st.signal, onProgress: st.onProgress, onRatings: liveRatings(list, rate) });
+            const r = await generateRecap(list, aiTitleOf(sm), { onStage: st.onStage, signal: st.signal, onProgress: st.onProgress });
             st.stop();
-            applyRatings(list, r, rate);
+
             const { labels: _l, scores: _s, ...rc } = r;
             recaps[key] = { ...rc, hash: hsh, at: Date.now(), n: list.length, total: all.length, covered: sigsOf(list) };
             chrome.storage.local.set({ [RECAPS_KEY]: recaps }).catch(() => {});
@@ -1949,59 +1788,10 @@ async function openRecap(dayStart, label, source = ui.source, autoRefresh = fals
 }
 
 // An item needs the AI only if it has no AI score or no category yet.
-const needsAi = (i) => !i.ai || !i.cat;
 let scoring = false;
 // Ids of items currently queued/being scored; their cards show a small indicator.
-const scoringIds = new Set();
 
 /** Runs in the background (no sheet): the cards being scored show ⏳ and fill in as each batch finishes. */
-async function scoreWithAi(list) {
-    if (scoring) { toast(uiRef, T('Already scoring — one moment')); return false; }
-    const all = (list || []).filter(Boolean);
-    list = all.filter(needsAi);
-    if (!all.length) { toast(uiRef, T('Nothing to score')); return false; }
-    if (!list.length) { toast(uiRef, T('These items are already scored')); return false; }
-    const sm = subMap();
-    let done = 0, error = null;
-    scoring = true;
-    list.forEach(i => scoringIds.add(i.id));
-    render();
-    const batches = Math.ceil(list.length / MAX_RECAP_ITEMS);
-    toast(uiRef, T('Scoring {n} items with AI in the background…', { n: list.length }));
-    let failed = 0;
-    try {
-        for (let k = 0; k < list.length; k += MAX_RECAP_ITEMS) {
-            const chunk = list.slice(k, k + MAX_RECAP_ITEMS);
-            let res;
-            try {
-                res = await scoreItems(chunk, aiTitleOf(sm), {});
-            } catch (e) {
-                // one unreadable reply must not stop the remaining batches
-                failed += chunk.length; error = e;
-                toast(uiRef, T('Batch {a}/{b} failed: {m}', { a: k / MAX_RECAP_ITEMS + 1, b: batches, m: e.message || T('AI scoring failed') }));
-                continue;
-            } finally { chunk.forEach(i => scoringIds.delete(i.id)); }
-            chunk.forEach((i, n) => {
-                // never overwrite an existing AI score or category
-                if (!i.ai && res.scores[n] !== null) { i.sent = res.scores[n]; i.ai = true; done++; }
-                if (!i.cat && res.labels && res.labels[n]) { i.cat = res.labels[n]; done = Math.max(done, 1); }
-            });
-            await persist();
-            render();
-            if (batches > 1) toast(uiRef, T('Scored {a} of {b}…', { a: Math.min(k + chunk.length, list.length), b: list.length }));
-        }
-    } catch (e) {
-        error = e;
-    } finally {
-        scoring = false;
-        scoringIds.clear();
-        render();
-    }
-    const summary = done ? TN(done, 'Scored {n} item with AI', 'Scored {n} items with AI') + (all.length > list.length ? ' ' + T('({n} already done)', { n: all.length - list.length }) : '') : '';
-    if (error) toast(uiRef, (failed ? T('{n} items could not be scored', { n: failed }) : (error.message || T('AI scoring failed'))) + (summary ? ' — ' + summary : ''));
-    else toast(uiRef, summary || T('AI scoring failed'));
-    return !error && done > 0;
-}
 
 // ── Settings > Feeds panel ─────────────────────────────────────────────────
 function updateSettingsSub() {
@@ -2009,10 +1799,7 @@ function updateSettingsSub() {
     if (!sub) return;
     const prefSub = document.querySelector('.settings-row-sub[data-sub="feedprefs"]');
     if (prefSub) prefSub.textContent = T('Reading · AI · updates');
-    const folders = allTags().length;
-    sub.textContent = subs.length
-        ? TN(subs.length, '{n} feed', '{n} feeds') + (folders ? ' · ' + TN(folders, '{n} tag', '{n} tags') : '')
-        : T('Subscriptions · tags · OPML');
+    sub.textContent = subs.length ? TN(subs.length, '{n} feed', '{n} feeds') : T('Subscriptions · OPML');
 }
 
 function sendPollConfig() {
@@ -2028,26 +1815,14 @@ async function setSetting(key, value) {
     if (key === 'keepDays') { pruneItems(); await persist(); render(); }
 }
 
-// Source diet: last-30-day usage and mood per subscription (mood only from rated items).
-const DIET_DAYS = 30, DIET_MIN_SCORED = 5, NOISY_MOOD = -30;
-let openSubId = null, subFilter = 'all', subSort = moodEnabled() ? 'mood' : 'unread', dietDismissed = false;
+// Source usage over the last 30 days.
+const DIET_DAYS = 30;
+let openSubId = null, subFilter = 'all', subSort = 'unread';
 function dietStats(s) {
     const since = Date.now() - DIET_DAYS * 864e5;
     const mine = items.filter(i => i.feedId === s.id && i.published >= since);
-    const scored = mine.filter(i => i.ai && typeof i.sent === 'number');
-    const mood = scored.length >= DIET_MIN_SCORED ? Math.round(scored.reduce((a, i) => a + i.sent, 0) / scored.length * 100) : null;
     const read = mine.length ? Math.round(mine.filter(i => i.read).length / mine.length * 100) : null;
-    if (!moodEnabled()) return { n: mine.length, read, mood: null, noisy: false, unread: items.filter(i => i.feedId === s.id && !i.read).length };
-    return { n: mine.length, read, mood, noisy: mood !== null && mood <= NOISY_MOOD, unread: items.filter(i => i.feedId === s.id && !i.read).length };
-}
-function dietMoodBar(m) {
-    const w = el('span', 'sd-mood');
-    w.append(el('span', 'sd-mood-track'), el('span', 'sd-mood-mid'));
-    if (m === null) { w.classList.add('is-empty'); w.title = T('Not enough rated items yet'); return w; }
-    const f = el('span', 'sd-mood-fill ' + (m < 0 ? 'neg' : 'pos'));
-    f.style.width = Math.abs(m) / 2 + '%'; f.style[m < 0 ? 'right' : 'left'] = '50%';
-    w.append(f);
-    return w;
+    return { n: mine.length, read, unread: items.filter(i => i.feedId === s.id && !i.read).length };
 }
 
 function subRow(s) {
@@ -2056,21 +1831,18 @@ function subRow(s) {
     const row = el('div', 'feed-sub-card' + (s.muted ? ' is-muted' : '') + (open ? ' is-open' : ''));
     row.dataset.subId = s.id;
 
-    // Summary line (always visible): avatar · name · tags · mood bar · usage
+    // Summary line (always visible): avatar · name · usage
     const head = el('div', 'sd-head'); head.tabIndex = 0; head.setAttribute('role', 'button'); head.setAttribute('aria-expanded', String(open));
     const av = el('span', 'sd-avatar', (subTitle(s).trim()[0] || '•').toUpperCase());
     const main = el('div', 'sd-main');
     main.append(el('div', 'sd-name', subTitle(s)));
     const meta = el('div', 'sd-tags');
-    allOf(s).forEach(t => meta.append(el('span', 'sd-tag', t)));
     if (st.noisy) meta.append(el('span', 'sd-flag sd-flag-noisy', '⚠ ' + T('Noisy')));
     if (s.muted) meta.append(el('span', 'sd-flag', '🔕 ' + T('Muted')));
     if (s.error) meta.append(el('span', 'sd-flag sd-flag-err', '⚠ ' + s.error));
     main.append(meta);
     const diet = el('div', 'sd-diet');
-    const mrow = el('div', 'sd-mood-row');
-    mrow.append(dietMoodBar(st.mood), el('span', 'sd-mood-val ' + (st.mood === null ? '' : st.mood < 0 ? 'neg' : 'pos'), st.mood === null ? '–' : (st.mood > 0 ? '+' : st.mood < 0 ? '−' : '') + Math.abs(st.mood)));
-    diet.append(mrow, el('div', 'sd-use', st.n ? TU('{n}/mo · {r}% read', { n: st.n, r: st.read }) : T('No items yet')));
+    diet.append(el('div', 'sd-use', st.n ? TU('{n}/mo · {r}% read', { n: st.n, r: st.read }) : T('No items yet')));
     head.append(av, main, diet);
     const toggle = () => { openSubId = open ? null : s.id; renderFeedSettings(); };
     head.addEventListener('click', toggle);
@@ -2089,30 +1861,6 @@ function subRow(s) {
         await persist(); render(); renderFeedSettings();
     });
     ed.append(name);
-    ed.append(el('div', 'sd-label', T('Tags')));
-    const tagBox = el('div', 'feed-tags');
-    const saveTags = async (next) => {
-        s.tags = cleanTags(next);
-        if (!sourceExists(ui.source)) ui.source = 'all';
-        await persist(); render(); renderFeedSettings();
-    };
-    (s.tags || []).forEach(t => {
-        const chip = el('span', 'feed-sub-tag', t);
-        const x = btn('feed-tag-x', '×', () => saveTags(s.tags.filter(y => tagKey(y) !== tagKey(t))), T('Remove tag {tag}', { tag: t }));
-        chip.append(x);
-        tagBox.append(chip);
-    });
-    const tagIn = el('input', 'feed-tag-input');
-    tagIn.type = 'text'; tagIn.placeholder = (s.tags || []).length ? T('+ tag') : T('+ Add tag'); tagIn.setAttribute('list', 'feedTagList'); tagIn.setAttribute('aria-label', T('Add tag'));
-    tagIn.autocomplete = 'off'; tagIn.spellcheck = false;
-    const commit = () => { const v = tagIn.value.trim(); if (v) saveTags([...(s.tags || []), v]); };
-    tagIn.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); commit(); }
-        else if (e.key === 'Backspace' && !tagIn.value && (s.tags || []).length) saveTags(s.tags.slice(0, -1));
-    });
-    tagIn.addEventListener('change', commit);
-    tagBox.append(tagIn);
-    ed.append(tagBox);
     ed.append(el('div', 'sd-label', TU('{n} unread', { n: st.unread })));
     const acts = el('div', 'sd-actions');
     acts.append(
@@ -2138,25 +1886,6 @@ function toggleRow(id, title, hint, key) {
     return row;
 }
 
-function moodToggleRow() {
-    const row = el('div', 'setting-group flex justify-between align-center mb-3');
-    const left = el('div', 'setting-text');
-    const lab = el('label', null, T('😊 Mood')); lab.htmlFor = 'feedSetMood'; lab.className = 'setting-label';
-    const p = el('p', null, T('Rates the tone of summaries and feed items. Powers mood filters, charts and the Source diet. Turn off to hide all mood features.')); p.className = 'setting-desc';
-    left.append(lab, p);
-    const sw = el('label', 'switch setting-switch');
-    const cb = el('input'); cb.type = 'checkbox'; cb.id = 'feedSetMood'; cb.checked = moodEnabled();
-    cb.addEventListener('change', async () => {
-        await setMoodEnabled(cb.checked);
-        if (!cb.checked && (ui.mood !== 'any' || ui.sort === 'mood')) { ui.mood = 'any'; if (ui.sort === 'mood') ui.sort = 'new'; persistUi(); }
-        if (!cb.checked && subSort === 'mood') subSort = 'unread';
-        render(); renderFeedSettings();
-    });
-    sw.append(cb, el('span', 'slider-toggle'));
-    row.append(left, sw);
-    return row;
-}
-
 function selectRow(id, title, key, opts) {
     const row = el('div', 'setting-group flex justify-between align-center mb-3');
     const lab = el('label', null, title); lab.htmlFor = id; lab.className = 'setting-label-grow';
@@ -2174,10 +1903,6 @@ function renderFeedSettings() {
     root.replaceChildren();
 
     root.append(el('p', 'settings-caption', TU('Subscriptions · {n}', { n: subs.length })));
-    const dl = el('datalist'); dl.id = 'feedTagList';
-    allTags().forEach(f => { const o = el('option'); o.value = f; dl.append(o); });
-    root.append(dl);
-
     // Add + OPML menu
     const addRow = el('div', 'feed-add-row');
     const input = el('input'); input.type = 'text'; input.placeholder = T('Add a site or feed address…'); input.autocomplete = 'off'; input.spellcheck = false;
@@ -2197,21 +1922,6 @@ function renderFeedSettings() {
     const stats = new Map(subs.map(s => [s.id, dietStats(s)]));
 
     // Insight banner: only when something is actually noisy
-    const noisy = subs.filter(s => !s.muted && stats.get(s.id).noisy);
-    if (noisy.length && !dietDismissed) {
-        const negTotal = subs.reduce((a, s) => a + items.filter(i => i.feedId === s.id && i.ai && typeof i.sent === 'number' && i.sent < -0.2 && i.published >= Date.now() - DIET_DAYS * 864e5).length, 0);
-        const negNoisy = noisy.reduce((a, s) => a + items.filter(i => i.feedId === s.id && i.ai && typeof i.sent === 'number' && i.sent < -0.2 && i.published >= Date.now() - DIET_DAYS * 864e5).length, 0);
-        const pct = negTotal ? Math.round(negNoisy / negTotal * 100) : 0;
-        const ban = el('div', 'sd-banner');
-        ban.append(el('strong', null, pct ? TN(noisy.length, '{n} source causes {p}% of your negative items', '{n} sources cause {p}% of your negative items').replace('{p}', pct) : TN(noisy.length, '{n} source is mostly negative', '{n} sources are mostly negative')),
-            el('span', 'feed-muted', noisy.map(subTitle).slice(0, 3).join(', ')));
-        const act = el('div', 'sd-actions');
-        act.append(btn('button-secondary btn-sm', T('Review'), () => { subSort = 'mood'; subFilter = 'all'; openSubId = noisy[0].id; renderFeedSettings(); }),
-            btn('button-tertiary btn-sm', T('Dismiss'), () => { dietDismissed = true; renderFeedSettings(); }));
-        ban.append(act);
-        root.append(ban);
-    }
-
     // Filter chips + sort
     const bar = el('div', 'sd-toolbar');
     const chips = el('div', 'sd-chips');
@@ -2220,7 +1930,7 @@ function renderFeedSettings() {
         chips.append(btn('pill' + (subFilter === k ? ' active' : ''), label + ' ' + counts[k], () => { subFilter = k; renderFeedSettings(); }));
     });
     const sort = el('select', 'sd-sort'); sort.setAttribute('aria-label', T('Sort'));
-    [...(moodEnabled() ? [['mood', T('Sort: Mood')]] : []), ['unread', T('Sort: Unread')], ['read', T('Sort: Read share')], ['name', T('Sort: Name')]].forEach(([k, t]) => { const o = el('option', null, t); o.value = k; if (k === subSort) o.selected = true; sort.append(o); });
+    [ ['unread', T('Sort: Unread')], ['read', T('Sort: Read share')], ['name', T('Sort: Name')]].forEach(([k, t]) => { const o = el('option', null, t); o.value = k; if (k === subSort) o.selected = true; sort.append(o); });
     sort.addEventListener('change', () => { subSort = sort.value; renderFeedSettings(); });
     bar.append(chips, sort);
     root.append(bar);
@@ -2230,7 +1940,6 @@ function renderFeedSettings() {
     if (!subs.length) card.append(el('p', 'feed-muted', T('No feeds yet. Add one below or import an OPML file.')));
     const num = (v, dflt) => (v === null || v === undefined ? dflt : v);
     const sorters = {
-        mood: (a, b) => num(stats.get(a.id).mood, 101) - num(stats.get(b.id).mood, 101),
         unread: (a, b) => stats.get(b.id).unread - stats.get(a.id).unread,
         read: (a, b) => num(stats.get(a.id).read, 101) - num(stats.get(b.id).read, 101),
         name: (a, b) => subTitle(a).localeCompare(subTitle(b))
@@ -2267,41 +1976,16 @@ async function ollamaSetup() {
         return { configured: active || saved, active, model };
     } catch (e) { return { configured: false, active: false, model: '' }; }
 }
-let articleTags = [];   // every tag of the saved articles: what the lexicon still has to learn comes from here
-async function refreshTopicLang() {
-    try { topicLang = (await uiLanguage()).code; } catch (e) { /* keep the last one */ }
-    try { await loadLexicon(); articleTags = (await StorageManager.getArticlesIndex({ includeArchived: true })).flatMap(a => a.tags || []); } catch (e) { /* no articles yet */ }
-}
+
 function libraryPlan() {
     const sm = subMap();
-    return planLibrary({ items, recaps, source: 'all', inSource: (i) => inSource(i, sm, 'all'), startOfDay, itemSig, subs, topicLang, articleTags, rateWithRecap: settings.rateWithRecap !== false });
+    return planLibrary({ items, recaps, source: 'all', inSource: (i) => inSource(i, sm, 'all'), startOfDay, itemSig });
 }
-/** Up to 3 topic tags for one feed in the UI language; kept apart from the user's own tags (s.tags) so those are never touched. */
-async function libraryTagFeed(entry, signal, ctx = {}) {
-    const s = subs.find(x => x.id === entry.id); if (!s) return;
-    const r = entry.keys
-        ? { ...(await translateFeedTopics(entry.keys, { signal, onStage: ctx.onStage, service: 'ollama' })), keys: entry.keys }
-        : await generateFeedTopics(subTitle(s), entry.items, { cats: categoryCounts(entry.all), signal, onStage: ctx.onStage, service: 'ollama' });
-    s.topics = r.tags.slice(0, 3); s.topicKeys = r.keys; s.topicsLang = r.lang;
-    await saveLexicon();
-    await persist();
-}
-async function libraryRateChunk(chunk, signal, ctx = {}) {
-    const res = await scoreItems(chunk, aiTitleOf(subMap()), { signal, onStage: ctx.onStage, service: 'ollama' });
-    chunk.forEach((i, n) => {
-        if (!i.ai && res.scores[n] !== null) { i.sent = res.scores[n]; i.ai = true; }   // never overwrite an existing rating or category
-        if (!i.cat && res.labels && res.labels[n]) i.cat = res.labels[n];
-    });
-    await persist();
-}
-/** Name a batch of article tags for the lexicon (nothing is stored on the articles). */
-async function libraryNameTags(batch, signal, ctx = {}) {
-    await learnTagNames(batch, { signal, onStage: ctx.onStage, service: 'ollama' });
-    await saveLexicon();
-}
+
+
 /** Day recap in batches: the first batch writes it, every further batch extends it. Saved after each batch, so a stop loses at most one batch. */
 async function libraryRecapDay(entry, size, signal, ctx = {}) {
-    const sm = subMap(), rate = settings.rateWithRecap !== false;
+    const sm = subMap();
     const key = `${entry.day}|all`;
     const all = recapScope(entry.day, 'all');
     const sigs = (arr) => Object.fromEntries(arr.map(x => [x.id, itemSig(x)]));
@@ -2313,13 +1997,13 @@ async function libraryRecapDay(entry, size, signal, ctx = {}) {
         if (ctx.step) ctx.step({ batch: k + 1, batches: chunks.length, count: chunk.length });
         let rc;
         if (!cur) {
-            const r = await generateRecap(chunk, aiTitleOf(sm), { rate, signal, onStage: ctx.onStage, service: 'ollama' });
-            applyRatings(chunk, r, rate);
+            const r = await generateRecap(chunk, aiTitleOf(sm), { signal, onStage: ctx.onStage, service: 'ollama' });
+
             const { labels: _l, scores: _s, ...base } = r;
             rc = { ...base, covered: sigs(chunk) };
         } else {
-            const r = await generateRecapUpdate(cur, chunk, aiTitleOf(sm), { rate, signal, edited: (x) => x.id in cur.covered, onStage: ctx.onStage, service: 'ollama' });
-            applyRatings(r.sent, r, rate);
+            const r = await generateRecapUpdate(cur, chunk, aiTitleOf(sm), { signal, edited: (x) => x.id in cur.covered, onStage: ctx.onStage, service: 'ollama' });
+
             const { labels: _l, scores: _s, sent: _t, ...base } = r;
             rc = { ...base, covered: { ...cur.covered, ...sigs(chunk) } };
         }
@@ -2336,10 +2020,10 @@ const libraryUiLive = () => libraryUi && libraryUi.bar.isConnected ? libraryUi :
 
 /** One run of the whole-library pipeline. `auto` = started by the timer: newest days first, quiet. */
 async function executeLibrary({ auto = false } = {}) {
-    if (libraryRun || scoring || benchRunning) return null;
+    if (libraryRun || scoring) return null;
     const n = cleanBatchSize(settings.libraryBatch);
-    await refreshTopicLang();
-    const plan = libraryPlan(); if (!plan.rate.length && !plan.days.length && !plan.tag.length && !plan.lex.length) return null;
+
+    const plan = libraryPlan(); if (!plan.days.length) return null;
     if (auto) plan.days.reverse();
     const ctl = new AbortController(); libraryRun = { ctl };
     const keepLimit = getRecapLimit(); setRecapLimit(0);   // a per-recap cap would silently drop items from a batch
@@ -2348,7 +2032,7 @@ async function executeLibrary({ auto = false } = {}) {
     let out = null, lastRendered = -1;
     try {
         out = await runLibrary(plan, n, {
-            signal: ctl.signal, rateChunk: libraryRateChunk, tagFeed: libraryTagFeed, nameTags: libraryNameTags, recapDay: libraryRecapDay,
+            signal: ctl.signal, recapDay: libraryRecapDay,
             onStage: (st) => {
                 if (!libraryRun) return;
                 // Remembered on the run itself, so a card re-created after leaving Settings can pick up where this one is.
@@ -2364,113 +2048,22 @@ async function executeLibrary({ auto = false } = {}) {
     return out;
 }
 
-let benchRunning = false;
-const fmtSec = (s) => s >= 90 ? Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0') + ' min' : (s < 10 ? s.toFixed(1) : String(Math.round(s))) + ' s';
-
-/**
- * Performance profile (Gentle / Balanced / Powerful) + a benchmark of this machine: one fixed 20-headline rating batch,
- * timed, then turned into "a run takes about X, Y items per hour" per profile. The comparison classes are rough
- * reference ranges, not data from other users.
- */
-function performanceBlock(setup, rerender) {
-    const refLabel = { power: T('GPU or Apple Silicon, 7–8B model'), balanced: T('Recent laptop, small (3–4B) model'), eco: T('CPU only or older machine'), slow: T('Very slow: use a smaller model') };
-    const names = { eco: T('Gentle'), balanced: T('Balanced'), power: T('Powerful'), custom: T('Custom') };
-    const box = el('div', 'library-perf');
-    const cur = presetOf(settings);
-
-    const row = el('div', 'setting-group flex justify-between align-center mb-3');
-    const lab = el('label', null, T('⚡ Performance profile')); lab.htmlFor = 'feedSetPreset'; lab.className = 'setting-label-grow';
-    const sel = el('select'); sel.id = 'feedSetPreset'; sel.className = 'setting-select';
-    [...PRESET_IDS, ...(cur === 'custom' ? ['custom'] : [])].forEach((id) => { const o = el('option', null, names[id]); o.value = id; if (id === cur) o.selected = true; sel.append(o); });
-    sel.addEventListener('change', async () => {
-        const v = presetSettings(sel.value); if (!v) return;
-        for (const [k, val] of Object.entries(v)) await setSetting(k, val);
-        rerender();
-    });
-    row.append(lab, sel);
-    box.append(row);
-
-    const b = settings.libraryBench;
-    const sentence = (id) => {
-        const p = PRESETS[id];
-        return T('{n} items per request · {r} requests per run · every {m} min', { n: p.batch, r: p.requests, m: p.minutes });
-    };
-    box.append(el('p', 'feed-muted', cur === 'custom' ? T('Your own mix of batch size, requests per run and interval.') : sentence(cur)));
-
-    const out = el('div', 'library-bench');
-    const paint = () => {
-        out.replaceChildren();
-        const r = settings.libraryBench;
-        if (!r || !(r.warm > 0)) { out.append(el('p', 'feed-muted', T('Not measured yet. The test sends two small rating batches to Ollama (about a minute on a slow machine) and nothing leaves your computer.'))); return; }
-        const cls = classOf(r.warm), rec = recommend(r.warm);
-        out.append(el('p', 'library-bench-main', T('{s} for {n} headlines', { s: fmtSec(r.warm), n: BENCH_COUNT })
-            + ' · ' + T('first request {s} (loads the model)', { s: fmtSec(r.cold) })
-            + (r.model ? ' · ' + r.model : '')));
-        const list = el('ul', 'library-bench-list');
-        REFERENCE.forEach((x) => {
-            const lo = REFERENCE[REFERENCE.indexOf(x) - 1];
-            const range = x.maxSec === Infinity ? T('over {s}', { s: fmtSec(lo.maxSec) }) : T('up to {s}', { s: fmtSec(x.maxSec) });
-            const li = el('li', x.id === cls ? 'is-you' : null, range + ' · ' + refLabel[x.id] + (x.id === cls ? '  ← ' + T('you') : ''));
-            list.append(li);
-        });
-        out.append(el('p', 'feed-muted', T('Typical setups for one batch (rough reference ranges):')), list);
-        const plist = el('ul', 'library-bench-list');
-        PRESET_IDS.forEach((id) => {
-            const pr = projection(r.warm, id);
-            plist.append(el('li', id === rec ? 'is-you' : null,
-                `${names[id]}: ` + T('a run takes about {t}', { t: fmtSec(pr.tickSec) }) + ' · ' + T('up to {n} items per hour', { n: pr.itemsPerHour }) + (id === rec ? '  ← ' + T('recommended') : '')));
-        });
-        out.append(el('p', 'feed-muted', T('What each profile would do on this machine:')), plist);
-        if (rec !== cur) {
-            const useBtn = btn('btn-sm', T('Use {p}', { p: names[rec] }), async () => {
-                const v = presetSettings(rec);
-                for (const [k, val] of Object.entries(v)) await setSetting(k, val);
-                rerender();
-            });
-            out.append(useBtn);
-        }
-    };
-    paint();
-
-    const status = el('p', 'feed-muted'); status.setAttribute('aria-live', 'polite');
-    const go = btn('btn-sm', b ? T('Measure again') : T('Measure this computer'), async () => {
-        if (libraryRun || scoring || benchRunning) { toast(uiRef, T('Already scoring — one moment')); return; }
-        benchRunning = true; go.disabled = true;
-        const ctl = new AbortController();
-        try {
-            status.textContent = T('Measuring… the first request also loads the model.');
-            const t0 = Date.now();
-            await scoreItems(benchItems(), () => '', { signal: ctl.signal, service: 'ollama' });
-            const t1 = Date.now();
-            status.textContent = T('Measuring… second request.');
-            await scoreItems(benchItems(), () => '', { signal: ctl.signal, service: 'ollama' });
-            const t2 = Date.now();
-            await setSetting('libraryBench', { at: Date.now(), model: setup.model || '', cold: (t1 - t0) / 1000, warm: (t2 - t1) / 1000 });
-            status.textContent = '';
-            rerender();
-        } catch (e) {
-            status.textContent = T('Measurement failed: {e}', { e: (e && e.message) || T('AI request failed') });
-        } finally { benchRunning = false; go.disabled = false; }
-    });
-    box.append(out, go, status);
-    return box;
-}
 
 async function renderLibraryCard(card) {
     card.replaceChildren();
-    await refreshTopicLang();
+
     const setup = await ollamaSetup();
     const lastRun = backgroundStatus && backgroundStatus.at
         ? el('p', 'feed-muted', T('Last background run: {time} · {result}', {
             time: new Date(backgroundStatus.at).toLocaleString(locale()),
-            result: T('{a} items rated · {b} day recaps written', { a: backgroundStatus.rated || 0, b: backgroundStatus.recaps || 0 })
+            result: T('{b} day recaps written', { b: backgroundStatus.recaps || 0 })
                 + (backgroundStatus.failed ? ' · ' + T('{n} failed', { n: backgroundStatus.failed }) : '')
         }))
         : el('p', 'feed-muted', T('No background run yet.'));
     if (!setup.configured) {
         card.append(
             lastRun,
-            el('p', 'feed-muted', T('Available when Ollama is set up. It rates, categorizes and recaps your whole Feed library in small batches on your own machine. It can take hours but spends no tokens.')),
+            el('p', 'feed-muted', T('Available when Ollama is set up. Creates recaps of your Feed library in small batches on your own machine.')),
             toggleRow('feedSetAutoProcess', T('🔁 Process new items automatically'), T('Fetches and processes new items in the background with Ollama while your browser is running. Cloud and BYOK models stay manual.'), 'autoProcess'),
             selectRow('feedSetAutoEvery', T('⏱️ Run every'), 'autoProcessMinutes', [[15, T('15 minutes')], [30, T('30 minutes')], [60, T('1 hour')], [180, T('3 hours')], [360, T('6 hours')]])
         );
@@ -2490,11 +2083,11 @@ async function renderLibraryCard(card) {
     stopBtn.hidden = true;
     const summaryText = () => {
         const p = libraryPlan(), n = countRequests(p, cleanBatchSize(settings.libraryBatch));
-        if (!p.rate.length && !p.days.length && !p.tag.length && !p.lex.length) return T('Everything in your library is rated, categorized and recapped.');
+        if (!p.days.length) return T('Every stored day has a complete recap.');
         const eta = formatEta(n * 90000, T);   // rough: local models need about 1–2 minutes per batch
-        return T('{a} items to rate · {b} days to recap · {n} AI requests', { a: p.rate.length + (p.viaRecap || 0), b: p.days.length, n }) + (p.tag.length ? ' · ' + T('{n} feeds to tag', { n: p.tag.length }) : '') + (p.lex.length ? ' · ' + T('{n} tag lists to name', { n: p.lex.length }) : '') + (eta ? ' · ' + eta : '');
+        return T('{b} days to recap · {n} AI requests', { b: p.days.length, n }) + (eta ? ' · ' + eta : '');
     };
-    const refresh = () => { status.textContent = summaryText(); const p = libraryPlan(); startBtn.disabled = !p.rate.length && !p.days.length && !p.tag.length && !p.lex.length; startBtn.textContent = T('Process the whole library'); };
+    const refresh = () => { status.textContent = summaryText(); const p = libraryPlan(); startBtn.disabled = !p.days.length; startBtn.textContent = T('Process the whole library'); };
 
     // Stage of the request in flight, with a ticking clock so a slow local model never looks frozen.
     const STAGE_TEXT = () => ({ send: T('Sending the batch to Ollama…'), wait: T('Waiting for the model…'), write: T('Model is writing…'), parse: T('Reading the answer…') });
@@ -2507,7 +2100,7 @@ async function renderLibraryCard(card) {
     };
     const stopClock = () => { if (clock) { clearInterval(clock); clock = null; } stage = ''; };
     const dayText = (ts) => new Date(ts).toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' });
-    const modelText = setup.model ? T('Model: {m}', { m: setup.model }) + (setup.active ? '' : ' · ' + T('not your active summary model')) : '';
+    const modelText = setup.model ? T('Model: {m}', { m: setup.model }) + (setup.active ? '' : ' · ' + T("not your active main output model")) : '';
 
     libraryUi = {
         bar, refresh,
@@ -2524,13 +2117,10 @@ async function renderLibraryCard(card) {
         progress: (pr) => {
             bar.value = pr.totalRequests ? pr.doneRequests / pr.totalRequests : 0;
             const st = pr.step;
-            if (st && st.phase === 'rate') headLine.textContent = T('Rating and categorizing: batch {a} of {b} · items {from}–{to} of {n}', { a: st.batch, b: st.batches, from: st.from, to: st.to, n: st.items });
-            else if (st && st.phase === 'lexicon') headLine.textContent = T('Naming tags: batch {a} of {b}', { a: st.batch, b: st.batches });
-            else if (st && st.phase === 'tag') headLine.textContent = T('Tagging feed {a} of {b}', { a: st.feed, b: st.feeds });
-            else if (st && st.phase === 'recap') headLine.textContent = T('Day recap {d} of {t} ({date}): batch {a} of {b} · {n} items', { d: st.dayIndex, t: st.days, date: dayText(st.day), a: st.batch, b: st.batches, n: st.count });
+            if (st && st.phase === 'recap') headLine.textContent = T('Day recap {d} of {t} ({date}): batch {a} of {b} · {n} items', { d: st.dayIndex, t: st.days, date: dayText(st.day), a: st.batch, b: st.batches, n: st.count });
             const eta = formatEta(pr.etaMs, T);
             totalsLine.textContent = [T('Request {a} of {b}', { a: Math.min(pr.doneRequests + 1, pr.totalRequests), b: pr.totalRequests }),
-                T('{a} items rated · {b} days recapped', { a: pr.rated, b: pr.recaps }),
+                T('{b} days recapped', { b: pr.recaps }),
                 pr.failed ? T('{n} failed', { n: pr.failed }) : '',
                 T('{t} elapsed', { t: mmss(pr.elapsedMs) }), eta ? T('{eta} left', { eta }) : ''].filter(Boolean).join(' · ');
         },
@@ -2538,16 +2128,15 @@ async function renderLibraryCard(card) {
             stopClock(); live.hidden = true; bar.hidden = true; stopBtn.hidden = true; startBtn.hidden = false;
             refresh();
             if (out) status.textContent = (out.stopped ? T('Stopped. Starting again continues where it left off.') + ' ' : T('Done.') + ' ')
-                + T('{a} items rated · {b} days recapped', { a: out.rated, b: out.recaps }) + (out.failed ? ' · ' + T('{n} failed', { n: out.failed }) : '')
+                + T('{b} days recapped', { b: out.recaps }) + (out.failed ? ' · ' + T('{n} failed', { n: out.failed }) : '')
                 + (out.elapsedMs ? ' · ' + T('{t} elapsed', { t: mmss(out.elapsedMs) }) : '');
         }
     };
     const actions = el('div', 'feed-recap-actions'); actions.append(startBtn, stopBtn);
     card.append(
-        performanceBlock(setup, () => renderLibraryCard(card).catch(() => {})),
         selectRow('feedSetLibBatch', T('📦 Items per batch'), 'libraryBatch', BATCH_SIZES.map(v => [v, v === DEFAULT_BATCH ? T('{n} (recommended)', { n: v }) : String(v)])),
         lastRun, status, live, bar, actions,
-        el('p', 'feed-muted', T('Runs on your own machine with Ollama and spends no tokens, even when another model is active for summaries. Keep this panel open: closing it pauses the run, and starting again continues where it stopped. Only items still stored are processed (see "Keep items for"). Today\'s recap is written when you open it.')),
+        el('p', 'feed-muted', T("Runs on your own machine with Ollama and spends no tokens, even when another model is active for results. Keep this panel open: closing it pauses the run, and starting again continues where it stopped. Only items still stored are processed (see \"Keep items for\"). Today's recap is written when you open it.")),
         toggleRow('feedSetAutoProcess', T('🔁 Process new items automatically'), T('Fetches and processes new items in the background with Ollama while your browser is running. Cloud and BYOK models stay manual.'), 'autoProcess'),
         selectRow('feedSetAutoEvery', T('⏱️ Run every'), 'autoProcessMinutes', [[15, T('15 minutes')], [30, T('30 minutes')], [60, T('1 hour')], [180, T('3 hours')], [360, T('6 hours')]]),
         selectRow('feedSetRequests', T('🔢 Requests per automatic run'), 'requestsPerTick', REQUEST_STEPS.map(v => [v, v === DEFAULT_REQUESTS ? T('{n} (recommended)', { n: v }) : String(v)])));
@@ -2569,13 +2158,11 @@ function renderFeedPrefs() {
         const c = el('div', 'feed-set-card'); c.id = id; c.append(...rows); root.append(c);
     };
     card('feedPrefsReading', TU('Reading'),
-        toggleRow('feedSetMarkRead', T('✓ Mark read when opened'), T('Items you open or summarize leave your unread list'), 'markReadOnOpen'),
-        toggleRow('feedSetAutoSum', T('✨ Auto-summarize favorites'), T('Starring an item summarizes it in a background tab'), 'autoSummarizeFavs'),
-        el('p', 'feed-muted', T('Summarize on a feed item follows the mode chosen on the Summarize screen (extension by default). Favorites are always kept.')));
+        toggleRow('feedSetMarkRead', T('✓ Mark read when opened'), T("Items you open or analyze leave your unread list"), 'markReadOnOpen'),
+        toggleRow('feedSetAutoSum', T("✨ Auto-analyze favorites"), T('Starring an item summarizes it in a background tab'), 'autoSummarizeFavs'),
+        el('p', 'feed-muted', T("Analyze on a feed item follows the mode chosen on the Analyze screen (extension by default). Favorites are always kept.")));
     card('feedPrefsAi', TU('AI analysis'),
-        moodToggleRow(),
-        selectRow('feedSetRecapLimit', T('📝 Items per recap'), 'recapLimit', [[0, T('No limit')], [40, '40'], [80, '80'], [150, '150'], [300, '300']]),
-        toggleRow('feedSetRate', T('🤖 Rate items with the recap'), T('Adds mood and category to each item in the same AI request'), 'rateWithRecap'));
+        selectRow('feedSetRecapLimit', T('📝 Items per recap'), 'recapLimit', [[0, T('No limit')], [40, '40'], [80, '80'], [150, '150'], [300, '300']]));
     card('feedPrefsLibrary', TU('Whole library · Ollama'));
     renderLibraryCard(root.querySelector('#feedPrefsLibrary')).catch(() => {});
     card('feedPrefsUpdates', TU('Updates & storage'),
@@ -2597,7 +2184,6 @@ export async function onFeedsScreenShown(uiObj) {
     try { await load(); } catch (e) { clearSkeleton(els.list); throw e; }
     try { await reconcileStubs(); } catch (e) { console.warn('[feeds] stub reconcile failed', e); }
     await loadHistoryMap();
-    carryMoodToHistory();
     render();
     renderFeedSettings();
     if (els.controlsBar) els.controlsBar.classList.remove('scroll-hidden');
@@ -2607,7 +2193,6 @@ export async function onFeedsScreenShown(uiObj) {
 
 export function initFeedManager(uiObj) {
     uiRef = uiObj;
-    refreshTopicLang();
     els = {
         controls: document.getElementById('feedControls'),
         sourcePill: document.getElementById('feedSourcePill'),
@@ -2619,16 +2204,13 @@ export function initFeedManager(uiObj) {
         recapCard: document.getElementById('feedRecapCard'),
         scopeRow: document.getElementById('feedScopeRow'),
         filterChip: document.getElementById('feedFilterChip'),
-        moodChip: document.getElementById('feedMoodChip'),
         opmlInput: document.getElementById('feedOpmlInput'),
         list: document.getElementById('feedItemList'),
         empty: document.getElementById('feedEmpty'),
         screen: document.getElementById('feedsScreen'),
         controlsBar: document.getElementById('feedControls'),
         search: document.getElementById('feedSearch'),
-        graphBtn: document.getElementById('feedGraphBtn'),
         insightsBtn: document.getElementById('feedInsightsBtn'),
-        graph: document.getElementById('feedGraph'),
         insights: document.getElementById('feedInsights')
     };
     if (!els.list) return;
@@ -2652,23 +2234,19 @@ export function initFeedManager(uiObj) {
                 histTimer = setTimeout(async () => {
                     const data = await chrome.storage.local.get({ [SK.feedBackground]: {} });
                     mergeBackground(data[SK.feedBackground] || {});
-                    syncMood();
+
                     if (els && els.list) render();
                     if (document.getElementById('feedSettingsRoot')) renderFeedSettings();
                 }, 250);
             }
             if (!ch || !ch[SK.articlesIndex]) return;
             clearTimeout(histTimer);
-            histTimer = setTimeout(async () => { await loadHistoryMap(); await carryMoodToHistory(); if (els && els.list) render(); }, 250);
+            histTimer = setTimeout(async () => { await loadHistoryMap();  if (els && els.list) render(); }, 250);
         });
     }
-    if (els.moodChip) els.moodChip.addEventListener('click', () => {
-        if (ui.mood === 'pos') ui.mood = 'any';
-        else { ui.mood = 'pos'; ui.status = 'all'; }
-        persistUi(); render();
-    });
+
     els.chipRow.querySelectorAll('[data-status]').forEach(b => b.addEventListener('click', () => {
-        ui.status = b.dataset.status; if (ui.mood === 'pos') ui.mood = 'any'; persistUi(); render();
+        ui.status = b.dataset.status;  persistUi(); render();
     }));
     els.opmlInput.addEventListener('change', () => {
         const f = els.opmlInput.files && els.opmlInput.files[0];

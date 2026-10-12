@@ -46,14 +46,6 @@ assert(det.querySelector('.detail-title').textContent.includes('Title <img'), 't
 assert(det.querySelector('.detail-decision .decision-chip').textContent.includes('week <img'), 'timeframe as text');
 assert(det.querySelector('.summary-box h2') && /Point/.test(det.querySelector('.summary-box').textContent), 'summary markup kept');
 
-// 4. graph preview card
-const ag = await imp('modules/archiveGraph.js');
-const host = d.createElement('div'); d.body.appendChild(host);
-ag.__test_showPreviewCard(host, { title: 'G ' + X, summary: '<p>Graph &lt;img src=y onerror=z&gt; summary</p>', tags: ['t' + X], timestamp: new Date().toISOString() });
-await tick(30);
-const pc = host.querySelector('.graph-preview-card');
-assert(pc && !pc.querySelector('img'), 'no markup in the preview card');
-noHandlers(pc, 'preview');
-assert(pc.textContent.includes('G <img') && pc.textContent.includes('Graph <img src=y'), 'title and summary as text');
 assert.equal(w.__pwned, undefined);
 console.log('ok');
+w.close();

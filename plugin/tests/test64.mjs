@@ -15,25 +15,12 @@ assert.equal(applyScholarly({ state: 'yes', doi: '10.1234/abc' }, '{"scholarly":
 assert.equal(applyScholarly(null, '{"scholarly":false}'), null);
 assert.deepEqual(applyScholarly({ state: 'yes' }, 'garbage'), { state: 'yes' });   // unparsable keeps page signals
 assert.equal(applyScholarly(null, '{"scholarly":true,"type":"systematic review"}').type, 'review');
-// popup helpers
-const { paperChips, paperType, paperFacts, paperSearchText } = await imp('modules/paperInfo.js');
-const art = { paper: 'yes', doi: '10.1234/abc', paperType: 'review', paperAuthors: 'Smith, J.', meta: { paper: { state: 'yes', type: 'review', facts: { design: 'Meta-analysis', sample: '12 studies' } } } };
-assert.equal(paperType(art), 'review');
-assert(paperChips(art).some(c => c[1] === 'Review'));
-assert.equal(paperFacts(art).length, 2);
-assert(paperSearchText(art).includes('10.1234/abc') && paperSearchText(art).includes('smith'));
-assert.equal(paperSearchText({ title: 'x' }), '');
 // Completion merges scholarly metadata without exposing the metadata in the response.
 const { finalizeSummary } = await imp('content/finalize.js');
 const finished = await finalizeSummary({ raw: '<div><p>A trial finding.</p></div><!-- SCHOLARLY: {"scholarly":true,"type":"trial","sample":"n=120"} -->', selectedLanguage: 'en', contentText: 'We ran a trial of 120 people.', pageTitle: 'Trial', pageMeta: {} });
-assert.equal(finished.pageMeta.paper.type, 'trial');
-assert.equal(finished.pageMeta.paper.facts.sample, 'n=120');
+assert(!finished.pageMeta.paper, 'completion ignores retired scholarly metadata');
 assert(!finished.cleanHtml.includes('SCHOLARLY'));
 const am = fs.readFileSync(new URL('../src/modules/articleManager.js', import.meta.url), 'utf8');
-assert(/\['research'/.test(am) && /RESEARCH_FILTERS/.test(am) && /paperSearchText\(a\)/.test(am));
-// on-demand key facts
-const { extractPaperFacts } = await imp('modules/paperInfo.js');
-const out = await extractPaperFacts({ id: 'x', content: '<p>We ran a trial of 120 people.</p>', title: 'T', paper: 'yes' }, async () => '{"scholarly":true,"type":"trial","design":"RCT","sample":"n=120","limitations":"short"}', 'German').catch(e => e);
-assert(out instanceof Error ? /./.test(out.message) : out.facts.sample === 'n=120', String(out));
-assert(/paper-facts-btn/.test(am));
-console.log('test64 ok');
+assert(!/RESEARCH_FILTERS|paper-facts-btn|renderPaperRow|renderDetailTags/.test(am), 'research controls removed');
+console.log('TEST 64 OK');
+w.close();

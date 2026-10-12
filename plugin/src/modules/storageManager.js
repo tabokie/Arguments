@@ -2,7 +2,7 @@ import { SK, SK_LEGACY, SK_DEAD, LOCAL_KEY_LIST, ARTICLE_REC_LEGACY, articleRecK
 import { debug } from './log.js';
 import { countWords } from './textUtils.js';
 import { withQuestions } from './conversation.js';
-import { DEFAULT_HIGHLIGHT_PROMPT, DEFAULT_SUMMARY_PROMPT, PAGE_PROMPT_KEYS, RETIRED_PROMPT_KEYS, resolvePagePrompts } from './pagePrompts.js';
+import { PAGE_PROMPT_KEYS, RETIRED_PROMPT_KEYS, migratePagePromptSettings } from './pagePrompts.js';
 // storageManager.js
 
 // Precomputed once per save/migration so analyticsManager.js's reading-time
@@ -18,9 +18,10 @@ class StorageManager {
     }
 
     static DEFAULTS = {
-        prompt: DEFAULT_SUMMARY_PROMPT,
-        highlightPrompt: DEFAULT_HIGHLIGHT_PROMPT,
-        promptType: 'custom',
+        prompt: '',
+        highlightPrompt: '',
+        highlightPromptMode: 'default',
+        mainOutputPromptMode: 'default',
         selectedLanguage: 'en-US',
         connectionMode: 'cloud',
         preferredCloudModel: 'google/gemini-3.8-flash'
@@ -343,24 +344,8 @@ class StorageManager {
         return Array.isArray(rec?.conversation) ? rec.conversation : [];
     }
 
-    /** Follow-up questions the model suggested for this article (not asked yet). */
-    static async getSuggested(id) {
-        if (!id) return [];
-        const key = articleRecKey(id);
-        const rec = (await this.getLocal([key]))[key];
-        return Array.isArray(rec?.suggested) ? rec.suggested : [];
-    }
-
-    /** Short answers that came with the suggested questions: { question: answer }. */
-    static async getSuggestedAnswers(id) {
-        if (!id) return {};
-        const key = articleRecKey(id);
-        const rec = (await this.getLocal([key]))[key];
-        return rec && rec.suggestedAnswers && typeof rec.suggestedAnswers === 'object' ? rec.suggestedAnswers : {};
-    }
-
     /** Replace the conversation; keeps the lean index in step (qaCount) so lists never load records. */
-    static async saveConversation(id, turns, pool, quick) {
+    static async saveConversation(id, turns) {
         if (!id) return false;
         const key = articleRecKey(id);
         const [recData, idxData] = await Promise.all([this.getLocal([key]), this.getLocal({ [SK.articlesIndex]: [] })]);
@@ -379,42 +364,9 @@ class StorageManager {
             entry.summaryWordCount = countWords(summary);
         }
         const nextRec = { ...rec, conversation: list, summary };
-        if (Array.isArray(pool)) nextRec.suggested = pool.filter(q => typeof q === 'string' && q.trim()).slice(0, 8);   // suggested follow-ups, kept for later
-        if (Array.isArray(pool) && quick && typeof quick === 'object') {      // keep short answers only for questions still suggested
-            const kept = {};
-            for (const q of nextRec.suggested) if (typeof quick[q] === 'string') kept[q] = quick[q];
-            nextRec.suggestedAnswers = kept;
-        }
         if (list.length || rec.summaryBase !== undefined) nextRec.summaryBase = base;
         await this.setLocal({ [key]: nextRec, [SK.articlesIndex]: index });
         return true;
-    }
-
-    /** Store the paper facts / type on an article (record meta.paper + the lean index fields). */
-    static async savePaperInfo(id, paper) {
-        if (!id || !paper) return false;
-        const key = articleRecKey(id);
-        const [recData, idxData] = await Promise.all([this.getLocal([key]), this.getLocal({ [SK.articlesIndex]: [] })]);
-        const rec = recData[key];
-        if (!rec) return false;
-        const index = idxData[SK.articlesIndex] || [];
-        const entry = index.find(a => a.id === id);
-        if (entry) { if (paper.state) entry.paper = paper.state; if (paper.type) entry.paperType = paper.type; if (paper.preprint) entry.preprint = true; if (paper.doi) entry.doi = paper.doi; }
-        await this.setLocal({ [key]: { ...rec, meta: { ...(rec.meta || {}), paper: { ...((rec.meta || {}).paper || {}), ...paper } } }, [SK.articlesIndex]: index });
-        return true;
-    }
-
-    /** Replace an article's tags (index entry): trimmed, de-duplicated, max 12 of 40 characters. Returns the stored list. */
-    static async setTags(id, tags) {
-        if (!id) return null;
-        const seen = new Set();
-        const clean = (Array.isArray(tags) ? tags : []).map(t => String(t || '').replace(/\s+/g, ' ').trim().slice(0, 40)).filter(t => t && !seen.has(t.toLowerCase()) && seen.add(t.toLowerCase())).slice(0, 12);
-        const { [SK.articlesIndex]: articlesIndex = [] } = await this.getLocal({ [SK.articlesIndex]: [] });
-        const e = articlesIndex.find(a => a.id === id);
-        if (!e) return null;
-        e.tags = clean;
-        await this.setLocal({ [SK.articlesIndex]: articlesIndex });
-        return clean;
     }
 
     static async saveArticle({ content, summary, url, title, description, highlights = [], tags = [], modelId = '', connectionMode = '', summaryLength = 200, extra = {} }) {
@@ -493,11 +445,6 @@ class StorageManager {
                 e.sentTo = (Array.isArray(e.sentTo) ? e.sentTo : []).filter(x => !(x.kind === patch.sent.kind && (x.label || '') === label));
                 e.sentTo.push({ kind: patch.sent.kind, label, at: now });
                 changed = true;
-            }
-            if (patch.paperOverride !== undefined) {   // 'yes' | 'no' | null (back to auto-detect)
-                const v = patch.paperOverride === 'yes' || patch.paperOverride === 'no' ? patch.paperOverride : null;
-                if (v && e.paperOverride !== v) { e.paperOverride = v; changed = true; }
-                else if (!v && e.paperOverride) { delete e.paperOverride; changed = true; }
             }
             if (typeof patch.archived === 'boolean' && !!e.archived !== patch.archived) {
                 e.archived = patch.archived;
@@ -784,10 +731,8 @@ class StorageManager {
 
     static async ensurePromptDefaults() {
         const data = await this.get(PAGE_PROMPT_KEYS);
-        const { highlightPrompt, summaryPrompt } = resolvePagePrompts(data);
-        if (data.highlightPrompt !== highlightPrompt || data.prompt !== summaryPrompt || data.promptType !== 'custom') {
-            await this.set({ highlightPrompt, prompt: summaryPrompt, promptType: 'custom' });
-        }
+        const settings = migratePagePromptSettings(data);
+        if (Object.entries(settings).some(([key, value]) => data[key] !== value)) await this.set(settings);
         await chrome.storage.sync.remove(RETIRED_PROMPT_KEYS);
     }
 

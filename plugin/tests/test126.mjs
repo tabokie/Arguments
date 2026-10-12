@@ -17,7 +17,7 @@ const structured = [
   '```'
 ].join('\n');
 const r = parseRecap(structured);
-assert.equal(r.mood, 'neu');
+assert(!('mood' in r));
 assert(!/```/.test(r.overview), 'code fence lines are dropped');
 assert.deepEqual(r.themes, [], 'a structured briefing keeps its bullets under their headings');
 assert(/### Wirtschaft & Finanzen\n- \*\*Goldmarkt/.test(r.overview), 'headings and bullets stay on their own lines');
@@ -43,7 +43,7 @@ assert(!/###/.test(gbox.textContent), 'no ### on screen');
 const plain = parseRecap('Ein Überblick. Noch ein Satz.\n- Erstens\n- Zweitens\nMOOD: positive');
 assert.equal(plain.overview, 'Ein Überblick. Noch ein Satz.');
 assert.deepEqual(plain.themes, ['Erstens', 'Zweitens']);
-assert.equal(plain.mood, 'pos');
+assert(!('mood' in plain));
 
 // a theme bullet may carry bold
 const li = w.document.createElement('li');

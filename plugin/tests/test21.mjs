@@ -15,29 +15,8 @@ store['feeds:items'] = [...cur, ...old];
 store['feeds:ui'] = { source: 'all', status: 'all', date: 'any', mood: 'any', sort: 'new', scope: 'feed' };
 const fm = await imp('modules/feedManager.js'); const ui = { showToast() {}, showScreen() {} };
 fm.initFeedManager(ui); await tick(50); await fm.onFeedsScreenShown(ui); await tick(50);
-const st = store['feeds:mood']; assert.ok(st && Object.keys(st).length >= 2, 'daily mood store written: ' + JSON.stringify(st && Object.keys(st)));
-// prune old items (setting 30 days)
-store['feeds:settings'] = { ...(store['feeds:settings'] || {}), keepDays: 30 };
-await fm.onFeedsScreenShown(ui); await tick(30);
+assert.equal(store['feeds:items'].length, 14, 'opening cached feeds preserves saved items');
 click($('#feedInsightsBtn')); await tick(50);
-assert.ok($('.feed-mt'), 'mood section');
-// month scope: previous months only visible through the store
-click($$('.feed-mt-sec .ar-view-btn').find(b => b.dataset.view === 'month')); await tick(20);
-assert.equal($$('.feed-mt-col').length, 6, '6 months');
-assert.ok($$('.feed-mt-col:not(.na)').length >= 1, 'a rated bucket');
-click($$('.feed-mt-sec .ar-view-btn').find(b => b.dataset.view === 'week')); await tick(20);
-assert.equal($$('.feed-mt-col').length, 8, '8 weeks');
-const now = $('.feed-mt-col.now'); assert.ok(now && !now.classList.contains('na'), 'current week has index');
-assert.ok(/\+33/.test($('.feed-mt-big').textContent), 'index (4-2)/6=+33: ' + $('.feed-mt-big').textContent);
-assert.ok($('.feed-mt-card .feed-mood-bar'), 'bar in detail card');
-click($$('.feed-mt-sec .ar-view-btn').find(b => b.dataset.view === 'day')); await tick(20);
-assert.equal($$('.feed-mt-col').length, 14);
-// day with 8 items, 6 rated: index defined; yesterday empty → n/a
-assert.ok($$('.feed-mt-col.na').length >= 12);
-click($$('.feed-mt-col.na')[0]); await tick(10);
-assert.ok($('.feed-mt-prog') || /\bn\/a\b/.test($('.feed-mt-big').textContent), 'n/a state');
-// open week hands over to scope pages
-click($$('.feed-mt-sec .ar-view-btn').find(b => b.dataset.view === 'week')); await tick(20);
-click($$('.feed-mt-acts .btn-sm')[0]); await tick(50);
-assert.ok($('#feedInsights').hidden, 'insights closed'); assert.ok(!$('#feedRecapCard').hidden, 'recap card shown for week scope');
+assert(!$('.feed-mt') && !$('.ar-topics'), 'mood and topic analytics are removed');
+assert($('#feedInsights .ar-chart'), 'volume analytics remain available');
 console.log('TEST 21 OK');

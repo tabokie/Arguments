@@ -12,10 +12,6 @@ import StorageManager from './storageManager.js';
 import { initPromptSettings, savePromptSettings } from './promptSettings.js';
 import { updateModelIdentifierUI } from './modelManager.js';
 import { initAuthManager } from './authManager.js';
-import { buildCanonicalTagMap, applyCanonicalTags } from './tagIntelligence.js';
-import { unknownTags, keysNeedingLabel } from './topicConcepts.js';
-import { loadLexicon, saveLexicon } from './topicLexicon.js';
-import { learnTagNames, translateFeedTopics, uiLanguage } from './feedAi.js';
 import { escapeHtml } from './textUtils.js';
 import { T, TN } from './feedI18n.js';
 import { exportHistoryMarkdown } from './markdownArchive.js';
@@ -30,7 +26,7 @@ export async function initSettingsManager(ui) {
     initLocalSendSettings(storageData);
     initDangerZone();
     initBackupRestore();
-    initLocalIntelligence();
+    initFeedLibraryTool();
     initBookmarkletGenerator();
 
     // Initialize Auth Manager (drives both the Settings panel and the
@@ -145,7 +141,6 @@ const ollamaTutorials = () => ({
     }
 });
 
-
 function detectOS() {
     const ua = navigator.userAgent.toLowerCase();
     if (/mac os|macintosh|iphone|ipad|ipod/.test(ua)) return 'macos';
@@ -258,22 +253,22 @@ function renderGuide(container) {
 // ── Section: Model Configuration (Refactored for Hybrid Subscription Model) ──
 async function initModelSettings(storageData) {
     const services = await StorageManager.getServices();
-    
+
     // UI Mode Containers
     const cloudModeContainer = document.getElementById('cloudModeContainer');
     const developerModeContainer = document.getElementById('developerModeContainer');
-    
+
     // High-Level Connection Mode Toggles
     const modeCloudRadio = document.getElementById('modeCloud');
     const modeLocalRadio = document.getElementById('modeLocal');
     const modeOllamaRadio = document.getElementById('modeOllama');
-    
+
     // Cloud Mode Elements
     const cloudModelSelect = document.getElementById('cloudModelSelect');
     const licenseKeyInput = document.getElementById('licenseKey');
     const verifyLicenseBtn = document.getElementById('verifyLicenseButton');
     const licenseStatusLabel = document.getElementById('licenseStatusLabel');
-    
+
     // Developer Mode Elements (Existing)
     const modelSelect = document.getElementById('model');
     const apiKeyInput = document.getElementById('apiKey');
@@ -340,7 +335,7 @@ async function initModelSettings(storageData) {
                 if (data.success && data.models.length > 0) {
                     // Clear the loading indicator option
                     cloudModelSelect.innerHTML = '';
-                    
+
                     // Populate options dynamically
                     data.models.forEach(model => {
                         const option = document.createElement('option');
@@ -722,12 +717,12 @@ function initBookmarkletGenerator() {
                 const d=document;
                 const ui=d.createElement('div');
                 ui.style.cssText='position:fixed;top:20px;right:20px;width:350px;max-height:80vh;overflow-y:auto;background:#fff;color:#171717;z-index:999999;padding:16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.2);font-family:sans-serif;font-size:14px;line-height:1.5;';
-                ui.innerHTML='<b>✨ AI Summary Helper</b><br><span id="as-st">'+${js(escapeHtml(T('Reading page...')))}+'</span><br><button id="as-cl" style="margin-top:10px;padding:4px 8px;border:none;background:#eee;border-radius:4px;cursor:pointer;">'+${js(escapeHtml(T('Close')))}+'</button>';
+                ui.innerHTML='<b>✨ Arguments</b><br><span id="as-st">'+${js(escapeHtml(T('Reading page...')))}+'</span><br><button id="as-cl" style="margin-top:10px;padding:4px 8px;border:none;background:#eee;border-radius:4px;cursor:pointer;">'+${js(escapeHtml(T('Close')))}+'</button>';
                 d.body.appendChild(ui);
                 d.getElementById('as-cl').onclick=()=>ui.remove();
                 try{
                     const text=d.body.innerText.substring(0,15000);
-                    d.getElementById('as-st').innerText=${js(T('Summarizing...'))};
+                    d.getElementById('as-st').innerText=${js(T("Analyzing..."))};
                     const r=await fetch('https://api.byphil.eu/v1/projects/ai_summary_helper/chat',{
                         method:'POST',
                         headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},
@@ -741,7 +736,7 @@ function initBookmarkletGenerator() {
                     });
                     if(!r.ok) throw new Error(r.status===401?${js(T('Session expired. Generate a new bookmarklet.'))}:${js(T('API Error:'))}+' '+r.status);
                     const j=await r.json();
-                    const s=j.result?.choices?.[0]?.message?.content||j.choices?.[0]?.message?.content||j.summary||${js(T('No summary returned.'))};
+                    const s=j.result?.choices?.[0]?.message?.content||j.choices?.[0]?.message?.content||j.summary||${js(T("No main output returned."))};
                     const html=String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\*\\*(.*?)\\*\\*/g,'<b>$1</b>').replace(/\\n/g,'<br>');
                     d.getElementById('as-st').innerHTML='<div style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;">'+html+'</div>';
                 }catch(e){
@@ -1035,132 +1030,14 @@ function getLocalSubnetIp() {
 
 // ── Section: On-Device Intelligence (tag cleanup) ────────────────────
 // The per-save tag normalization in content.js only handles known
-// alias->canonical mapping. Merging near-duplicate tags that emerged
-// organically across the whole archive (typos, "Podcast" vs "Podcasts",
-// "ML" vs "Machine Learning") needs the full tag vocabulary, so it runs
-// as an explicit, on-demand maintenance pass rather than on every save.
-function initLocalIntelligence() {
-    // Link to the Feed library run (Ollama): it belongs with the other tools that run on this machine.
-    const libBtn = document.getElementById('libraryToolButton');
-    if (libBtn) {
-        document.getElementById('libraryToolTitle').textContent = T('Process the Feed library with Ollama');
-        document.getElementById('libraryToolHint').textContent = T('Rates, categorizes and recaps all your feed items in small batches on your own machine. No tokens spent.');
-        libBtn.textContent = T('Open') + ' →';
-        libBtn.addEventListener('click', () => { import('./settingsNav.js').then(m => m.openSettingsPanel('feedprefs', 'feedPrefsLibrary')).catch(() => {}); });
-    }
-    initNameTags();
-    const btn = document.getElementById('cleanupTagsButton');
-    const resultEl = document.getElementById('cleanupTagsResult');
-    if (!btn) return;
-
-    btn.addEventListener('click', async () => {
-        btn.disabled = true;
-        const originalLabel = btn.textContent;
-        btn.textContent = '🧹 ' + T('Analyzing tags…');
-        if (resultEl) resultEl.style.display = 'none';
-
-        try {
-            // Tags live entirely in articlesIndex post-migration — this pass
-            // never needs to touch per-article content.
-            const articles = await StorageManager.getArticlesIndex({ includeArchived: true });
-
-            if (articles.length === 0) {
-                if (resultEl) { resultEl.textContent = T('No articles saved yet.'); resultEl.style.display = 'block'; }
-                return;
-            }
-
-            const canonicalMap = buildCanonicalTagMap(articles);
-            let changedArticles = 0;
-            let tagsMerged = 0;
-
-            const updated = articles.map(article => {
-                const before = article.tags || [];
-                const after = applyCanonicalTags(before, canonicalMap);
-                const beforeKey = before.map(t => t.toLowerCase()).sort().join('|');
-                const afterKey = after.map(t => t.toLowerCase()).sort().join('|');
-                if (beforeKey !== afterKey) {
-                    changedArticles++;
-                    tagsMerged += Math.max(0, before.length - after.length);
-                }
-                return { ...article, tags: after };
-            });
-
-            await StorageManager.setLocal({ [SK.articlesIndex]: updated });
-
-            if (resultEl) {
-                resultEl.textContent = changedArticles > 0
-                    ? T('✓ Updated {a}, merged {b}.', { a: TN(changedArticles, '{n} article', '{n} articles'), b: TN(tagsMerged, '{n} duplicate tag', '{n} duplicate tags') })
-                    : T('✓ Tags already look consistent — nothing to merge.');
-                resultEl.style.display = 'block';
-            }
-        } catch (err) {
-            console.error('[AISH] Tag cleanup failed:', err);
-            if (resultEl) { resultEl.textContent = T('Something went wrong — please try again.'); resultEl.style.display = 'block'; }
-        } finally {
-            btn.disabled = false;
-            btn.textContent = originalLabel;
-        }
-    });
-}
-
-/**
- * One-off migration of the tags that already exist: every tag that is neither a built-in topic nor in the learned lexicon
- * is named by the AI (English name + the UI-language word) in blocks of 40 and written to the lexicon only. The articles keep
- * their tags; History, graph and charts then show them in the UI language and group the synonyms. Safe to repeat: a tag is
- * asked once, and a stopped run continues with what is left.
- */
-const NAME_TAGS_MIN_USES = 2;
-const NAME_TAGS_TIMEOUT_MS = 3 * 60 * 1000;   // per request of 40 tags
-function initNameTags() {
-    const btn = document.getElementById('nameTagsButton');
-    if (!btn) return;
-    const title = document.getElementById('nameTagsTitle'), hint = document.getElementById('nameTagsHint'), out = document.getElementById('nameTagsResult');
-    title.textContent = T('Name tags in your language');
-    hint.textContent = T('Asks your AI connection once for the English name and the UI-language word of every tag that is not known yet and is used at least twice, most used first. Your articles keep their tags.');
-    btn.textContent = T('Name tags');
-    const say = (m) => { out.textContent = m; out.style.display = 'block'; };
-    btn.addEventListener('click', async () => {
-        btn.disabled = true;
-        try {
-            await loadLexicon();
-            const articles = await StorageManager.getArticlesIndex({ includeArchived: true });
-            const all = articles.flatMap(a => a.tags || []);
-            // Most used first; a tag that appears only once in the archive is not worth a request (it neither groups nor shows up in charts).
-            // Two kinds of work: tags nobody has named yet (English name + UI word), and tags already known in another
-            // language that lack a label in the CURRENT UI language (e.g. after switching English → Spanish).
-            const { code } = await uiLanguage();
-            const unnamed = unknownTags(all, Infinity, NAME_TAGS_MIN_USES);
-            const unlabeled = keysNeedingLabel(all, code, Infinity, NAME_TAGS_MIN_USES);
-            const total = unnamed.length + unlabeled.length;
-            if (!total) { say(T('✓ Every frequently used tag already has a name — nothing to do.')); return; }
-            const blocks = [];
-            for (let k = 0; k < unnamed.length; k += 40) blocks.push({ list: unnamed.slice(k, k + 40), run: (l, signal) => learnTagNames(l, { signal }) });
-            for (let k = 0; k < unlabeled.length; k += 40) blocks.push({ list: unlabeled.slice(k, k + 40), run: async (l, signal) => { await translateFeedTopics(l, { signal }); return l.length; } });
-            let named = 0, done = 0, failed = 0, lastError = null;
-            // A model that never answers must not look like a frozen button: a clock ticks next to the count and a request
-            // gives up after NAME_TAGS_TIMEOUT_MS.
-            let line = '', since = 0;
-            const tick = setInterval(() => { const t = Math.round((Date.now() - since) / 1000); say(line + ' · ' + Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0')); }, 1000);
-            try {
-                for (const b of blocks) {
-                    line = T('Naming tags… {done} of {total}', { done, total }); since = Date.now(); say(line);
-                    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), NAME_TAGS_TIMEOUT_MS);
-                    try { named += await b.run(b.list, ctl.signal); await saveLexicon(); failed = 0; }
-                    catch (e) {
-                        lastError = ctl.signal.aborted ? new Error(T('AI request failed') + ' (timeout)') : e;
-                        if (++failed >= 2) throw lastError;   // one hiccup is skipped; two in a row stop the run
-                    } finally { clearTimeout(timer); }
-                    done += b.list.length;
-                }
-            } finally { clearInterval(tick); }
-            document.dispatchEvent(new CustomEvent('aish:lexiconChanged'));
-            if (lastError && !named) throw lastError;   // nothing worked: say why instead of "Named 0"
-            say(T('✓ Named {n} of {total} tags.', { n: named, total }));
-        } catch (err) {
-            console.error('[AISH] Tag naming failed:', err);
-            document.dispatchEvent(new CustomEvent('aish:lexiconChanged'));
-            say(T('Something went wrong — please try again.') + (err && err.message ? ' (' + err.message + ')' : ''));
-        } finally { btn.disabled = false; }
+function initFeedLibraryTool() {
+    const button = document.getElementById('libraryToolButton');
+    if (!button) return;
+    document.getElementById('libraryToolTitle').textContent = T('Process the Feed library with Ollama');
+    document.getElementById('libraryToolHint').textContent = T('Creates recaps of your feed items in small batches on your own machine.');
+    button.textContent = T('Open') + ' →';
+    button.addEventListener('click', () => {
+        import('./settingsNav.js').then(module => module.openSettingsPanel('feedprefs', 'feedPrefsLibrary'));
     });
 }
 
@@ -1174,7 +1051,7 @@ export function initDangerZone() {
     const askAndDelete = async ({ title, body, preselect, confirmLabel, button }) => {
         const counts = await describeData().catch(() => ({}));
         const rows = [
-            ['articles', '📚 ' + T('Summaries & archive'), counts.articles ? TN(counts.articles, '{n} summary', '{n} summaries') : ''],
+            ['articles', '📚 ' + T("Results & archive"), counts.articles ? TN(counts.articles, "{n} main output", "{n} results") : ''],
             ['highlights', '🖍️ ' + T('Highlights'), counts.highlights ? String(counts.highlights) : ''],
             ['feeds', '📰 ' + T('Feeds'), counts.feeds ? TN(counts.feeds, '{n} feed', '{n} feeds') + ' · ' + TN(counts.feedItems || 0, '{n} item', '{n} items') : ''],
             ['podcasts', '🎙️ ' + T('Podcasts'), counts.podcasts ? String(counts.podcasts) : ''],
@@ -1216,14 +1093,14 @@ export function initDangerZone() {
     if (btnSettings) {
         btnSettings.addEventListener('click', () => askAndDelete({
             title: T('Delete settings?'),
-            body: T('Resets preferences, prompts, API keys, sign-in and send targets on this device. Summaries, highlights and feeds stay unless you tick them. The extension will reload.'),
+            body: T("Resets preferences, prompts, API keys, sign-in and send targets on this device. Results, highlights and feeds stay unless you tick them. The extension will reload."),
             preselect: ['prefs', 'keys', 'send'], confirmLabel: T('Delete settings'), button: btnSettings
         }));
     }
     if (btnHistory) {
         btnHistory.addEventListener('click', () => askAndDelete({
             title: T('Delete history?'),
-            body: T('Permanently removes your summaries, the archive and your highlights from this device. Settings and feeds stay unless you tick them. This cannot be undone.'),
+            body: T("Permanently removes your results, the archive and your highlights from this device. Settings and feeds stay unless you tick them. This cannot be undone."),
             preselect: ['articles', 'highlights'], confirmLabel: T('Delete history'), button: btnHistory
         }));
     }
@@ -1417,7 +1294,7 @@ export function initBackupRestore() {
                     chrome.runtime.reload();
                 } catch (err) {
                     console.error('Import failed:', err);
-                    alert(T('Invalid backup file. Please select a valid AI Summary Helper export.'));
+                    alert(T("Invalid backup file. Please select a valid Arguments export."));
                 } finally {
                     fileInput.value = '';
                 }

@@ -35,7 +35,7 @@ const defaultBody = JSON.parse(relayed.find(message => message.action === 'start
 for (const message of defaultBody.messages) {
   assert(message.content.indexOf(DEFAULT_HIGHLIGHT_PROMPT) < message.content.indexOf(DEFAULT_SUMMARY_PROMPT));
   assert(message.content.includes(DEFAULT_HIGHLIGHT_PROMPT) && message.content.includes(DEFAULT_SUMMARY_PROMPT));
-  assert(message.content.includes('SCHOLARLY') && message.content.includes('QUESTIONS'), 'metadata instructions reach the provider');
+  assert(!/(?:TAGS|MOOD|QUESTIONS|SCHOLARLY):/.test(message.content), 'retired metadata instructions are absent');
 }
 assert(defaultBody.messages.at(-1).content.endsWith(defaultBody.messages[0].content), 'the final reminder repeats the complete assembled prompt after the source');
 assert(!document.getElementById('aish-summary-window'), 'no window while the model is writing');
@@ -89,7 +89,7 @@ for (const service of ['openai', 'gemini', 'ollama']) {
     assert(text.includes(expectedHighlight) && text.includes(expectedSummary), `${service} receives both configured prompts`);
     assert(text.indexOf(expectedHighlight) < text.indexOf(expectedSummary), `${service} highlights precede summary instructions`);
     assert(!text.includes(DEFAULT_HIGHLIGHT_PROMPT) && !text.includes(DEFAULT_SUMMARY_PROMPT), `${service} custom prompts replace defaults`);
-    assert(text.includes('SCHOLARLY') && text.includes('QUESTIONS'), `${service} receives metadata instructions`);
+    assert(!/(?:TAGS|MOOD|QUESTIONS|SCHOLARLY):/.test(text), `${service} omits retired metadata instructions`);
   }
   if (service === 'gemini') assert(body.contents[0].parts.at(-1).text.endsWith(body.contents[0].parts[0].text), 'Gemini receives the final reminder after the source');
   else assert(body.messages.at(-1).content.endsWith(body.messages[0].content), `${service} receives the final reminder after the source`);
@@ -126,6 +126,9 @@ chrome.runtime.sendMessage = (message, callback) => {
     if (message.apiUrl.endsWith('/api/show')) raw = JSON.stringify({ model_info: { 'test.context_length': 4096 } });
     else if (body.stream === false) {
       assert(body.messages[0].content.includes('exact prefix'), 'part requests select prefixes');
+      assert(body.messages[0].content.includes('Use the shortest unique prefix'), 'part requests require compact selections too');
+      assert(!body.messages[0].content.includes(store.prompt), 'final user inclusion criteria are not applied to individual parts');
+      assert(body.messages[0].content.includes('even when they are not exceptional on their own'), 'part notes preserve material for cross-part synthesis');
       const source = body.messages[1].content;
       const highlights = [];
       if (collisions.some(sentence => source.includes(sentence))) highlights.push('We should adopt');
@@ -155,7 +158,7 @@ assert(chunkedBody.messages[1].content.length + chunkedBody.messages[0].content.
 assert.deepEqual(chunkedRequest.detach.highlights.filter(h => h.prefix === 'We should adopt').map(h => h.text), collisions, 'chunk-local prefixes are recovered before global ambiguity can discard them');
 assert(chunkedRequest.detach.highlightSourceText.includes(chunkedSentence), 'the resolver retains the full original source, rather than generated notes');
 const completedBeforeChunked = relayed.filter(message => message.action === 'summaryComplete').length;
-const chunkedOutput = '<p>A concise insight.</p>';
+const chunkedOutput = ''; // valid empty main output still paints prepared highlights
 emit({ action: 'streamChunk', requestId: chunkedRequest.requestId, payload: { chunk: JSON.stringify({ message: { content: chunkedOutput } }) + '\n' } });
 emit({ action: 'streamChunk', requestId: chunkedRequest.requestId, payload: { done: true } });
 for (let i = 0; i < 50 && relayed.filter(message => message.action === 'summaryComplete').length === completedBeforeChunked; i++) await tick();

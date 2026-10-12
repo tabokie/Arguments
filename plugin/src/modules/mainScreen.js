@@ -1,5 +1,5 @@
 import { modelIcon } from './modelBadge.js';
-import { icon, iconEl, setIconLabel } from './icons.js';
+import { iconEl, setIconLabel } from './icons.js';
 import { SK, articleRecKey } from './storageKeys.js';
 import { escapeHtml } from './textUtils.js';
 import { debug } from './log.js';
@@ -9,15 +9,13 @@ import { debug } from './log.js';
 import StorageManager from './storageManager.js';
 import { T, TN } from './feedI18n.js';
 import { t } from './i18n.js';
-import { paperChips } from './paperInfo.js';
 import { aiComplete } from './feedAi.js';
 import { modalOpen } from './shortcuts.js';
 import { initInstantRead } from './instantRead.js';
 import { getReader } from './reader.js';
 import { createComposer, samePage, contextRows, statusLines, activeStep } from './composerState.js';
-import { answerPreview, newTurn, buildPrompt, parseAnswer, joinContinuation } from './conversation.js';
+import { answerPreview, newTurn, buildPrompt, parseAnswer } from './conversation.js';
 import { turnEl, renderAnswer } from './qaView.js';
-import { typeText } from './typewriter.js';
 import { sidebarTokenFromHash, acceptSidebarMessage, SIDEBAR_TOKEN_FIELD } from './sidebarChannel.js';
 import { attachCardMenu } from './cardMenu.js';
 import { currentLengthSpec } from './summaryLength.js';
@@ -41,7 +39,7 @@ export function initMainScreen(ui) {
     };
 
     const addBubble = (article) => {
-        const title = article.title || article.content?.split('\n')[0] || 'Summary';
+        const title = article.title || article.content?.split('\n')[0] || 'Arguments';
         const domain = article.url ? getDomain(article.url) : '';
         // Strip <img> tags from AI-generated HTML to prevent 404s on relative paths
         const summaryHtml = (article.summary || '').replace(/<img[^>]*>/gi, '');
@@ -50,8 +48,6 @@ export function initMainScreen(ui) {
         const preview = textOnly.length > 100 ? textOnly.slice(0, 100) + '…' : textOnly;
         const date = article.timestamp ? new Date(article.timestamp).toLocaleDateString() : '';
 
-        const tags = article.tags || [];
-        const tagsHtml = tags.length ? `<div class="bubble-tags">${tags.map(t => `<span class="bubble-tag">${escapeHtml(t)}</span>`).join('')}</div>` : '';
         const modelHtml = article.modelId ? `<span class="card-model card-model--block">${modelIcon(article)} ${escapeHtml(article.modelId)}</span>` : '';
         const bubble = document.createElement('div');
         bubble.className = 'summary-bubble';
@@ -62,22 +58,12 @@ export function initMainScreen(ui) {
                 <span class="summary-bubble-domain">${escapeHtml(domain)} · ${date}</span>
             </div>
             <div class="summary-bubble-body">${preview}</div>
-            ${tagsHtml}
             ${modelHtml}
         `;
         const highlights = renderHighlights(article.highlights, key => t(key));
         if (highlights) {
             highlights.addEventListener('click', event => event.stopPropagation());
             bubble.appendChild(highlights);
-        }
-        // 🎓 paper badges (detected from DOI / citation meta; the user's override lives on the index entry)
-        {
-            const chips = paperChips(article);
-            if (chips.length) {
-                let row = bubble.querySelector('.bubble-tags');
-                if (!row) { row = document.createElement('div'); row.className = 'bubble-tags'; bubble.querySelector('.summary-bubble-body').after(row); }
-                chips.slice().reverse().forEach(([tone, text]) => { const s = document.createElement('span'); s.className = 'bubble-tag paper paper-' + tone; s.textContent = text; row.prepend(s); });
-            }
         }
         // Click to open in history
         bubble.style.cursor = 'pointer';
@@ -416,7 +402,7 @@ export function initMainScreen(ui) {
         input.addEventListener('change', () => { const f = input.files && input.files[0]; input.value = ''; attachPdf(f); });
         const b = document.createElement('button');
         b.type = 'button'; b.id = 'chipAttach'; b.className = 'chip chip-attach';
-        b.title = T('Attach a PDF to summarize'); b.setAttribute('aria-label', T('Attach a PDF to summarize'));
+        b.title = T("Attach a PDF to analyze"); b.setAttribute('aria-label', T("Attach a PDF to analyze"));
         const ic = document.createElement('span'); ic.className = 'chip-icon'; ic.append(iconEl('paperclip'));
         const lb = document.createElement('span'); lb.textContent = 'PDF';
         b.append(ic, lb);
@@ -543,7 +529,7 @@ export function initMainScreen(ui) {
         if (optOutUrl && !samePage(optOutUrl, tab.url)) optOutUrl = null;
         if (optOutUrl) return;
         if (conversation && samePage(conversation.url, tab.url)) {
-            composer.set('followup'); showConversationChip(); renderSuggestions(); return;
+            composer.set('followup'); showConversationChip(); return;
         }
         if (conversation && !conversation.detached) return;
         let list = [];
@@ -642,16 +628,14 @@ export function initMainScreen(ui) {
         if (conversation && conversation.bubble === bubble) { bubble.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); additionalQuestionsInput.focus(); return; }
         let full = null;
         try { full = await StorageManager.getArticleFull(article.id); } catch (_) { /* fall back to the card */ }
-        let turns = [], pool = [], quick = {};
+        let turns = [];
         try { turns = await StorageManager.getConversation(article.id); } catch (_) { turns = []; }
-        try { pool = await StorageManager.getSuggested(article.id); } catch (_) { pool = []; }
-        try { quick = await StorageManager.getSuggestedAnswers(article.id); } catch (_) { quick = {}; }
         if (!bubble.isConnected) return;
         clearThread();
         const f = full || article;
         conversation = {
             id: article.id, url: f.url || article.url || '', title: f.title || article.title || '', content: f.content || '', summary: f.summary || article.summary || '',
-            meta: f.meta || (f.favicon ? { favicon: f.favicon } : {}), turns: Array.isArray(turns) ? turns : [], pool: Array.isArray(pool) ? pool.slice() : [], quick: quick || {}, bubble, detached: true
+            meta: f.meta || (f.favicon ? { favicon: f.favicon } : {}), turns: Array.isArray(turns) ? turns : [], bubble, detached: true
         };
         try { instant && instant.refresh(); } catch (_) { /* optional */ }
         const host = document.createElement('div');
@@ -661,7 +645,7 @@ export function initMainScreen(ui) {
         bubble.classList.add('ask-open');
         const btn = bubble.querySelector('.ask-btn'); if (btn) btn.setAttribute('aria-expanded', 'true');
         conversation.turns.forEach(t => host.appendChild(turnEl(t, { onPin: persistConversation, onSource: revealOnPage })));
-        renderSuggestions();
+
         clearNote();
         composer.set('followup');
         showConversationChip();   // composer.set() is a no-op when it already is in follow-up: the chip (with its Back button) must still follow the new conversation
@@ -679,7 +663,7 @@ export function initMainScreen(ui) {
     }
 
     const persistConversation = () => {
-        if (conversation && conversation.id) StorageManager.saveConversation(conversation.id, conversation.turns, conversation.pool, conversation.quick).catch(() => {});
+        if (conversation && conversation.id) StorageManager.saveConversation(conversation.id, conversation.turns).catch(() => {});
     };
 
     const revealOnPage = (quote, chip) => {
@@ -690,154 +674,39 @@ export function initMainScreen(ui) {
         }).catch(() => {});
     };
 
-    /** Suggestion chips under the thread: the unused part of the pool (initial QUESTIONS + the ones that came with each answer). */
-    function renderSuggestions() {
-        feed.querySelector('.chat-suggest')?.remove();
-        if (!conversation) return null;
-        const asked = new Set(conversation.turns.map(t => t.q.trim().toLowerCase()));
-        conversation.pool = (conversation.pool || []).filter((q, i, a) => !asked.has(q.trim().toLowerCase()) && a.findIndex(x => x.trim().toLowerCase() === q.trim().toLowerCase()) === i);
-        const sug = document.createElement('div');
-        sug.className = 'chat-suggest';
-        conversation.pool.slice(0, 3).forEach((q) => {
-            const c = document.createElement('button');
-            c.type = 'button'; c.className = 'chat-suggest-chip'; c.textContent = q;
-            c.addEventListener('click', () => sendFollowUp(q));
-            sug.appendChild(c);
-        });
-        if (sug.children.length) placeThread(sug);
-        return sug;
-    }
 
     /** Is the active connection a local Ollama model? (then the full answer is requested without asking) */
-    async function isOllamaActive() {
-        try {
-            const s = await chrome.storage.sync.get(['connectionMode', 'activeService']);
-            return s.connectionMode === 'local' && String(s.activeService || '').toLowerCase() === 'ollama';
-        } catch (_) { return false; }
-    }
+
 
     async function sendFollowUp(q) {
         if (!conversation || !q) return;
-        feed.querySelector('.chat-suggest')?.remove();
         additionalQuestionsInput.value = '';
         fetchSummaryButton.disabled = true;
-        const qEl = addTurn('chat-q', q);
-        // A suggested question comes with a short answer: type it out like a person while the full answer is requested.
-        const quickText = (conversation.quick && conversation.quick[q]) || '';
+        const questionElement = addTurn('chat-q', q);
+        const answerElement = addTurn('chat-a chat-a--pending', T('Thinking…'));
         try {
-            if (instant) {
-                instant.startChat(q);
-                // The short answer is already known: hand all of it to the voice at once. It must not wait for the typewriter,
-                // which only releases a sentence after it has typed it out (seconds of silence before the first word).
-                if (quickText) instant.chatText(quickText);
-            }
-        } catch (_) { /* optional */ }
-        const ans = addTurn('chat-a chat-a--pending', quickText ? '' : T('Thinking…'));
-        // The model continues the short answer (it is told what is on screen): nothing is wiped, the text just grows.
-        let typer = null, typing = false, typed = '', cont = '', fullDone = false, failed = false;
-        const more = document.createElement('div');
-        more.className = 'chat-more'; more.setAttribute('role', 'status');
-        more.innerHTML = `<span class="chat-more-label">${escapeHtml(T('Thinking more…'))}</span><i></i><i></i><i></i><button type="button" class="chat-more-stop"></button>`;
-        const stopBtn = more.querySelector('.chat-more-stop');
-        stopBtn.textContent = T('■ Stop');
-        const ctrl = new AbortController();
-        let stopped = false;
-        // Local Ollama models are slow but free: start the full answer straight away so it is (partly) ready when the short one is read.
-        // Paid / cloud models: the short answer stands, the user decides whether the full one is worth the tokens.
-        const auto = !quickText || await isOllamaActive();
-        // Happy with the short answer? Stop keeps it (and what was already written) and cancels the request.
-        stopBtn.addEventListener('click', () => { stopped = true; fullDone = true; ctrl.abort(); });
-        const paint = () => {
-            if (failed) return;
-            renderAnswer(ans, typing ? typed : joinContinuation(quickText, cont));
-            more.classList.toggle('is-writing', !typing && !!cont);   // label gone once text flows, the Stop button stays
-            scrollFeed();
-        };
-        if (quickText) {
-            const reduce = document.documentElement.getAttribute('data-motion') === 'reduce';
-            typing = true;
-            ans.classList.add('chat-a--quick');
-            ans.after(more);
-            more.hidden = !auto;
-            scrollFeed();
-            typer = typeText(quickText, (t) => { typed = t; paint(); }, { fast: () => fullDone, instant: reduce });   // display only: the voice already has the whole short answer
-            typer.done.then(() => { typing = false; paint(); try { instant && instant.chatText(joinContinuation(quickText, cont)); } catch (_) { /* optional */ } });
-        }
-        try {
-            if (!auto) {
-                await typer.done;
-                const dig = document.createElement('div');
-                dig.className = 'chat-dig';
-                dig.innerHTML = '<button type="button" class="chat-dig-go"></button><button type="button" class="chat-dig-skip"></button>';
-                dig.querySelector('.chat-dig-go').textContent = T('Dig deeper');
-                dig.querySelector('.chat-dig-skip').textContent = T('That is enough');
-                ans.after(dig);
+            try { instant && instant.startChat(q); } catch (_) { /* optional */ }
+            const { system, user } = buildPrompt({ ...conversation, question: q });
+            const raw = await aiComplete(system, user, null, null, message => {
+                const text = message?.text ? answerPreview(message.text) : '';
+                if (!text) return;
+                renderAnswer(answerElement, text);
+                try { instant && instant.chatText(text); } catch (_) { /* optional */ }
                 scrollFeed();
-                fetchSummaryButton.disabled = false;
-                const deeper = await new Promise((res) => {
-                    dig.querySelector('.chat-dig-go').addEventListener('click', () => res(true));
-                    dig.querySelector('.chat-dig-skip').addEventListener('click', () => res(false));
-                });
-                dig.remove();
-                fetchSummaryButton.disabled = true;
-                if (!deeper) { stopped = true; throw Object.assign(new Error('Cancelled'), { name: 'AbortError' }); }
-                more.hidden = false;
-                more.classList.remove('is-writing');
-                ans.after(more);
-            }
-            const { system, user } = buildPrompt({ ...conversation, question: q, draft: quickText });
-            const raw = await aiComplete(system, user, null, quickText ? ctrl.signal : null, (m) => {
-                // Stream the continuation in as it is written (cleaned of HTML / code fences / the SOURCES line).
-                const t = m && m.text ? answerPreview(m.text) : '';
-                if (!t) return;
-                cont = t;
-                if (!typing) paint();      // while the short answer is still being typed, it keeps going first
-                if (!typing) { try { instant && instant.chatText(joinContinuation(quickText, t)); } catch (_) { /* optional */ } }   // never speak ahead of the typed short answer
             }, { partial: true });
-            fullDone = true;
-            if (typer) await typer.done;
-            more.remove();
-            const parsed = parseAnswer(raw, conversation.content);
-            const { sources, questions, quick } = parsed;
-            const a = joinContinuation(quickText, parsed.a);
+            const { a, sources } = parseAnswer(raw, conversation.content);
             try { instant && instant.chatDone(a || ''); } catch (_) { /* optional */ }
             const turn = newTurn(conversation.turns, { q, a: a || T('No answer.'), sources });
             conversation.turns.push(turn);
             try { instant && instant.refresh(); } catch (_) { /* optional */ }
             paintAskCount();
-            const el = turnEl(turn, { onPin: persistConversation, onSource: revealOnPage });
-            qEl.remove(); ans.replaceWith(el);
-            // Fresh suggestions arrive with the answer (no extra request); unused older ones stay in the pool.
-            conversation.pool = [...(questions || []), ...(conversation.pool || [])];
-            conversation.quick = { ...(conversation.quick || {}), ...(quick || {}) };
-            renderSuggestions();
+            questionElement.remove();
+            answerElement.replaceWith(turnEl(turn, { onPin: persistConversation, onSource: revealOnPage }));
             persistConversation();
-        } catch (err) {
-            if (stopped) {
-                // Keep the short answer (finish typing at once) and only the complete sentences of what was already written.
-                if (typer) await typer.done;
-                more.remove();
-                const keep = (cont.match(/^[\s\S]*[.!?…。!?](?=\s|$)/) || [''])[0];
-                const a = joinContinuation(quickText, keep);
-                try { instant && instant.chatDone(a || ''); } catch (_) { /* optional */ }
-                const turn = newTurn(conversation.turns, { q, a, sources: [] });
-                conversation.turns.push(turn);
-                try { instant && instant.refresh(); } catch (_) { /* optional */ }
-                paintAskCount();
-                qEl.remove(); ans.replaceWith(turnEl(turn, { onPin: persistConversation, onSource: revealOnPage }));
-                renderSuggestions();
-                persistConversation();
-                fetchSummaryButton.disabled = false;
-                scrollFeed();
-                return;
-            }
-            failed = true;
-            if (typer) typer.stop();
-            more.remove();
+        } catch (error) {
             try { instant && instant.abort(); } catch (_) { /* optional */ }
-            ans.textContent = (quickText ? quickText + '\n' : '') + '❌ ' + ((err && err.message) || T('AI request failed'));
-            ans.classList.remove('chat-a--pending');
-            renderSuggestions();
+            answerElement.textContent = '❌ ' + (error?.message || T('AI request failed'));
+            answerElement.classList.remove('chat-a--pending');
         }
         fetchSummaryButton.disabled = false;
         scrollFeed();
@@ -861,10 +730,10 @@ export function initMainScreen(ui) {
             try { refreshFetchExtras(); resumeForPage(); } catch (_) { /* composer not ready yet */ }
         } else {
             if (recentEntry) recentEntry.style.display = 'flex';
-            if (recentTitle) recentTitle.textContent = T('No recent summaries');
+            if (recentTitle) recentTitle.textContent = T("No recent results");
             if (recentMeta) {
                 const mac = /Mac|iPhone|iPad/i.test((navigator.platform || '') + ' ' + (navigator.userAgent || ''));
-                recentMeta.textContent = T('Summarize a page to see it here') + ' · ' + (mac ? '⌘ + Shift + E' : 'Ctrl + Shift + E');
+                recentMeta.textContent = T("Analyze a page to see it here") + ' · ' + (mac ? '⌘ + Shift + E' : 'Ctrl + Shift + E');
             }
         }
     };
@@ -936,7 +805,7 @@ export function initMainScreen(ui) {
     const addFirstBubble = (pageInfo, focus, chipRect) => {
         const first = document.createElement('div');
         first.className = 'chat-turn chat-q chat-q--first';
-        const l1 = document.createElement('div'); l1.textContent = T('Summarize this page');
+        const l1 = document.createElement('div'); l1.textContent = T("Analyze this page");
         first.appendChild(l1);
         const pageLine = [pageInfo && pageInfo.title, pageInfo && pageInfo.host].filter(Boolean).join(' · ');
         if (pageLine) { const lp = document.createElement('div'); lp.className = 'chat-q-sub'; lp.textContent = clip(pageLine, 80); first.appendChild(lp); }
@@ -993,7 +862,7 @@ export function initMainScreen(ui) {
                 streamPhase = Math.max(streamPhase, 1);
             }
             if (streamPhase !== lastStepPhase) { lastStepPhase = streamPhase; if (lastContext) renderSteps(lastContext); }
-            const phaseTitle = ['', T('Waiting for the model…'), T('Writing the summary…')][streamPhase];
+            const phaseTitle = ['', T('Waiting for the model…'), T("Writing the main output…")][streamPhase];
             if (phaseTitle) { if (phaseTitle !== lastPhaseTitle) { lastPhaseTitle = phaseTitle; updateStream(phaseTitle); } }
             else updateStream(raw || T('Working on it…'));
             if (msg.preview) updateStreamPreview(msg.preview);
@@ -1024,14 +893,13 @@ export function initMainScreen(ui) {
         if (msg.action === 'summaryComplete') {
             removeStreamBubble();
             // Render the new summary immediately from relayed data
-            if (msg.summary) {
+            if (typeof msg.summary === 'string') {
                 clearThread();
                 const bubbleArticle = {
-                    title: msg.title || 'Summary',
+                    title: msg.title || 'Arguments',
                     url: msg.url || '',
                     summary: msg.summary,
                     timestamp: msg.timestamp || new Date().toISOString(),
-                    tags: msg.tags || [],
                     modelId: msg.modelId || '',
                     connectionMode: msg.connectionMode || 'local',
                     meta: msg.meta || {},
@@ -1053,10 +921,7 @@ export function initMainScreen(ui) {
                     summary: msg.summary, meta: msg.meta || {}, turns: []
                 };
                 clearNote();
-                const given = (Array.isArray(msg.questions) ? msg.questions : []).filter(Boolean);
-                conversation.pool = given.slice();
-                conversation.quick = (msg.quick && typeof msg.quick === 'object') ? { ...msg.quick } : {};
-                renderSuggestions();
+
                 if (composer) { composer.set('followup'); showConversationChip(); }
                 scrollFeed();
             } else {
@@ -1191,7 +1056,7 @@ export function initMainScreen(ui) {
                 return b;
             };
             menu.append(
-                mk('sparkles', T('Summarize'), T('Read it with AI'), () => fetchSummaryButton.click()),
+                mk('sparkles', T("Analyze"), T('Read it with AI'), () => fetchSummaryButton.click()),
                 mk('download', T('Save only'), T('Keep it in History, no AI, nothing sent'), savePageOnly)
             );
             document.body.append(menu);
@@ -1222,7 +1087,7 @@ export function initMainScreen(ui) {
     const bgSend = (m) => new Promise((resolve) => { try { chrome.runtime.sendMessage(m, (r) => { void chrome.runtime.lastError; resolve(r || null); }); } catch (_) { resolve(null); } });
     const queueNotes = new Map();   // job id -> element
     const showQueuedNote = (id, title, position, scroll = true) => {
-        const text = '⏳ ' + T('Queued: {title}', { title: clip(title || T('this page'), 60) }) + (position > 1 ? ' · #' + position : '') + ' — ' + T('starts when the current summary is done');
+        const text = '⏳ ' + T('Queued: {title}', { title: clip(title || T('this page'), 60) }) + (position > 1 ? ' · #' + position : '') + ' — ' + T("starts when the current main output is done");
         const existing = queueNotes.get(id);
         if (existing) { existing.querySelector('span').textContent = text; return; }
         const el = document.createElement('div');
@@ -1322,7 +1187,7 @@ export function initMainScreen(ui) {
                 const modelLabel = document.getElementById('chipModelLabel');
                 const chipIcon = document.querySelector('.chip[data-panel="model"] .chip-icon');
                 const isCloud = chipIcon?.dataset.icon === 'cloud' || ((await chrome.storage.sync.get('connectionMode')).connectionMode || 'cloud') === 'cloud';
-                
+
                 addFirstBubble(pageInfo, additionalQuestions, chipRect);
                 addStreamBubble(modelLabel?.textContent || '', isCloud ? 'cloud' : 'local');
                 updateStream('Contacting content script…');
@@ -1350,7 +1215,7 @@ export function initMainScreen(ui) {
                 if (!(await hasSiteAccess(activeTab.url))) {
                     const granted = await requestSiteAccess(activeTab.url);
                     if (!granted) {
-                        updateStream('❌ AI Summary Helper needs permission to run on this site. Please tap "Allow" in the prompt (or enable it in Safari Settings → Extensions → AI Summary Helper).');
+                        updateStream('❌ Arguments needs permission to run on this site. Please tap "Allow" in the prompt (or enable it in Safari Settings → Extensions → Arguments).');
                         resetToFetch();
                         return;
                     }
@@ -1424,13 +1289,13 @@ export function initMainScreen(ui) {
 // with the matching tab selected.
 function setupOnboardingExtras(ui) {
     const set = (id, text) => { const n = document.getElementById(id); if (n) n.textContent = text; };
-    set('onboardingIntro', T('Pick a way to run your summaries. Change it any time in settings.'));
+    set('onboardingIntro', T("Pick a way to run your results. Change it any time in settings."));
     set('onboardingOwnKeyTitle', '🔑 ' + T('My own API key'));
     set('onboardingOwnKeyHint', T('No account. Your key stays on this device.'));
     set('onboardingOllamaTitle', '🦙 ' + T('Ollama on this computer'));
     set('onboardingOllamaHint', T('Local models. No account, no key.'));
     const mac = /Mac|iPhone|iPad/i.test((navigator.platform || '') + ' ' + (navigator.userAgent || ''));
-    set('onboardingTip', T('Tip: press {key} on any page to summarize it.', { key: mac ? '⌘ + Shift + E' : 'Ctrl + Shift + E' }));
+    set('onboardingTip', T("Tip: press {key} on any page to analyze it.", { key: mac ? '⌘ + Shift + E' : 'Ctrl + Shift + E' }));
 
     // Own key / Ollama: open the model settings with the matching tab already selected.
     const openModels = (radioId) => {
@@ -1644,7 +1509,7 @@ export function requestSiteAccess(url) {
 export async function ensureContentScript(tabId, url) {
     // Restricted Chrome URLs
     if (!isInjectableUrl(url)) {
-        throw new Error('AI Summary cannot run on system pages or the Web Store.');
+        throw new Error('Arguments cannot run on system pages or the Web Store.');
     }
 
     // Try a ping first — if it succeeds we're already good
@@ -1669,8 +1534,8 @@ export async function ensureContentScript(tabId, url) {
 
     if (!hasAccess) {
         throw new Error(
-            'AI Summary Helper does not have permission to run on this site. ' +
-            'Please enable it in Safari Settings → Extensions → AI Summary Helper ' +
+            'Arguments does not have permission to run on this site. ' +
+            'Please enable it in Safari Settings → Extensions → Arguments ' +
             '→ "Allow on this website" (or "Always Allow on every website").'
         );
     }
@@ -1686,8 +1551,8 @@ export async function ensureContentScript(tabId, url) {
         // not have permission to run scripts on this page").
         if (/permission|not allowed|Cannot access|not permitted|denied/i.test(msg)) {
             throw new Error(
-                'AI Summary Helper does not have permission to run on this site. ' +
-                'Please enable it in Safari Settings → Extensions → AI Summary Helper ' +
+                'Arguments does not have permission to run on this site. ' +
+                'Please enable it in Safari Settings → Extensions → Arguments ' +
                 '→ "Allow on this website" (or "Always Allow on every website").'
             );
         }

@@ -18,7 +18,7 @@ assert.ok($('#feedToolbar') && !$('#feedToolbar').hidden, 'search, graph, insigh
 assert.equal($('#feedControls').firstElementChild.id, 'feedToolbar', 'search bar is the first row, like History');
 assert.ok(!$('#feedSearchBtn'));
 assert.equal($$('.feed-item').length, 4, 'feed scrolls across all days');
-assert.ok($('#feedSearch') && $('#feedGraphBtn') && $('#feedInsightsBtn'));
+assert.ok($('#feedSearch') && !$('#feedGraphBtn') && $('#feedInsightsBtn'));
 // R2: Week page (anchor = a day under the top bar; here: first header, fake layout)
 $('#feedControls').getBoundingClientRect = () => ({ bottom: 0 });
 $$('.feed-day[data-day]').forEach((h, i) => { h.getBoundingClientRect = () => ({ top: i * 100 }); });

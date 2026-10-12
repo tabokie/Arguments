@@ -33,5 +33,5 @@ export function locale() {
     return l || undefined;
 }
 
-// The UI language as a _locales folder code ('de', 'pt_PT', …) — what topicConcepts.js labels are keyed by.
+// The UI language as a _locales folder code ('de', 'pt_PT', …).
 export const uiLocale = () => resolveLocale(locale());

@@ -94,7 +94,7 @@ export function mountReadingTools({ scroller, content, article = null, doc = doc
     const mkx = (tag, cls, text) => { const e = doc.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
     opts.append(mkx('div', 'rt-pop-t', T('Read aloud')));
     const seg = mkx('div', 'rt-seg'); seg.setAttribute('role', 'group');
-    [['summary', T('Summary'), ls], ['original', T('Original'), lo]].forEach(([k, label, l]) => {
+    [['summary', T("Main output"), ls], ['original', T('Original'), lo]].forEach(([k, label, l]) => {
       const b = mkx('button', 'rt-seg-b' + (src === k ? ' is-on' : ''));
       b.type = 'button'; b.dataset.src = k; b.setAttribute('aria-pressed', String(src === k));
       b.append(mkx('span', 'rt-seg-t', label), mkx('span', 'rt-seg-s', langName(l)));
@@ -110,7 +110,7 @@ export function mountReadingTools({ scroller, content, article = null, doc = doc
     const rates = mkx('div', 'rt-rates');
     [0.8, 1, 1.25, 1.5].forEach((r) => { const b = mkx('button', 'rt-rate-b' + ((prefs.rate || 1) === r ? ' is-on' : ''), r + '×'); b.type = 'button'; b.addEventListener('click', async () => { await reader.setRate(r); paintOpts(); }); rates.append(b); });
     opts.append(rates);
-    opts.append(mkx('p', 'rt-note', T('The voice follows the language of the text: an English summary of a German article is read in English, the original in German.')));
+    opts.append(mkx('p', 'rt-note', T("The voice follows the language of the text: an English main output of a German article is read in English, the original in German.")));
     const go = mkx('button', 'rt-start'); go.type = 'button'; go.disabled = !v;
     go.append(mkx('span', '', '▶'), mkx('span', '', T('Start')));
     go.addEventListener('click', () => startReading(src));

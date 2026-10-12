@@ -72,7 +72,7 @@ export async function sendToLocalSend(targetIp, fileName, fileDataString, mimeTy
 
     const preparePayload = {
         info: {
-            alias: 'AI Summary Helper',
+            alias: 'Arguments',
             version: '2.0',
             deviceModel: 'Browser Extension',
             deviceType: 'browser'

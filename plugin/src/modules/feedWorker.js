@@ -148,13 +148,8 @@ export function mergeWorkerItems(existing, incoming, keepDays = 30, now = Date.n
 
 export function boundedLibraryPlan(plan, batchSize, maxRequests = 3) {
     let slots = Math.max(0, Math.floor(maxRequests));
-    // Topic tags are one tiny request per feed (a few headlines in, a few words out): at most 2 per tick, on top of the batch slots.
-    const tag = (plan.tag || []).slice(0, 2);
-    const rateCount = Math.min(plan.rate.length, slots * batchSize);
-    slots -= Math.ceil(rateCount / batchSize);
     const days = [];
     // Newest day first: what is on screen when the Feed opens (today, yesterday) gets its recap before the backlog does.
-    // `rate` is already newest first (planLibrary), and rating runs before recaps, so the top of the list looks finished soonest.
     for (const day of [...plan.days].sort((x, y) => y.day - x.day)) {
         if (!slots) break;
         const count = Math.min(day.todo.length, slots * batchSize);
@@ -163,5 +158,5 @@ export function boundedLibraryPlan(plan, batchSize, maxRequests = 3) {
         days.push({ ...day, todo });
         slots -= Math.ceil(count / batchSize);
     }
-    return { rate: plan.rate.slice(0, rateCount), days, ...(plan.tag ? { tag } : {}), ...(plan.lex ? { lex: plan.lex.slice(0, 1) } : {}) };   // one lexicon batch per tick
+    return { days };
 }

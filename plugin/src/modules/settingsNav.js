@@ -18,15 +18,13 @@ const INDEX = [
     ['models', N_('API key'), 'apiKey', 'key token secret'],
     ['models', N_('Endpoint URL'), 'customEndpoint', 'ollama local server custom'],
     ['prompts', N_('Highlight prompt'), 'highlightPrompt', 'highlight sentences ideas arguments instructions custom'],
-    ['prompts', N_('Summary prompt'), 'prompt', 'summary novelty insights instructions custom'],
-    ['feeds', N_('Sources · rename · tags · mute'), 'feedSubsCard', 'rss feeds subscriptions tags folder group rename mute unsubscribe sources'],
+    ['prompts', N_('Main output prompt'), 'prompt', 'main output novelty insights instructions custom'],
+    ['feeds', N_('Sources · rename · mute'), 'feedSubsCard', 'rss feeds subscriptions rename mute unsubscribe sources'],
     ['feeds', N_('Import / export OPML'), 'feedOpmlActions', 'opml import export rss subscriptions backup reader'],
     ['feedprefs', N_('Mark read when opened'), 'feedSetMarkRead', 'feed read unread open'],
-    ['feedprefs', N_('Mood on/off (tone analysis)'), 'feedSetMood', 'mood sentiment tone positive negative disable hide analysis diet'],
-    ['feedprefs', N_('Process the whole Feed library (Ollama)'), 'feedPrefsLibrary', 'ollama batch whole library recap rate categorize local on-device automatic background'],
-    ['library', N_('Process the whole Feed library (Ollama)'), 'libraryToolButton', 'ollama batch whole library recap rate categorize local on-device'],
-    ['feedprefs', N_('Rate items with the recap'), 'feedSetRate', 'feed ai recap rate score sentiment mood category label automatic'],
-    ['feedprefs', N_('Auto-summarize favorites'), 'feedSetAutoSum', 'feed favorite star summarize automatic background'],
+    ['feedprefs', N_('Process the whole Feed library (Ollama)'), 'feedPrefsLibrary', 'ollama batch whole library recap local on-device automatic background'],
+    ['library', N_('Process the whole Feed library (Ollama)'), 'libraryToolButton', 'ollama batch whole library recap local on-device'],
+    ['feedprefs', N_("Auto-analyze favorites"), 'feedSetAutoSum', 'feed favorite star summarize automatic background'],
     ['feedprefs', N_('Check feeds in the background'), 'feedSetPoll', 'feed badge notification new items poll background'],
     ['feedprefs', N_('Feed refresh interval'), 'feedSetRefresh', 'feed refresh update minutes hour interval'],
     ['feedprefs', N_('Keep feed items for'), 'feedSetKeep', 'feed retention days delete old cleanup'],
@@ -47,7 +45,6 @@ const INDEX = [
     ['appearance', N_('Native Chrome side panel'), 'nativeSidePanelToggle', 'sidebar side panel popup window'],
     ['library', N_('Export settings'), 'exportSettingsButton', 'backup export download json'],
     ['library', N_('Import settings'), 'importSettingsButton', 'restore import backup json'],
-    ['library', N_('Clean up & merge tags'), 'cleanupTagsButton', 'tags duplicates merge clean on-device'],
     ['library', N_('Delete history'), 'deleteHistoryButton', 'danger erase clear remove articles archive'],
     ['library', N_('Delete all data'), 'deleteAllButton', 'danger erase clear remove everything wipe reset factory keys feeds highlights'],
     ['library', N_('Delete settings'), 'deleteSettingsButton', 'danger reset erase remove'],
@@ -113,7 +110,7 @@ async function refreshSubtitles() {
             set('models', T('Own key') + (prov ? ' · ' + prov : ''));
         }
     } catch (e) { /* storage unavailable (context invalidated) */ }
-    set('prompts', T('Highlight and summary prompts'));
+    set('prompts', T("Highlight and main output prompts"));
     set('reading', T('Highlighting {a} · ghost {b}', { a: onOff('highlightingToggle'), b: onOff('aiHighlightingToggle') }));
     const delivery = selectedText('deliveryPreference');
     set('send', delivery ? T('Delivery: {name}', { name: delivery }) : T('Kindle · LocalSend · bookmarklet'));

@@ -71,8 +71,8 @@ const full = 'Because of the code.\nSOURCES: "The challenge was never the design
 const pq = parseAnswer(full, 'The challenge was never the design; it was the code and more.');
 assert.equal(pq.a, 'Because of the code.');
 assert.equal(pq.sources.length, 1);
-assert.deepEqual(pq.questions, ['Who paid for it?', 'How long did it take?']);
-assert.deepEqual(parseAnswer('Plain answer. Questions: none really.', '').questions, []);
+assert(!('questions' in pq), 'retired model suggestions are discarded');
+assert(!('questions' in parseAnswer('Plain answer. Questions: none really.', '')));
 assert.equal(answerPreview('Answer text\nQUESTIONS: ["a'), 'Answer text');
 assert.equal(answerPreview('Questions about this: many'), 'Questions about this: many');
 // Language rule for small models: hard rule + native-language sentence; nothing for English.
@@ -93,11 +93,7 @@ assert.equal(stI.node.querySelector('.recap-preview').hidden, false);
 stI.stop();
 const ss = fs.readFileSync(new URL('../src/modules/sendSheet.js', import.meta.url), 'utf8');
 assert(/createRecapStatus\(\{[\s\S]*preview: true/.test(ss) && /generateDigestIntro\(list0, state\.introStyle, \{ onStage/.test(ss));
-// Suggested-question parsing is forgiving, and there is no separate suggestion call any more.
-// The actual requests and final reminders are checked in test129.
-{
-  const m = fs.readFileSync(new URL('mainScreen.js', here), 'utf8');
-  assert(/QUESTIONS:\\s\*\(\[\\s\\S\]\*\?\)\\s\*\(\?:-->\|\$\)/.test(fs.readFileSync(new URL('../src/content/finalize.js', import.meta.url), 'utf8')) && /matchAll\(\/\["“\]/.test(fs.readFileSync(new URL('../src/modules/suggestions.js', import.meta.url), 'utf8')), 'forgiving parsing');
-  assert(!/buildSuggestPrompt|parseSuggestions/.test(m), 'no second request for suggestions');
-}
+// No automatic question suggestions are requested by the page or follow-up prompts.
+const { buildPagePrompt } = await imp('modules/pagePrompts.js');
+assert(!/QUESTIONS:/.test(buildPagePrompt()));
 console.log('TEST 59 OK'); process.exit(0);
