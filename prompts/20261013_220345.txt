@@ -1,0 +1,12 @@
+- Why is it that, for a page that is already summarized, when I reopen it the hover window and highlight is not applied to the page?
+- Fix it.
+- Hover window shows up, but highlight markup is still not applied.
+- Oh, the highlight shows up now. Not sure why it didn't earlier.
+- I realized the original version already has a hover UI to see highlight and summarize. The new UI we added earlier is redundant. Let's reuse the old UI, but (1) change "Summarize" to "Chat", opening it does not re-run the summarization, but simply open the summary with a chat below. (2) Present match failures if it doesn
+- The prefix sometimes cannot be located because it starts at half sentence, e.g. the sentence after a comma or colon. I want to search algorithm to fix this.
+- When there are multiple matches, use the first one.
+- This sentence "I don't think the future looks like Wall-E. I think it looks like insanely healthy people able to pursue their passions with a level of rigour and capability that has never existed before." with prefix "I think it looks like insanely healthy people able to pursue their passions" causes a match failure. Figure out why and fix it.
+- Cap the page text input to 150k characters. It is configurable in the setting.
+- [$gap](/Users/xyt/.agents/skills/gap/SKILL.md)
+- Fix them all
+- [$finish](/Users/xyt/.agents/skills/finish/SKILL.md) co-author=GPT-6.1 Sol

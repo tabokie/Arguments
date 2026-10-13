@@ -4657,5 +4657,11 @@
   },
   "f_generate_a_bookmarklet_that__658d": {
     "message": "Erstelle ein Bookmarklet, das jede Seite in jedem Browser analysiert – auch auf iOS/Android, wo die Erweiterung nicht läuft. Es verwendet deine Anmeldung bei byphil Cloud."
+  },
+  "f_page_text_limit_characters_2725": {
+    "message": "Seitentextlimit (Zeichen)"
+  },
+  "f_analyze_the_first_part_of_lo_6450": {
+    "message": "Bei längeren Seiten wird der erste Teil bis zu diesem Zeichenlimit analysiert. Standard: 150.000."
   }
 }

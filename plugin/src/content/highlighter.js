@@ -6,7 +6,7 @@ import { SK } from '../modules/storageKeys.js';
 // searched only inside the article. Where supported it is painted with the CSS
 // Custom Highlight API (no DOM changes); otherwise it falls back to <mark>.
 
-import { ancScopeRoot, ancBuildIndex, ancMakeSelector, ancResolve, ancToRange, ancQuoteUsable, ancNormalize } from './anchor.js';
+import { ancScopeRoot, ancBuildIndex, ancMakeSelector, ancResolve, ancToRange, ancNormalize } from './anchor.js';
 import { hlpRender } from './highlightPanel.js';
 import { pageKeyForUrl, isNoisePage } from '../modules/pageKey.js';
 
@@ -52,6 +52,7 @@ let lastObservedUrl = getPageKey();
 
 // Live registry: annotation id → { ann, range, status: 'ok'|'ambiguous'|'lost', marks: [] }
 const hlLive = new Map();
+let hlDismissedTexts = new Set();
 const HL_NATIVE = typeof CSS !== 'undefined' && CSS.highlights && typeof Highlight !== 'undefined';
 const hlSets = { user: null, ghost: null };
 let hlReattachId = null;
@@ -349,7 +350,7 @@ export function startAnnotationWatchers() {
   if (!storageChangeListenerAttached) {
     storageChangeListenerAttached = true;
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area === 'local' && SK.annotations in changes && isAnyHighlightingEnabled()) {
+      if (area === 'local' && SK.annotations in changes) {
         scheduleRestoreAnnotations(80);
       }
     });
@@ -361,9 +362,10 @@ export function startAnnotationWatchers() {
 
 export function restoreAnnotations() {
   if (isHighlightingSuppressed()) { clearHighlightElements(); hlpRender([], {}); return; }
-  if (!isAnyHighlightingEnabled()) return;
   getNormalizedAnnotations((annotations) => {
     const currentUrl = getPageKey();
+    hlDismissedTexts = new Set(annotations.filter(annotation => annotation.url === currentUrl && annotation.dismissed).map(annotation => ancNormalize(annotation.text)));
+    if (!isAnyHighlightingEnabled()) { hlRefreshPanel(); return; }
     const pageAnnotations = annotations.filter(a => {
       if (a.url !== currentUrl || a.dismissed) return false;
       if (a.type === 'ghost') return aiHighlightingEnabled;
@@ -402,7 +404,7 @@ function hlResolveAll(pageAnnotations, allAnnotations) {
     entry = { ann, range: null, status: 'lost', marks: [] };
     if (res) {
       entry.range = ancToRange(usedIdx, res.start, res.end);
-      entry.status = entry.range ? (res.ambiguous ? 'ambiguous' : 'ok') : 'lost';
+      entry.status = entry.range ? 'ok' : 'lost';
     }
     hlLive.set(ann.id, entry);
     if (entry.range) {
@@ -430,7 +432,7 @@ function hlResolveAll(pageAnnotations, allAnnotations) {
 }
 
 export function scheduleRestoreAnnotations(delay = 160) {
-  if (!isAnyHighlightingEnabled()) return;
+  if (isHighlightingSuppressed()) return;
 
   const now = Date.now();
   if (!restoreTimer) restoreScheduledAt = now;
@@ -715,9 +717,9 @@ export function applyGhostHighlights(quotes = []) {
   // Match every sentence before consulting saved annotations: dismissed or previously
   // saved highlights must not be reported as failures merely because no new mark is added.
   const matches = quotes.map(text => {
-    const exact = ancQuoteUsable(idx, text, 8);
-    if (!exact) return { text, status: ancResolve(idx, { text }) ? 'ambiguous' : 'unmatched' };
-    const res = ancResolve(idx, { text: exact });
+    const exact = ancNormalize(text);
+    // New selections have no stored context: ancResolve chooses the first occurrence.
+    const res = exact && ancResolve(idx, { text: exact });
     const range = res && ancToRange(idx, res.start, res.end);
     const selector = range && ancMakeSelector(idx, range);
     return range && selector ? { text, status: 'matched', exact, range, selector } : { text, status: 'unmatched' };
@@ -728,7 +730,7 @@ export function applyGhostHighlights(quotes = []) {
     matches.forEach(({ status, exact, range, selector: q }) => {
       if (status !== 'matched') return;
       // already known (also when dismissed earlier): never re-create
-      if (annotations.some(a => a.url === url && a.type === 'ghost' && a.text === exact)) return;
+      if (annotations.some(a => a.url === url && a.text === exact)) return;
       const ann = { id: hlNewId(), url, text: exact, type: 'ghost', timestamp: new Date().toISOString(), v: 2,
         quote: { exact: q.exact, prefix: q.prefix, suffix: q.suffix }, pos: q.pos };
       annotations.push(ann); added = true;
@@ -755,9 +757,23 @@ export function getUserHighlightTexts() {
 // ── 3. Panel + scrollbar ticks ───────────────────────────────────────────────
 
 let hlPanelTimer = null;
-let hlSummarizeHandler = null;
-/** content.js registers what the panel's “Summarize” does (the highlighter must not import the summary flow). */
-export function setPageSummarizeHandler(fn) { hlSummarizeHandler = fn; }
+let hlChatHandler = null;
+let hlSavedSelections = [];
+let hlHasSavedSummary = false;
+let hlPageHighlightsChangedHandler = null;
+export function setPageHighlightsChangedHandler(fn) { hlPageHighlightsChangedHandler = fn; }
+export function getSavedPageHighlights() {
+  return hlSavedSelections.filter(selection => !hlDismissedTexts.has(ancNormalize(selection.text))).map(selection => {
+    const entry = [...hlLive.values()].find(value => ancNormalize(value.ann.text) === ancNormalize(selection.text));
+    return entry ? { ...selection, status: entry.status === 'lost' ? 'unmatched' : 'matched' } : selection;
+  });
+}
+export function setPageChatHandler(fn) { hlChatHandler = fn; }
+export function setSavedPageHighlights(highlights = [], hasSummary = false) {
+  hlSavedSelections = highlights;
+  hlHasSavedSummary = hasSummary;
+  hlRefreshPanel();
+}
 function hlRefreshPanel() {
   clearTimeout(hlPanelTimer);
   hlPanelTimer = setTimeout(() => {
@@ -776,9 +792,14 @@ function hlRefreshPanel() {
       }
       return { id: e.ann.id, type: e.ann.type, text: e.ann.text, status: e.status, frac };
     });
-    // Nothing could be attached on this page (feed that changed, other content under the same URL): stay quiet.
-    if (items.length && items.every(i => i.status === 'lost')) { hlpRender([], {}); return; }
+    // Retain saved selections that have no annotation, including source recovery failures.
+    hlSavedSelections.forEach((selection, index) => {
+      if (hlDismissedTexts.has(ancNormalize(selection.text))) return;
+      if (items.some(item => ancNormalize(item.text) === ancNormalize(selection.text))) return;
+      items.push({ id: `saved_${index}`, type: 'ghost', text: selection.text, status: 'lost', matchStatus: selection.status, frac: null, saved: true });
+    });
     hlpRender(items, {
+      hasSummary: hlHasSavedSummary,
       hideSite: () => {
         const host = window.location.hostname.replace(/^www\./, '').toLowerCase();
         chrome.storage.sync.get(['highlightExcludedSites'], (r) => {
@@ -787,10 +808,11 @@ function hlRefreshPanel() {
           chrome.storage.sync.set({ highlightExcludedSites: list });
         });
       },
-      summarize: () => (hlSummarizeHandler ? hlSummarizeHandler() : undefined),
+      chat: () => (hlChatHandler ? hlChatHandler() : undefined),
       jump: hlJump, remove: (id) => hlRemove(id, { dismiss: hlLive.get(id)?.ann.type === 'ghost' }),
       keep: hlKeep, reattach: (id) => { hlReattachId = id; }, pending: () => hlReattachId
     });
+    hlPageHighlightsChangedHandler?.();
   }, 120);
 }
 

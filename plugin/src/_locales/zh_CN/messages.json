@@ -4657,5 +4657,11 @@
   },
   "f_generate_a_bookmarklet_that__658d": {
     "message": "生成可在任意浏览器中分析网页的书签脚本，包括无法运行扩展的 iOS/Android。书签脚本使用你的 byphil Cloud 登录信息。"
+  },
+  "f_page_text_limit_characters_2725": {
+    "message": "页面文本上限（字符数）"
+  },
+  "f_analyze_the_first_part_of_lo_6450": {
+    "message": "较长的页面仅分析开头部分，最多读取此字符数。默认值：150,000。"
   }
 }

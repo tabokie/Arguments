@@ -39,7 +39,7 @@ export function collectPageMeta(doc = document, loc = window.location) {
   return meta;
 }
 
-export function saveToLocalStorage(content, summary, url, title, description, tags = [], modelId = '', summaryLength = 200, _moodScore, extra, pageMeta, highlights = []) {
+export function saveToLocalStorage(content, summary, url, title, description, tags = [], modelId = '', summaryLength = 200, _moodScore, extra, pageMeta, highlights = [], analysisSource) {
   return new Promise((resolve, reject) => {
     const timestamp = new Date().toISOString();
     const id = `article_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -57,6 +57,7 @@ export function saveToLocalStorage(content, summary, url, title, description, ta
     if (pageMeta && pageMeta.favicon) indexEntry.favicon = pageMeta.favicon;   // lean: lists can show it without loading the record
     if (extra && typeof extra === 'object') Object.assign(indexEntry, extra);
     const record = { content, summary, description: description || (pageMeta && pageMeta.description) || '' };
+    if (analysisSource && typeof analysisSource.text === 'string') record.analysisSource = { text: analysisSource.text, truncated: !!analysisSource.truncated };
     if (highlights.length) record.highlights = highlights;
     if (pageMeta && Object.keys(pageMeta).length) record.meta = pageMeta;
 

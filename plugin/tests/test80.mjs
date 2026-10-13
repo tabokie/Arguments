@@ -87,4 +87,18 @@ assert.deepEqual(p.sent, [], 'highlighting off: selecting text does not inject')
 // 7. failed injection (restricted page) is retried on the next trigger, not in a loop
 p = await page('https://example.com/a/b', { local: { 'hl:all': mine }, injectOk: false });
 assert.equal(p.sent.length, 1, 'one attempt per trigger');
+
+// 8. saved analyses need the full script even when no page annotations exist.
+const saved = [{ id: 'saved', url: 'https://example.com/a/b', summary: '<p>Saved insight.</p>' }];
+assert.deepEqual((await page('https://example.com/a/b?utm_source=x', { local: { 'articles:index': saved } })).sent,
+  ['aish:injectContent'], 'saved analysis without annotations → injection');
+assert.deepEqual((await page('https://example.com/a/b', { local: { 'articles:index': saved }, sync: { highlightingEnabled: false } })).sent,
+  ['aish:injectContent'], 'summary restoration does not depend on highlighting settings');
+assert.deepEqual((await page('https://example.com/other', { local: { 'articles:index': saved } })).sent, [], 'another page does not restore this analysis');
+assert.deepEqual((await page('https://example.com/a/b', { local: { 'articles:index': [{ ...saved[0], savedOnly: true }] } })).sent, [], 'saving a page alone does not open a summary');
+p = await page('https://example.com/a/b');
+p.local['articles:index'] = saved;
+p.fire({ 'articles:index': { newValue: saved } }, 'local');
+await tick();
+assert.deepEqual(p.sent, ['aish:injectContent'], 'a detached completion wakes an already open page');
 console.log('TEST 80 OK');

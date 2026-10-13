@@ -1,9 +1,10 @@
 import { SK } from './modules/storageKeys.js';
 import { lengthSpec, readLengthSetting, resolveSummaryLength } from './modules/summaryLength.js';
+import { loadPageTextLimit, limitPageText } from './modules/pageInput.js';
 import { loadPagePrompts, buildPagePrompt, buildPageInstructions, buildReadingPartPrompt } from './modules/pagePrompts.js';
 import { matchPagePaper } from './content/paper.js';
 import { finalizeSummary } from './content/finalize.js';
-import { showSummaryWindow } from './content/summaryWindow.js';
+import { startSavedPageRestore } from './content/savedPage.js';
 import { resolveHighlightSelections, mergeHighlightSelections } from './content/highlightSentences.js';
 // content.js — Orchestrator
 // Entry point for the content script. Imports from ./content/* modules and
@@ -13,7 +14,6 @@ import { resolveHighlightSelections, mergeHighlightSelections } from './content/
 
 import {
   getAllTextContent,
-  truncateToTokenLimit,
   estimateTokens,
   ollamaNumCtx,
   needsChunking,
@@ -53,7 +53,7 @@ import {
   handleGhostHighlightClick,
   getUserHighlightTexts,
   revealQuote,
-  setPageSummarizeHandler
+  setPageChatHandler
 } from './content/highlighter.js';
 
 import {
@@ -221,6 +221,13 @@ import {
   // The summary that is running right now (context + latest progress), so a panel that opens
   // after it started — e.g. when it was started from the on-page tool — can show it.
   let liveRun = null;
+  const savedPage = startSavedPageRestore(() => !!liveRun, state => {
+    const message = { action: 'pageHighlightState', ...state };
+    try { chrome.runtime.sendMessage(message)?.catch?.(() => {}); } catch (_) { /* sidebar closed */ }
+    const sidebar = document.getElementById('ai-summary-hybrid-sidebar');
+    const wrapped = sidebarMessage(message);
+    if (sidebar?.contentWindow && wrapped) sidebar.contentWindow.postMessage(wrapped, '*');
+  });
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // Normalize casing so both 'PING' and 'ping' work.
@@ -232,6 +239,10 @@ import {
 
     if (request.action === 'getSummaryState') {
       sendResponse({ running: !!liveRun, context: liveRun && liveRun.context, progress: liveRun && liveRun.progress });
+      return false;
+    }
+    if (request.action === 'getPageHighlightState') {
+      sendResponse(savedPage.getHighlightState());
       return false;
     }
 
@@ -428,8 +439,6 @@ import {
     }
   });
 
-  // Summarize started from the on-page highlights panel: open the side panel,
-  // then run the same flow as the popup's Summarize button (highlights = focus).
   /** One non-streaming request through the background worker; resolves with the raw response body. */
   function callOnce(apiUrl, headers, body) {
     return new Promise((resolve, reject) => {
@@ -488,24 +497,18 @@ import {
     return { text: notes.join('\n\n'), parts: parts.length, highlights: mergeHighlightSelections(highlights) };
   }
 
-  async function startSummaryFromPage() {
-    if (activeSummaryRequestId || !document.body) return;
+  async function openChatFromPage() {
+    if (!document.body) return;
+    const articleId = savedPage.getArticle()?.id || '';
     let opened = false;
-    try { const r = await chrome.runtime.sendMessage({ action: 'openNativeSidePanel' }); opened = !!(r && r.success); } catch (_) { /* no native side panel here → hybrid sidebar fallback below */ }
-    if (!opened) { try { ensureHybridSidebar(); } catch (_) { /* page without a body cannot host the sidebar; nothing to show */ } }
-    await new Promise((r) => setTimeout(r, 500));
-    const [sync, local] = await Promise.all([
-      chrome.storage.sync.get(['selectedLanguage', 'debugEnabled']),
-      chrome.storage.local.get([SK.summaryLength, SK.summaryLengthMode, SK.summaryLengthBias])
-    ]);
-    pendingFeedUrl = '';
-    const hiddenTarget = document.createElement('div');
-    hiddenTarget.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;';
-    document.body.appendChild(hiddenTarget);
-    await fetchSummary('', sync.selectedLanguage || 'English', undefined,
-      lengthSpec(readLengthSetting(local, SK)), hiddenTarget, sync.debugEnabled || false, 'extension');
+    try { const r = await chrome.runtime.sendMessage({ action: 'openNativeSidePanel', articleId }); opened = !!(r && r.success); } catch (_) { /* native sidebar unavailable */ }
+    if (!opened) {
+      const sidebar = ensureHybridSidebar(articleId);
+      const message = sidebarMessage({ action: 'openSavedChat', articleId });
+      if (message) sidebar?.contentWindow?.postMessage(message, '*');
+    }
   }
-  setPageSummarizeHandler(startSummaryFromPage);
+  setPageChatHandler(openChatFromPage);
 
   // ── Summary fetch + streaming ───────────────────────────────────────────────
 
@@ -513,8 +516,10 @@ import {
   let activeSummaryRequestId = null;
 
   async function fetchSummary(additionalQuestions, selectedLanguage, prompt, summaryLength, targetElement, debugEnabled, summaryMode = 'extension', attachment = null, highlightPrompt = undefined) {
-    const pagePrompts = await loadPagePrompts({ summaryPrompt: prompt, highlightPrompt });
-    const tokenLimit = 20000;
+    const [pagePrompts, pageTextLimit] = await Promise.all([
+      loadPagePrompts({ summaryPrompt: prompt, highlightPrompt }),
+      loadPageTextLimit()
+    ]);
     // A PDF the user attached in the popup: its text was already extracted there, so the page itself is not read at all.
     const attached = attachment && typeof attachment.text === 'string' && attachment.text ? attachment : null;
     const pdfMode = !!attached || isPdfPage();
@@ -581,7 +586,7 @@ import {
       contentHtml = scraped.html;
       contentText = scraped.text;
     }
-    const truncatedContent = truncateToTokenLimit(contentText, tokenLimit);
+    const truncatedContent = limitPageText(contentText, pageTextLimit);
     // "Auto" (or a custom number from the popup) becomes a word count now that the article length is known.
     if (summaryLength === 'stored') {
       summaryLength = lengthSpec(readLengthSetting(await chrome.storage.local.get([SK.summaryLength, SK.summaryLengthMode, SK.summaryLengthBias]), SK));
@@ -913,10 +918,9 @@ import {
                 });
               }
 
-              showSummaryWindow(cleanHtml, highlightResults);
-
-              saveToLocalStorage(finalContentHtml, cleanHtml, sourceUrl, articleTitle, '', [], modelIdentifier, summaryLength, undefined, { ...(pendingFeedUrl && pendingFeedUrl !== sourceUrl ? { feedUrl: pendingFeedUrl } : {}) }, pageMeta, highlightResults)
+              saveToLocalStorage(finalContentHtml, cleanHtml, sourceUrl, articleTitle, '', [], modelIdentifier, summaryLength, undefined, { ...(pendingFeedUrl && pendingFeedUrl !== sourceUrl ? { feedUrl: pendingFeedUrl } : {}) }, pageMeta, highlightResults, { text: truncatedContent, truncated: truncatedContent.length < contentText.length })
                 .then(savedArticle => {
+                  savedPage.remember(savedArticle);
                   try { chrome.runtime.sendMessage({ action: 'runSaved', requestId }).catch(() => {}); } catch (_) { /* optional */ }
                   if (savedArticle && savedArticle.id) relay('summarySaved', { id: savedArticle.id, url: sourceUrl });
                   resolve({ success: true, article: savedArticle });

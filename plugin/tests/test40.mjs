@@ -28,14 +28,15 @@ const m2 = [...d.querySelectorAll('mark.ai-user-highlight')]; assert.equal(m2.le
 assert(m2[0].closest('p').textContent.startsWith('Analysts'), 'legacy: first match inside the article');
 assert(!d.querySelector('nav mark'), 'never in nav');
 assert(store['hl:all'][0].quote && store['hl:all'][0].id, 'upgraded');
-// ghost quotes: short+repeated dropped, unique long kept, dismissed never returns
+// ghost quotes: first repeated occurrence kept, unique long kept, dismissed never returns
 H.clearHighlightElements(); store['hl:all'] = [];
 H.applyGhostHighlights(['the market', 'Rates stay high and the market reacts slowly to news']); await tick(60);
-assert.equal(store['hl:all'].length, 1); assert.equal(store['hl:all'][0].type, 'ghost');
-store['hl:all'][0].dismissed = true; H.clearHighlightElements(); H.restoreAnnotations(); await tick(60);
+assert.equal(store['hl:all'].length, 2); assert.equal(store['hl:all'][0].type, 'ghost');
+assert(d.querySelector('.ai-ghost-highlight').closest('p').textContent.startsWith('Analysts'), 'the first repeated occurrence inside the article is painted');
+store['hl:all'].forEach(annotation => { annotation.dismissed = true; }); H.clearHighlightElements(); H.restoreAnnotations(); await tick(60);
 assert.equal(d.querySelectorAll('mark').length, 0, 'dismissed ghost stays away');
 H.applyGhostHighlights(['Rates stay high and the market reacts slowly to news']); await tick(60);
-assert.equal(store['hl:all'].length, 1, 'not re-created after dismiss');
+assert.equal(store['hl:all'].length, 2, 'not re-created after dismiss');
 // History: marked once; context picks the right occurrence
 const { markHighlights } = await imp('modules/annotationExporter.js');
 const anns = [{ text: 'the market', type: 'user', quote: { exact: 'the market', prefix: 'In conclusion, ', suffix: ' is not a bubble' } },

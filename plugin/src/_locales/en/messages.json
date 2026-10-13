@@ -4874,5 +4874,11 @@
   },
   "f_generate_a_bookmarklet_that__658d": {
     "message": "Generate a bookmarklet that analyzes any page in any browser — including iOS/Android where the extension can't run. It uses your byphil Cloud login."
+  },
+  "f_page_text_limit_characters_2725": {
+    "message": "Page text limit (characters)"
+  },
+  "f_analyze_the_first_part_of_lo_6450": {
+    "message": "Analyze the first part of longer pages, up to this character limit. Default: 150,000."
   }
 }

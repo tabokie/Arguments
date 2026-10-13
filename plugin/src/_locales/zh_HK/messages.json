@@ -4657,5 +4657,11 @@
   },
   "f_generate_a_bookmarklet_that__658d": {
     "message": "產生可在任何瀏覽器分析網頁的書籤腳本，包括無法執行擴充功能的 iOS/Android。書籤腳本使用你的 byphil Cloud 登入資訊。"
+  },
+  "f_page_text_limit_characters_2725": {
+    "message": "頁面文字上限（字元數）"
+  },
+  "f_analyze_the_first_part_of_lo_6450": {
+    "message": "較長的頁面只分析開頭部分，最多讀取此字元數。預設值：150,000。"
   }
 }

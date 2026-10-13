@@ -4657,5 +4657,11 @@
   },
   "f_generate_a_bookmarklet_that__658d": {
     "message": "أنشئ إشارة مرجعية برمجية لتحليل أي صفحة في أي متصفح، بما في ذلك iOS وAndroid حيث لا تعمل الإضافة. تستخدم تسجيل دخولك إلى byphil Cloud."
+  },
+  "f_page_text_limit_characters_2725": {
+    "message": "حد نص الصفحة (أحرف)"
+  },
+  "f_analyze_the_first_part_of_lo_6450": {
+    "message": "حلّل الجزء الأول من الصفحات الطويلة حتى هذا الحد من الأحرف. القيمة الافتراضية: 150,000."
   }
 }

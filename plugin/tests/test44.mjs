@@ -23,7 +23,7 @@ assert.deepEqual(C.parseSuggestions('no json'), []);
 
 // prompt: page text capped, only the last 6 turns go back
 const many = Array.from({ length: 9 }, (_, i) => ({ q: 'q' + i, a: 'a' + i }));
-const pr = C.buildPrompt({ title: 'T', content: 'x'.repeat(30000), summary: '<p>S</p>', turns: many, question: 'now?' });
+const pr = C.buildPrompt({ title: 'T', content: 'x'.repeat(30000), summary: '<p>S</p>', turns: many, question: 'now?', pageTextLimit: 20000 });
 assert(pr.user.length < 22000 && pr.user.includes('q8') && pr.user.includes('q3') && !pr.user.includes('Q: q2\n'), 'last 6 turns');
 assert(pr.system.includes('SOURCES'));
 

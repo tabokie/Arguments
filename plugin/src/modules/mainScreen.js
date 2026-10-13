@@ -1,7 +1,7 @@
 import { modelIcon } from './modelBadge.js';
 import { iconEl, setIconLabel } from './icons.js';
 import { SK, articleRecKey } from './storageKeys.js';
-import { escapeHtml } from './textUtils.js';
+import { escapeHtml, cleanUntrustedHtml } from './textUtils.js';
 import { debug } from './log.js';
 // mainScreen.js
 // Handles main screen UI — chat-style summary feed
@@ -21,6 +21,7 @@ import { attachCardMenu } from './cardMenu.js';
 import { currentLengthSpec } from './summaryLength.js';
 import { PAGE_PROMPT_KEYS, resolvePagePrompts } from './pagePrompts.js';
 import { renderHighlights } from './highlightView.js';
+import { loadPageTextLimit } from './pageInput.js';
 
 export function initMainScreen(ui) {
     const fetchSummaryButton = document.getElementById('fetchSummary');
@@ -38,6 +39,15 @@ export function initMainScreen(ui) {
         try { return new URL(url).hostname.replace('www.', ''); } catch { return ''; }
     };
 
+    const setBubbleHighlights = (bubble, selections) => {
+        const previous = bubble.querySelector('.highlights');
+        const highlights = renderHighlights(selections, key => t(key));
+        if (highlights) {
+            highlights.open = !!previous?.open;
+            highlights.addEventListener('click', event => event.stopPropagation());
+            if (previous) previous.replaceWith(highlights); else bubble.appendChild(highlights);
+        } else previous?.remove();
+    };
     const addBubble = (article) => {
         const title = article.title || article.content?.split('\n')[0] || 'Arguments';
         const domain = article.url ? getDomain(article.url) : '';
@@ -60,11 +70,7 @@ export function initMainScreen(ui) {
             <div class="summary-bubble-body">${preview}</div>
             ${modelHtml}
         `;
-        const highlights = renderHighlights(article.highlights, key => t(key));
-        if (highlights) {
-            highlights.addEventListener('click', event => event.stopPropagation());
-            bubble.appendChild(highlights);
-        }
+        setBubbleHighlights(bubble, article.highlights);
         // Click to open in history
         bubble.style.cursor = 'pointer';
         bubble.addEventListener('click', async () => {
@@ -230,6 +236,9 @@ export function initMainScreen(ui) {
     let lastContext = null;          // summaryContext of the running/last summary
     let conversation = null;         // { url, title, content, summary, turns:[{q,a}] }
     let activeTabId = null;
+    const pageTabParam = new URLSearchParams(window.location.search).get('pageTab');
+    const pageTabId = pageTabParam && /^\d+$/u.test(pageTabParam) ? Number(pageTabParam) : null;
+    let highlightRequest = 0;
     let workingElsewhere = false;   // a summary runs in another tab: the button queues this page instead of stopping
     let liveBubbleEl = null;          // its card element
     const savedIds = {};              // url → id, when 'summarySaved' arrives before 'summaryComplete'
@@ -622,10 +631,26 @@ export function initMainScreen(ui) {
         c.textContent = TN(conversation.turns.length, '💬 {n} reply', '💬 {n} replies');
     };
 
+    const applyPageHighlightState = (state, sender) => {
+        if (!conversation || state?.articleId !== conversation.id || !samePage(state.url, conversation.url)
+            || !Array.isArray(state.highlights) || (!sender?.sidebar && sender?.tab?.id !== activeTabId)) return;
+        setBubbleHighlights(conversation.bubble, state.highlights);
+    };
+    async function syncPageHighlights(article, bubble) {
+        const request = ++highlightRequest;
+        try {
+            const tab = pageTabId === null ? await getActiveTab() : { id: pageTabId };
+            if (!tab || (tab.url && !samePage(tab.url, article.url))) return;
+            activeTabId = tab.id;
+            const state = await sendMessageToTab(tab.id, { action: 'getPageHighlightState' });
+            if (request !== highlightRequest || !bubble.isConnected || conversation?.bubble !== bubble) return;
+            applyPageHighlightState(state, { tab });
+        } catch (_) { /* page closed: keep the saved matching information */ }
+    }
     /** Ask on an older summary card: load its stored turns, put the thread under that card, composer in follow-up mode. */
     async function askAbout(article, bubble) {
         if (!composer || composer.state === 'working' || !article || !article.id) return;
-        if (conversation && conversation.bubble === bubble) { bubble.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); additionalQuestionsInput.focus(); return; }
+        if (conversation && conversation.bubble === bubble) { bubble.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); additionalQuestionsInput.focus(); await syncPageHighlights(article, bubble); return; }
         let full = null;
         try { full = await StorageManager.getArticleFull(article.id); } catch (_) { /* fall back to the card */ }
         let turns = [];
@@ -651,6 +676,7 @@ export function initMainScreen(ui) {
         showConversationChip();   // composer.set() is a no-op when it already is in follow-up: the chip (with its Back button) must still follow the new conversation
         try { bubble.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) { /* cosmetic */ }
         additionalQuestionsInput.focus({ preventScroll: true });
+        await syncPageHighlights(f, bubble);
     }
 
     function addTurn(cls, text) {
@@ -686,7 +712,8 @@ export function initMainScreen(ui) {
         const answerElement = addTurn('chat-a chat-a--pending', T('Thinking…'));
         try {
             try { instant && instant.startChat(q); } catch (_) { /* optional */ }
-            const { system, user } = buildPrompt({ ...conversation, question: q });
+            const pageTextLimit = await loadPageTextLimit();
+            const { system, user } = buildPrompt({ ...conversation, question: q, pageTextLimit });
             const raw = await aiComplete(system, user, null, null, message => {
                 const text = message?.text ? answerPreview(message.text) : '';
                 if (!text) return;
@@ -712,9 +739,27 @@ export function initMainScreen(ui) {
         scrollFeed();
     }
 
+    const pageChatId = new URLSearchParams(window.location.search).get('chat');
+    let pageChatRequest = 0;
+    const openSavedChat = async () => {
+        const request = ++pageChatRequest;
+        const full = await StorageManager.getArticleFull(pageChatId);
+        if (request !== pageChatRequest || !full.id || full.savedOnly || full.feedStub) return;
+        const bubble = [...feed.querySelectorAll('.summary-bubble')].find(node => node.dataset.id === full.id) || addBubble(full);
+        const parsed = new DOMParser().parseFromString(full.summary || '', 'text/html');
+        cleanUntrustedHtml(parsed.body);
+        bubble.querySelector('.summary-bubble-body').innerHTML = parsed.body.innerHTML;
+        if (recentEntry) recentEntry.style.display = 'none';
+        await askAbout(full, bubble);
+    };
     const loadFeed = async () => {
         const articles = await StorageManager.getArticlesIndex();
         feed.innerHTML = '';
+        const requested = pageChatId && articles.find(article => article.id === pageChatId && !article.savedOnly && !article.feedStub);
+        if (requested) {
+            await openSavedChat();
+            return;
+        }
         if (articles && articles.length > 0) {
             if (recentEntry) recentEntry.style.display = 'none';
             const sorted = articles.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -845,7 +890,15 @@ export function initMainScreen(ui) {
         const pill = document.querySelector('.composer-pill');
         instant = initInstantRead({ chip: document.getElementById('chipSound'), panel: document.getElementById('panelSound'), barHost: pill && pill.parentElement, });
     } catch (_) { /* reading aloud is optional */ }
-    const handleStreamMessage = (msg) => {
+    const handleStreamMessage = (msg, sender = {}) => {
+        if (msg.action === 'pageHighlightState') {
+            applyPageHighlightState(msg, sender);
+            return;
+        }
+        if (msg.action === 'openSavedChat' && pageChatId && msg.articleId === pageChatId) {
+            openSavedChat().catch(() => {});
+            return;
+        }
         if (instant) { try { instant.onMessage(msg); } catch (_) { /* never block the stream */ } }
         if (msg.action === 'summaryContext' && composer && composer.state !== 'working') adoptRun(msg);
         if (msg.action === 'summaryProgress') {
@@ -1018,7 +1071,7 @@ export function initMainScreen(ui) {
     window.addEventListener('message', (event) => {
         if (!acceptSidebarMessage(event, sidebarToken, window.parent, window)) return;
         const { [SIDEBAR_TOKEN_FIELD]: _token, ...data } = event.data;
-        handleStreamMessage(data);
+        handleStreamMessage(data, { sidebar: true });
     });
 
     // ── Save only (no AI) ───────────────────────────────────────────────
@@ -1418,7 +1471,7 @@ export function getActiveTab() {
  */
 // Pages run only a tiny loader (loader.js); the full content script is injected the first time we talk to the page.
 // ping / stopSummary / getSummaryState are probes and must not inject.
-const NO_INJECT = new Set(['ping', 'stopSummary', 'getSummaryState']);
+const NO_INJECT = new Set(['ping', 'stopSummary', 'getSummaryState', 'getPageHighlightState']);
 const NOT_THERE = /Receiving end does not exist|Could not establish connection|No matching message handler/i;
 export function sendMessageToTab(tabId, message, _retried = false) {
     return new Promise((resolve, reject) => {

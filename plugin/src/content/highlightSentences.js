@@ -1,7 +1,8 @@
 // Expand model-selected prefixes against the source text before matching any webpage DOM.
 const highlightNormalize = (text) => text.replace(/\s+/gu, ' ').trim();
 const highlightEnd = /[.!?。！？؟…][\p{Pe}\p{Pf}"']*$/u;
-const highlightAbbreviation = /(?:\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St)|\b[A-Z])\.$/u;
+// Initials must be standalone tokens; the final E in Wall-E is not an initial.
+const highlightAbbreviation = /(?:\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St)\.|(?:^|[\s\p{Ps}\p{Pi}"'])[A-Z]\.)$/u;
 
 function highlightFallbackSegments(text) {
   const segments = [];
@@ -53,7 +54,27 @@ function highlightSourceBlocks(source, language, truncated) {
   return blocks;
 }
 
-/** Keep source recovery failures alongside complete, unambiguous sentences. */
+function highlightSentenceContaining(sentences, position) {
+  let lo = 0, hi = sentences.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const sentence = sentences[mid];
+    if (position < sentence.start) hi = mid - 1;
+    else if (position >= sentence.end) lo = mid + 1;
+    else return mid;
+  }
+  return -1;
+}
+
+function highlightStartsWithinWord(text, position, prefix) {
+  // A prefix can start inside a sentence, but not inside an alphabetic word.
+  // Chinese and Japanese text has no required spaces between words.
+  if (/^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(prefix)) return false;
+  return /[\p{L}\p{N}\p{M}_]$/u.test(text.slice(Math.max(0, position - 2), position))
+    && /^[\p{L}\p{N}\p{M}_]/u.test(prefix);
+}
+
+/** Recover the first complete match in source order, keeping genuinely missing prefixes as failures. */
 export function resolveHighlightSelections(prefixes, sourceText, language, truncated = false, sourcePart) {
   if (!Array.isArray(prefixes)) return [{ text: '', status: 'invalid-response' }];
   const blocks = highlightSourceBlocks(String(sourceText || ''), language, truncated);
@@ -65,24 +86,21 @@ export function resolveHighlightSelections(prefixes, sourceText, language, trunc
     if (typeof value !== 'string') { selected.push({ text: '', status: 'invalid-response' }); continue; }
     const prefix = highlightNormalize(value);
     if (!prefix) { selected.push({ text: '', status: 'invalid-response' }); continue; }
-    const found = new Set();
-    for (const block of blocks) {
+    let match = null;
+    source: for (const block of blocks) {
       const { sentences } = block;
-      for (let index = 0; index < sentences.length; index++) {
-        const { start, end } = sentences[index];
-        let text = block.text.slice(start, end);
-        if (!text.startsWith(prefix) && !prefix.startsWith(text)) continue;
-        // A model may copy a short opening sentence followed by part of the next.
-        // Recover every sentence touched by the prefix, without crossing source blocks.
-        for (let next = index + 1; text.length < prefix.length && next < sentences.length; next++) {
-          text = block.text.slice(start, sentences[next].end);
-        }
-        if (text.startsWith(prefix) && (part === null || part.includes(text))) found.add(text);
+      for (let position = block.text.indexOf(prefix); position !== -1; position = block.text.indexOf(prefix, position + 1)) {
+        if (highlightStartsWithinWord(block.text, position, prefix)) continue;
+        const first = highlightSentenceContaining(sentences, position);
+        const last = highlightSentenceContaining(sentences, position + prefix.length - 1);
+        if (first < 0 || last < 0) continue; // excludes a removed, truncated sentence
+        // Recover all complete sentences touched by the exact prefix, including
+        // opening clauses before a comma or colon. Never cross source blocks.
+        const text = block.text.slice(sentences[first].start, sentences[last].end);
+        if (part === null || part.includes(text)) { match = text; break source; }
       }
     }
-    const matches = [...found];
-    selected.push({ prefix, text: matches.length === 1 ? matches[0] : prefix,
-      status: matches.length === 1 ? 'resolved' : matches.length ? 'source-ambiguous' : 'source-unmatched' });
+    selected.push({ prefix, text: match || prefix, status: match ? 'resolved' : 'source-unmatched' });
   }
   return mergeHighlightSelections(selected);
 }

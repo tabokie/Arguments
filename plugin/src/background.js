@@ -1295,6 +1295,21 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             sendResponse({ success: false, error: 'sidePanel API not available' });
             return;
         }
+        if (sender?.tab?.id != null && typeof msg.articleId === 'string' && msg.articleId) {
+            const tabId = sender.tab.id;
+            const path = 'popup.html?surface=sidepanel&chat=' + encodeURIComponent(msg.articleId) + '&pageTab=' + tabId;
+            // Both API calls start inside the content-script click's user gesture.
+            const options = chrome.sidePanel.setOptions({ tabId, path, enabled: true });
+            const opening = chrome.sidePanel.open({ tabId });
+            Promise.all([options, opening]).then(() => {
+                // An already-open sidebar may have returned to its initial composer.
+                const message = chrome.runtime.sendMessage({ action: 'openSavedChat', articleId: msg.articleId });
+                if (message?.catch) message.catch(() => {});
+                sendResponse({ success: true });
+            })
+                .catch(err => sendResponse({ success: false, error: err.message }));
+            return true;
+        }
         // Use sender.tab.windowId to target the correct window
         const windowId = sender?.tab?.windowId;
         if (windowId) {

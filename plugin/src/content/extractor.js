@@ -6,7 +6,7 @@ import { ancScopeRoot } from './anchor.js';
 // these are called by the content.js orchestrator.
 
 /** Preserve block boundaries without splitting sentences at inline markup or wrapped source lines. */
-function extractedBlockText(root) {
+export function extractedBlockText(root) {
   const pieces = [];
   const visit = (node) => {
     if (node.nodeType === 3) { pieces.push(node.nodeValue.replace(/\s+/gu, ' ')); return; }

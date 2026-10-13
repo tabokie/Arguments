@@ -1,0 +1,40 @@
+// Clause prefixes recover the first complete containing sentence while respecting chunk limits and truncation.
+import assert from 'assert';
+import { setup, imp } from './harness.mjs';
+const { w } = setup({});
+const { resolveHighlightSelections, resolveHighlightPrefixes } = await imp('content/highlightSentences.js');
+const comma = 'The release looks promising, but deployment still needs independent review.';
+const colon = 'The conclusion is clear: repeatable measurements matter more than confident guesses.';
+assert.deepEqual(resolveHighlightPrefixes(['but deployment still needs', 'repeatable measurements matter'], comma + '\n\n' + colon, 'en'), [comma, colon]);
+assert.deepEqual(resolveHighlightPrefixes(['deployment still needs'], comma, 'en'), [comma], 'an interior phrase at a word boundary identifies its containing sentence');
+assert.deepEqual(resolveHighlightPrefixes(['rate'], 'Corporate policies need scrutiny.', 'en'), [], 'a substring inside another word cannot become a selection');
+const second = 'We must remember that deployment still needs experienced reviewers.';
+assert.equal(resolveHighlightSelections(['deployment still needs'], comma + '\n\n' + second, 'en')[0].text, comma, 'multiple interior matches select the first complete sentence');
+assert.equal(resolveHighlightSelections(['deployment still needs'], second + '\n\n' + comma, 'en')[0].text, second, 'selection follows source order');
+assert.equal(resolveHighlightSelections(['deployment still needs'], comma + '\n\n' + second, 'en', false, second)[0].text, second, 'the first eligible match must still belong to the model source chunk');
+const repeated = 'A repeatable test is useful, and a repeatable test is affordable.';
+assert.deepEqual(resolveHighlightPrefixes(['a repeatable test'], repeated, 'en'), [repeated], 'multiple occurrences in the same sentence are one selection');
+const span = 'The results matter, but they need review. Independent checks catch silent errors.';
+assert.deepEqual(resolveHighlightPrefixes(['but they need review. Independent checks'], span, 'en'), [span], 'an interior prefix may span complete adjacent sentences');
+assert.deepEqual(resolveHighlightPrefixes(['but they need review. Independent checks'], span.replace('. Independent', '.\n\nIndependent'), 'en'), [], 'source blocks cannot be merged');
+assert.deepEqual(resolveHighlightPrefixes(['but they need review. Independent checks'], span.slice(0, -1), 'en', true), [], 'a truncated final sentence prevents recovery of the entire span');
+assert.equal(resolveHighlightSelections(['but deployment'], comma, 'en', false, 'but deployment still needs independent review.')[0].status, 'source-unmatched', 'the full containing sentence must be present in the model source chunk');
+assert.equal(resolveHighlightSelections(['but deployment'], comma, 'en', false, comma)[0].text, comma);
+const chinese = '结论很明确：独立验证比自信的猜测更可靠。另一个观点完全不同。';
+assert.deepEqual(resolveHighlightPrefixes(['独立验证比自信'], chinese, 'zh'), ['结论很明确：独立验证比自信的猜测更可靠。']);
+const segmenter = Intl.Segmenter;
+try {
+  Intl.Segmenter = undefined;
+  assert.deepEqual(resolveHighlightPrefixes(['but deployment', 'repeatable measurements'], comma + '\n\n' + colon, 'en'), [comma, colon], 'fallback sentence segmentation also handles clause prefixes');
+} finally { Intl.Segmenter = segmenter; }
+document.body.innerHTML = '<article><p>The release looks promising, but <strong>deployment</strong> still needs independent review.</p></article>';
+const { getAllTextContent } = await imp('content/extractor.js');
+const { finalizeSummary } = await imp('content/finalize.js');
+const result = await finalizeSummary({ raw: '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: ["but deployment still needs"] -->', contentText: getAllTextContent().text, htmlLang: 'en' });
+assert.deepEqual(result.ghostQuotes, [comma], 'live finalization recovers the complete original argument');
+chrome.runtime.id = 'abc';
+const { applyGhostHighlights } = await imp('content/highlighter.js');
+assert.equal(applyGhostHighlights(result.ghostQuotes)[0].status, 'matched');
+assert.equal([...document.querySelectorAll('.ai-ghost-highlight')].map(mark => mark.textContent).join(''), comma, 'the complete recovered sentence paints across inline DOM nodes');
+console.log('TEST 141 OK');
+w.close();

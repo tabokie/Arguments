@@ -19,6 +19,7 @@ const INDEX = [
     ['models', N_('Endpoint URL'), 'customEndpoint', 'ollama local server custom'],
     ['prompts', N_('Highlight prompt'), 'highlightPrompt', 'highlight sentences ideas arguments instructions custom'],
     ['prompts', N_('Main output prompt'), 'prompt', 'main output novelty insights instructions custom'],
+    ['prompts', N_('Page text limit (characters)'), 'pageTextLimit', 'page input text length cap maximum characters truncate 150000'],
     ['feeds', N_('Sources · rename · mute'), 'feedSubsCard', 'rss feeds subscriptions rename mute unsubscribe sources'],
     ['feeds', N_('Import / export OPML'), 'feedOpmlActions', 'opml import export rss subscriptions backup reader'],
     ['feedprefs', N_('Mark read when opened'), 'feedSetMarkRead', 'feed read unread open'],

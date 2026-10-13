@@ -1,6 +1,7 @@
 // loader.js — tiny content script that runs on every page instead of the full content.js (~200 KB).
 // The full script is injected (by the background, via scripting.executeScript) only when it is needed:
 //   • this page has saved highlights to paint,
+//   • this page has a saved analysis to restore,
 //   • the user selects text (highlight tooltip),
 //   • or the extension talks to the page (summarize, context menu, shortcuts) — those senders inject on demand.
 // Classic script, no imports: keep it small and keep pageKeyForUrl in sync with modules/pageKey.js (test80 checks the parity).
@@ -21,6 +22,7 @@
   window.__AISH_LOADER = { keyFor };         // truthy guard; keyFor is exposed so test80 can check it against pageKey.js
 
   const ANN = 'hl:all';                      // keep in sync with SK.annotations (modules/storageKeys.js)
+  const ARTICLES = 'articles:index';        // keep in sync with SK.articlesIndex
   let loading = false;
   const full = () => !!window.__AISH_CONTENT_LOADED || !!window.aishContentScriptInitialized;
   let flags = null;                          // highlighting switches (sync storage), read once and kept fresh below
@@ -60,16 +62,18 @@
     });
   };
 
-  // Does this page have saved highlights? Then the full script has to paint them.
+  // Saved analyses also need the full script, even without matched annotations.
   const check = () => {
-    if (full() || loading || !highlightingOn()) return;
+    if (full() || loading) return;
     try {
-      api.storage.local.get([ANN], (res) => {
+      api.storage.local.get([ANN, ARTICLES], (res) => {
         void (api.runtime.lastError);
         const all = res && res[ANN];
-        if (!Array.isArray(all) || !all.length) return;
         const key = keyFor(location.href);
-        if (all.some(a => a && !a.dismissed && typeof a.url === 'string' && keyFor(a.url) === key)) load();
+        const articles = res && res[ARTICLES];
+        const saved = Array.isArray(articles) && articles.some(a => a && !a.savedOnly && !a.feedStub && typeof a.url === 'string' && keyFor(a.url) === key);
+        const marked = highlightingOn() && Array.isArray(all) && all.some(a => a && !a.dismissed && typeof a.url === 'string' && keyFor(a.url) === key);
+        if (saved || marked) load();
       });
     } catch (_) { /* context gone */ }
   };
@@ -87,7 +91,7 @@
 
   function onNav() { if (document.visibilityState !== 'hidden') check(); }
   function onStorage(changes, area) {
-    if (area === 'local' && changes[ANN]) check();
+    if (area === 'local' && (changes[ANN] || changes[ARTICLES])) check();
     if (area === 'sync' && (changes.userHighlightingEnabled || changes.aiHighlightingEnabled || changes.highlightingEnabled)) {
       flags = Object.assign({}, flags, ...['userHighlightingEnabled', 'aiHighlightingEnabled', 'highlightingEnabled'].filter(k => changes[k]).map(k => ({ [k]: changes[k].newValue })));
       check();

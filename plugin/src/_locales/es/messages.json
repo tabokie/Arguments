@@ -4657,5 +4657,11 @@
   },
   "f_generate_a_bookmarklet_that__658d": {
     "message": "Genera un bookmarklet que analiza cualquier página en cualquier navegador, incluidos iOS/Android, donde la extensión no funciona. Utiliza tu sesión de byphil Cloud."
+  },
+  "f_page_text_limit_characters_2725": {
+    "message": "Límite de texto de la página (caracteres)"
+  },
+  "f_analyze_the_first_part_of_lo_6450": {
+    "message": "Analiza la primera parte de las páginas largas hasta este límite de caracteres. Predeterminado: 150.000."
   }
 }

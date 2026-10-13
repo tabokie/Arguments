@@ -8,17 +8,15 @@ Prefer claims, conclusions, interpretations, recommendations, predictions, or di
 
 When several sentences make the same point, highlight the clearest one.`;
 
-export const DEFAULT_SUMMARY_PROMPT = `Read and extract insights. Focus on:
-
-- **Zeitgeist:** strong high-level conclusions about what the discussion reveals about current beliefs, incentives, fears, blind spots, or shifts in the field.
-- **Rare gems:** ideas or opinions that are genuinely unusual, non-obvious, or surprising even to an expert.
-- **Emergent patterns:** cross-page patterns, surprising connections, tensions, contradictions, or context that only become visible from reading multiple parts together.
+export const DEFAULT_SUMMARY_PROMPT = `Read and extract insights. Look for strong high-level conclusions about the zeitgeist, genuinely rare or surprising ideas, and patterns, tensions, contradictions, or connections that only become visible across multiple parts of the page. Treat these as loose criteria, not separate categories.
 
 Use an absolute bar for inclusion. If the page contains no exceptional insight, return little or nothing. Do not fill a quota.
 
-Write each item as a short, bold argument with a clear point of view. Synthesize across the discussion when useful. Favor memorable judgments over balanced summaries.
+Return a single unordered list. Each bullet should make one succinct, opinionated point. A point may combine several criteria or fall slightly outside them if it is unusually valuable.
 
-No recap, no chronology, no background, no repetition, no hedging, no filler.`;
+Synthesize across the discussion when useful. Favor sharp judgments and non-obvious conclusions over recap.
+
+No section headings, chronology, background, repetition, hedging, or filler.`;
 
 export const PAGE_PROMPT_KEYS = ['highlightPrompt', 'prompt', 'highlightPromptMode', 'mainOutputPromptMode', 'promptType'];
 export const RETIRED_PROMPT_KEYS = ['presetPrompt', 'promptBuilder', 'promptCustomText', 'promptType'];

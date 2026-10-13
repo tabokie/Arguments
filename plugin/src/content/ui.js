@@ -266,9 +266,17 @@ export function sidebarMessage(msg) {
 }
 
 /** Open the in-page sidebar if it is not open yet (never closes it). Returns the iframe. */
-export function ensureHybridSidebar() {
+export function ensureHybridSidebar(articleId = '') {
     if (!document.getElementById('ai-summary-hybrid-sidebar')) toggleHybridSidebar();
-    return document.getElementById('ai-summary-hybrid-sidebar');
+    const sidebar = document.getElementById('ai-summary-hybrid-sidebar');
+    if (sidebar && articleId) {
+      const url = new URL(sidebar.src);
+      if (url.searchParams.get('chat') !== articleId) {
+        url.searchParams.set('chat', articleId);
+        sidebar.src = url.href;
+      }
+    }
+    return sidebar;
 }
 
 export function toggleHybridSidebar() {

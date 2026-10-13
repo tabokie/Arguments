@@ -1,22 +1,22 @@
 # Feeds UI translations — coverage & length report
 
-Strings: 966. Length budget: ≤14 cols → max(1.5×, +5); ≤40 → 1.4×; longer → 1.3× (CJK/emoji count 2 columns).
+Strings: 968. Length budget: ≤14 cols → max(1.5×, +5); ≤40 → 1.4×; longer → 1.3× (CJK/emoji count 2 columns).
 
 | locale | translated | missing | placeholder errors | too long |
 |---|---|---|---|---|
-| ar | 966 | 0 | 0 | 36 |
-| de | 966 | 0 | 0 | 126 |
-| es | 966 | 0 | 0 | 154 |
-| fr | 966 | 0 | 0 | 171 |
-| hi | 966 | 0 | 0 | 64 |
-| it | 966 | 0 | 0 | 162 |
-| ja | 966 | 0 | 0 | 62 |
-| ko | 966 | 0 | 0 | 19 |
-| pt_PT | 966 | 0 | 0 | 164 |
-| ru | 966 | 0 | 0 | 90 |
-| zh_CN | 966 | 0 | 0 | 1 |
-| zh_HK | 966 | 0 | 0 | 1 |
-| zh_TW | 966 | 0 | 0 | 1 |
+| ar | 968 | 0 | 0 | 36 |
+| de | 968 | 0 | 0 | 126 |
+| es | 968 | 0 | 0 | 155 |
+| fr | 968 | 0 | 0 | 171 |
+| hi | 968 | 0 | 0 | 64 |
+| it | 968 | 0 | 0 | 163 |
+| ja | 968 | 0 | 0 | 62 |
+| ko | 968 | 0 | 0 | 19 |
+| pt_PT | 968 | 0 | 0 | 164 |
+| ru | 968 | 0 | 0 | 90 |
+| zh_CN | 968 | 0 | 0 | 1 |
+| zh_HK | 968 | 0 | 0 | 1 |
+| zh_TW | 968 | 0 | 0 | 1 |
 
 ## Over-long translations (check these in the UI)
 
@@ -324,6 +324,7 @@ Strings: 966. Length budget: ≤14 cols → max(1.5×, +5); ≤40 → 1.4×; lon
 | Queue a question… | Pon una pregunta en cola… | 25 vs 17 | 1.47× |
 | AI recap of this week, built from its day recaps | salida principal IA de esta semana, a partir de los resultados diarios | 70 vs 48 | 1.46× |
 | Automatic light-blue quote highlights from results | Citas resaltadas en azul claro automáticamente a partir de los resultados | 73 vs 50 | 1.46× |
+| Page text limit (characters) | Límite de texto de la página (caracteres) | 41 vs 28 | 1.46× |
 | Highlight and main output prompts | Instrucciones para destacados y salida principal | 48 vs 33 | 1.45× |
 | Sort: Read share | Orden: Porcentaje leído | 23 vs 16 | 1.44× |
 | {n} without recap | {n} sin salida principal | 23 vs 16 | 1.44× |
@@ -726,6 +727,7 @@ Strings: 966. Length budget: ≤14 cols → max(1.5×, +5); ≤40 → 1.4×; lon
 | Model is writing… | Il modello sta scrivendo… | 25 vs 17 | 1.47× |
 | Creating day recaps… {a}/{b} | Creazione risultati giornalieri… {a}/{b} | 38 vs 26 | 1.46× |
 | Custom style (optional): | Stile personalizzato (facoltativo): | 35 vs 24 | 1.46× |
+| Page text limit (characters) | Limite del testo della pagina (caratteri) | 41 vs 28 | 1.46× |
 | Use Native Chrome Side Panel | Usa il pannello laterale nativo di Chrome | 41 vs 28 | 1.46× |
 | Attach to side panel | Aggancia al pannello laterale | 29 vs 20 | 1.45× |
 | (on iOS, hold to drag for 2 seconds) | (su iOS, tieni premuto per trascinare per 2 secondi) | 52 vs 36 | 1.44× |

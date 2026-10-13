@@ -12,15 +12,15 @@ const source = 'We should adopt congestion pricing in cities.\n\nWe should adopt
 const raw = '<p>A valuable implication.</p><!-- GHOST_HIGHLIGHTS: ["We should adopt", "An invented prefix"] -->';
 const f = await finalizeSummary({ raw, contentText: source, selectedLanguage: 'en' });
 assert.deepEqual(f.highlights.map(h => [h.text, h.status]), [
-  ['We should adopt', 'source-ambiguous'], ['An invented prefix', 'source-unmatched']
-], 'failed source recovery must retain the original prefix with a truthful status');
-const { showSummaryWindow } = await imp('content/summaryWindow.js');
-const host = showSummaryWindow(f.cleanHtml, f.highlights);
-assert(!host.shadowRoot.querySelector('details').open);
-assert.equal(host.shadowRoot.querySelectorAll('.highlights li').length, 2);
-assert.equal(host.shadowRoot.querySelector('summary .failure').textContent, '2 not matched');
-assert.match(host.shadowRoot.querySelector('[data-match-status="source-ambiguous"]').textContent, /Multiple source sentences/);
-assert.match(host.shadowRoot.querySelector('[data-match-status="source-unmatched"]').textContent, /Prefix not found in source/);
+  ['We should adopt congestion pricing in cities.', 'resolved'], ['An invented prefix', 'source-unmatched']
+], 'multiple source matches select the first sentence and missing prefixes remain failures');
+const { renderHighlights } = await imp('modules/highlightView.js');
+const disclosure = renderHighlights(f.highlights);
+assert(!disclosure.open);
+assert.equal(disclosure.querySelectorAll('li').length, 2);
+assert.equal(disclosure.querySelector('summary .failure').textContent, '1 not matched');
+assert(disclosure.querySelector('[data-match-status="resolved"]').textContent.includes('We should adopt congestion pricing in cities.'));
+assert.match(disclosure.querySelector('[data-match-status="source-unmatched"]').textContent, /Prefix not found in source/);
 const highlightsOnly = await finalizeSummary({ raw: '<!-- GHOST_HIGHLIGHTS: ["We should adopt congestion"] -->', contentText: source });
 assert(!highlightsOnly.error && highlightsOnly.cleanHtml === '' && highlightsOnly.highlights[0].status === 'resolved');
 const noInsights = await finalizeSummary({ raw: '<!-- GHOST_HIGHLIGHTS: [] -->', contentText: source });
@@ -28,8 +28,7 @@ assert(!noInsights.error && noInsights.cleanHtml === '' && !noInsights.highlight
 const incomplete = await finalizeSummary({ raw: '', thinking: 'private reasoning', contentText: source });
 assert(incomplete.error, 'an absent response without prepared selections is still a failure');
 const malformed = await finalizeSummary({ raw: '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: [broken -->', contentText: source });
-const bad = showSummaryWindow(malformed.cleanHtml, malformed.highlights);
-assert.match(bad.shadowRoot.querySelector('.highlights').textContent, /Highlight response could not be read/);
+assert.match(renderHighlights(malformed.highlights).textContent, /Highlight response could not be read/);
 const omitted = await finalizeSummary({ raw: '<p>Insight.</p>', contentText: source });
 assert.equal(omitted.highlights[0].status, 'invalid-response', 'omitting required highlights metadata cannot masquerade as no arguments found');
 const empty = await finalizeSummary({ raw: '<p>Insight.</p><!-- GHOST_HIGHLIGHTS: [] -->', contentText: source });
@@ -50,7 +49,7 @@ const { default: SM } = await imp('modules/storageManager.js');
 const saved = await SM.getArticleFull(result.article.id);
 assert.deepEqual(saved.highlights, result.highlights, 'saved highlights survive record loading');
 const failures = await finishDetached({ sourceUrl: 'https://example.test/b', contentText: source, selectedLanguage: 'en' }, raw, '');
-assert.deepEqual((await SM.getArticleFull(failures.article.id)).highlights, f.highlights, 'source recovery failures also survive detached completion and record loading');
+assert.deepEqual((await SM.getArticleFull(failures.article.id)).highlights, f.highlights.map(selection => selection.status === 'resolved' ? { ...selection, status: 'unavailable' } : selection), 'first-match selections and source recovery failures survive detached completion');
 const prepared = [{ prefix: 'A selected', text: sentence, status: 'resolved' }];
 const chunked = await finishDetached({ sourceUrl: 'https://example.test/c', contentText: 'Discovery notes.', highlights: prepared }, '', 'private reasoning');
 assert(!chunked.error, 'empty final prose must retain prepared highlights');

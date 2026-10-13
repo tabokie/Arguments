@@ -84,7 +84,8 @@ export async function finalizeSummary(o) {
 /** Same as the in-page path: store the finished summary. `ctx` is what the page handed to the background when the run started. */
 export function saveFinished(ctx, f, contentHtml) {
   const extra = { ...(ctx.feedUrl && ctx.feedUrl !== ctx.sourceUrl ? { feedUrl: ctx.feedUrl } : {}) };
-  return saveToLocalStorage(contentHtml, f.cleanHtml, ctx.sourceUrl, f.title, '', [], ctx.modelIdentifier, ctx.summaryLength, undefined, extra, f.pageMeta, f.highlights);
+  const analysisSource = typeof ctx.highlightSourceText === 'string' ? { text: ctx.highlightSourceText, truncated: !!ctx.highlightSourceTruncated } : undefined;
+  return saveToLocalStorage(contentHtml, f.cleanHtml, ctx.sourceUrl, f.title, '', [], ctx.modelIdentifier, ctx.summaryLength, undefined, extra, f.pageMeta, f.highlights, analysisSource);
 }
 
 /** Background: a run whose page went away is finished here. */

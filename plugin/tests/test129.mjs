@@ -1,4 +1,4 @@
-// A summary completed by the content script appears on the page even without an open extension panel.
+// Completed results use the existing on-page highlights control and remain saved for Chat.
 import assert from 'assert';
 import { setup, imp, tick } from './harness.mjs';
 const { dom, w, store } = setup({});
@@ -44,13 +44,15 @@ emit({ action: 'streamChunk', requestId, payload: { chunk: 'data: ' + JSON.strin
 assert(!document.getElementById('aish-summary-window'), 'streamed text does not open a partial window');
 emit({ action: 'streamChunk', requestId, payload: { done: true } });
 for (let i = 0; i < 50 && !store['articles:index']?.length; i++) await tick();
-const host = document.getElementById('aish-summary-window');
-assert(host, 'the completed result is visible on the webpage');
-assert(host.shadowRoot.querySelector('.body').textContent.includes('A completed finding.'));
-assert(!host.shadowRoot.querySelector('.highlights').open, 'completion shows a collapsed Highlights section');
-assert.equal(host.shadowRoot.querySelector('.highlights li').textContent, 'A source argument about technology and research.');
-assert.equal(host.shadowRoot.querySelector('.highlights li').dataset.matchStatus, 'matched');
-assert(!host.shadowRoot.querySelector('.highlights .failure'), 'successful matching does not show a warning');
+for (let i = 0; i < 50 && !document.getElementById('aish-hl-host'); i++) await tick();
+const host = document.getElementById('aish-hl-host');
+assert(host, 'the existing highlights control appears after completion');
+assert(!document.getElementById('aish-summary-window'), 'completion creates no redundant window');
+assert(host.shadowRoot.querySelector('.chat').textContent.includes('Chat'));
+host.shadowRoot.querySelector('.pill').click();
+assert.equal(host.shadowRoot.querySelector('.item .q').textContent, '“A source argument about technology and research.”');
+assert.equal(host.shadowRoot.querySelector('.item').dataset.matchStatus, 'matched');
+assert(!host.shadowRoot.querySelector('.failure'), 'successful matching does not show a warning');
 assert(relayed.some(message => message.action === 'summaryComplete'), 'completion still reaches extension views');
 assert(store['articles:index']?.length, 'summary remains saved in history');
 const complete = relayed.find(message => message.action === 'summaryComplete');
@@ -60,6 +62,7 @@ assert(!document.querySelector('.placeholder'), 'the loading placeholder is remo
 assert.deepEqual(store[SK.annotations].filter(annotation => annotation.type === 'ghost').map(annotation => annotation.text), ['A source argument about technology and research.'], 'model prefixes become full-sentence annotations');
 assert.equal([...document.querySelectorAll('article .ai-ghost-highlight')].map(mark => mark.textContent).join(''), 'A source argument about technology and research.', 'the complete webpage sentence is marked across inline elements');
 const detached = relayed.find(message => message.action === 'startFetch').detach;
+assert.deepEqual(store['articles:rec:' + store['articles:index'][0].id].analysisSource, { text: detached.highlightSourceText, truncated: detached.highlightSourceTruncated }, 'live completion persists the exact analyzed source');
 assert(defaultBody.messages[1].content.startsWith('SOURCE PAGE:\n' + detached.highlightSourceText + '\n\n'), 'detached completion retains the exact sanitized source sent to the model');
 // Verify the actual requests, including Gemini's distinct API format and queued prompt overrides.
 globalThis.fetch = async (url) => {
@@ -101,12 +104,15 @@ for (const service of ['openai', 'gemini', 'ollama']) {
   for (let i = 0; i < 50 && relayed.filter(message => message.action === 'summaryComplete').length === completed; i++) await tick();
   assert.equal(relayed.filter(message => message.action === 'summaryComplete').length, completed + 1, `${service} completion still works`);
   if (service === 'openai') {
-    const fallback = document.getElementById('aish-summary-window').shadowRoot.querySelector('.highlights');
-    assert(fallback && !fallback.open, 'unmatched sentences have a collapsed fallback');
-    assert.equal(fallback.querySelector('li .highlight-sentence').textContent, 'An unmatched source argument remains useful when the webpage changes.', 'a sentence absent from the live DOM is still displayed in full');
-    assert.equal(fallback.querySelector('li').dataset.matchStatus, 'unmatched');
-    assert.equal(fallback.querySelector('li .match-status').textContent, 'Not found on page', 'the real matching failure is visible beside the sentence');
-    assert.equal(fallback.querySelector('summary .failure').textContent, '1 not matched', 'the failure count stays visible when collapsed');
+    let fallback;
+    for (let i = 0; i < 50 && !fallback; i++) {
+      fallback = document.getElementById('aish-hl-host').shadowRoot.querySelector('[data-match-status="unmatched"]');
+      if (!fallback) await tick();
+    }
+    assert(fallback, 'unmatched sentences remain in the original highlights panel');
+    assert.equal(fallback.querySelector('.q').textContent, '“An unmatched source argument remains useful when the webpage changes.”');
+    assert.equal(fallback.querySelector('.meta').textContent, 'Not found on page');
+    assert(document.getElementById('aish-hl-host').shadowRoot.querySelector('.pill').textContent.includes('1 not matched'));
     assert(!store[SK.annotations].some(annotation => annotation.text.startsWith('An unmatched source argument')), 'the fallback does not require a successful webpage annotation');
     const completion = relayed.findLast(message => message.action === 'summaryComplete');
     const saved = store['articles:rec:' + store['articles:index'].at(-1).id];

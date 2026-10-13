@@ -1,4 +1,4 @@
-// Prefixes resolve only to complete, unambiguous source sentences, across source blocks and languages.
+// Prefixes resolve to the first complete matching source sentence, across source blocks and languages.
 import assert from 'assert';
 import { setup, imp } from './harness.mjs';
 const { w } = setup({});
@@ -7,7 +7,9 @@ const source = 'Costs will fall only if demand stays stable. Costs will rise if 
 assert.deepEqual(resolveHighlightPrefixes(['Costs will fall', 'A second topic'], source, 'en'), [
   'Costs will fall only if demand stays stable.', 'A second topic needs a different policy, with important qualifications.'
 ]);
-assert.deepEqual(resolveHighlightPrefixes(['Costs will', 'will fall', 'Invented claim', '', {}, 12], source, 'en'), [], 'ambiguous prefixes, interior fragments and non-source text are rejected');
+assert.deepEqual(resolveHighlightPrefixes(['Invented claim', '', {}, 12], source, 'en'), [], 'non-source text is rejected');
+assert.deepEqual(resolveHighlightPrefixes(['Costs will'], source, 'en'), ['Costs will fall only if demand stays stable.'], 'multiple matches select the first sentence in source order');
+assert.deepEqual(resolveHighlightPrefixes(['will fall'], source, 'en'), ['Costs will fall only if demand stays stable.'], 'an interior phrase recovers the complete containing sentence');
 assert.deepEqual(resolveHighlightPrefixes(['Costs will fall', 'Costs will fall only if demand stays stable.'], source, 'en'), ['Costs will fall only if demand stays stable.'], 'overlapping prefixes and full-sentence model replies resolve once');
 assert.deepEqual(resolveHighlightPrefixes(['Costs will fall'], source + '\n\nCosts will fall only if demand stays stable.', 'en'), ['Costs will fall only if demand stays stable.'], 'identical repeated sentences are one selection');
 assert.deepEqual(resolveHighlightPrefixes(['A claim crosses'], 'A claim crosses\na wrapped line, but keeps its qualifications. Another claim.', 'en'), ['A claim crosses a wrapped line, but keeps its qualifications.']);
